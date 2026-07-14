@@ -63,6 +63,7 @@ Design specs live in [`docs/`](docs/):
 2. [`02-scoring-engine-rubric.md`](docs/02-scoring-engine-rubric.md) — the 10-marker rubric, weights, confidence bands, data sourcing
 3. [`03-multi-stage-form.md`](docs/03-multi-stage-form.md) — the 4-stage intake form and field-to-marker mapping
 4. [`04-ai-report-and-monetization.md`](docs/04-ai-report-and-monetization.md) — free/paid split, subscription model, report-caching architecture
+5. [`05-system-architecture.md`](docs/05-system-architecture.md) — component overview, request flow, data model, regeneration policy
 
 ---
 

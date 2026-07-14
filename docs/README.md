@@ -15,12 +15,13 @@ Landing Page → Multi-Stage Form → Scoring Engine → AI Report
 2. **`02-scoring-engine-rubric.md`** — the 10-marker E20 compatibility rubric, weights, confidence bands, data sourcing per marker
 3. **`03-multi-stage-form.md`** — the 4-stage intake form, field-by-field mapping to rubric markers, user-input vs backend-derived split
 4. **`04-ai-report-and-monetization.md`** — free/paid split, subscription model, report-caching architecture for cost control
+5. **`05-system-architecture.md`** — component overview, end-to-end request flow, checks/reports data model, regeneration policy
 
 ## Status
-All four docs are v1 research-backed drafts, not yet implemented. Known open items are listed at the bottom of each file — review these before/during build, several require product decisions (pricing point, cache-drift thresholds, RC-lookup vendor) rather than further research.
+All five docs are v1 research-backed drafts, not yet implemented. Known open items are listed at the bottom of each file — review these before/during build, several require product decisions (pricing point, cache-drift thresholds, RC-lookup vendor) rather than further research.
 
 ## Not yet covered (future docs)
-- System architecture diagram (data flow, caching layer as its own component, payment/subscription state machine)
+- Payment/subscription state machine (trial vs active vs lapsed — flagged in `04` and `05` open items)
 - OEM E20-declaration table sourcing/maintenance plan
 - Markers 3–9 rules engine — exact logic spec (era + variant → inferred material/calibration profile)
 - Backend/infra choices (not yet discussed)
