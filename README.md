@@ -12,7 +12,7 @@ India's rollout of E20 fuel has left millions of car owners with the same unansw
 
 DriveScore answers one specific question:
 
-> **"How compatible is *my* car with E20?"**
+> **"How compatible is _my_ car with E20?"**
 
 Every vehicle gets a 0–100 compatibility score with an explicit confidence rating — a heuristic estimate built on a documented, versioned rubric, not a black box.
 
@@ -33,12 +33,12 @@ Landing Page → Multi-Stage Form → Scoring Engine → AI Report
 
 Ten weighted markers across four tiers:
 
-| Tier | Focus | Weight |
-|---|---|---|
-| 1. Ground Truth | OEM E20 declaration, manufacture date vs regulatory cutoffs | ~40% |
-| 2. Material Durability | Elastomers/seals, tank & line corrosion, fuel pump | ~35% |
-| 3. Calibration / Driveability | Injection architecture, ECU fuel trim, O2 sensor, knock sensor | ~20% |
-| 4. Context | Usage/age composite | ~5% |
+| Tier                          | Focus                                                          | Weight |
+| ----------------------------- | -------------------------------------------------------------- | ------ |
+| 1. Ground Truth               | OEM E20 declaration, manufacture date vs regulatory cutoffs    | ~40%   |
+| 2. Material Durability        | Elastomers/seals, tank & line corrosion, fuel pump             | ~35%   |
+| 3. Calibration / Driveability | Injection architecture, ECU fuel trim, O2 sensor, knock sensor | ~20%   |
+| 4. Context                    | Usage/age composite                                            | ~5%    |
 
 Scores map to three bands: **Likely Compatible** (75–100) · **Use With Caution** (40–74) · **Not Recommended** (0–39), plus a low-confidence flag when no official OEM stance exists.
 
@@ -48,10 +48,10 @@ Full spec: [`docs/02-scoring-engine-rubric.md`](docs/02-scoring-engine-rubric.md
 
 ## Guiding Principles
 
-* **AI explains. It doesn't calculate.** Every score comes from the deterministic rubric; the LLM only narrates it.
-* Only ask users what only *they* can know — technical markers are derived by a backend rules engine.
-* Confidence is a first-class output, not fine print.
-* Build trust through transparency: visible weights, versioned rubric, explicit limitations.
+- **AI explains. It doesn't calculate.** Every score comes from the deterministic rubric; the LLM only narrates it.
+- Only ask users what only _they_ can know — technical markers are derived by a backend rules engine.
+- Confidence is a first-class output, not fine print.
+- Build trust through transparency: visible weights, versioned rubric, explicit limitations.
 
 ---
 
@@ -67,15 +67,27 @@ Design specs live in [`docs/`](docs/):
 
 ---
 
+## Getting Started
+
+```bash
+cd apps/web
+pnpm install
+cp .env.example .env.local
+pnpm dev
+```
+
+---
+
 ## Tech Stack
 
-* Next.js
-* React
-* TypeScript
-* Tailwind CSS
-* PostgreSQL
-* Prisma
-* OpenAI API
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- PostgreSQL
+- Prisma
+- OpenAI API
+- PostHog (product analytics, proxied first-party)
 
 Monorepo layout: `apps/web` (Next.js app) + `packages/` (`scoring-engine`, `ai`, `cars`, `database`, `types`, `ui`, `config`).
 
@@ -93,4 +105,4 @@ Start with the E20 question every Indian petrol-car owner is asking today, and g
 
 ---
 
-Built with ❤️ to help people run their cars with confidence.
+Built with ❤️ by [Nischal Nikit](https://github.com/niiischall) to help people run their cars with confidence.
