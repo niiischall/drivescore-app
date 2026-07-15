@@ -2,6 +2,7 @@
   "name": "web",
   "version": "0.1.0",
   "private": true,
+  "author": "Nischal Nikit <mailfornischal@gmail.com> (https://github.com/niiischall)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
