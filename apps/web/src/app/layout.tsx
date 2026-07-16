@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -18,6 +18,13 @@ export const metadata: Metadata = {
   title: "DriveScore",
   description:
     "AI-powered ownership advisor — know what it's really like to own a car before you buy it.",
+  twitter: {
+    card: "summary_large_image",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#6815E5",
 };
 
 export default function RootLayout({
