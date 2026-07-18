@@ -1,0 +1,11 @@
+export { ConfidenceSection } from "./confidence";
+export { FaqSection } from "./faq";
+export { LandingFooter } from "./footer";
+export { LandingHeader } from "./header";
+export { HeroSection } from "./hero";
+export { MethodSection } from "./method";
+export { ProblemSection } from "./problem";
+export { QuickActions } from "./quick-actions";
+export { SampleScoreSection } from "./sample-score";
+export { StickyCta } from "./sticky-cta";
+export { VisitorMarquee } from "./visitor-marquee";
