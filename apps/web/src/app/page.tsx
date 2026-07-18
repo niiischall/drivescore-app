@@ -1,22 +1,86 @@
-import Image from "next/image";
+import type { Metadata } from "next";
+import { LandingPage } from "@/components/landing";
+import { FAQS } from "@/components/landing/data/content";
+import { getUniqueVisitorCount } from "@/lib/posthog-visitors";
+import { getSiteUrl, siteConfig } from "@/lib/site";
 
-export default function Home() {
+export const metadata: Metadata = {
+  title: {
+    absolute: siteConfig.title,
+  },
+  description: siteConfig.description,
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: siteConfig.title,
+    description: siteConfig.description,
+    url: "/",
+  },
+};
+
+function buildJsonLd() {
+  const base = getSiteUrl();
+
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      name: siteConfig.name,
+      url: base,
+      description: siteConfig.description,
+      applicationCategory: "AutomotiveApplication",
+      operatingSystem: "Web",
+      inLanguage: "en-IN",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "INR",
+      },
+      areaServed: {
+        "@type": "Country",
+        name: "India",
+      },
+      about: {
+        "@type": "Thing",
+        name: "E20 fuel compatibility",
+        description:
+          "Compatibility of petrol vehicles with 20% ethanol-blended fuel in India",
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: f.a,
+        },
+      })),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: siteConfig.name,
+      url: base,
+      description: siteConfig.description,
+      inLanguage: "en-IN",
+    },
+  ];
+}
+
+export default async function Home() {
+  const visitorCount = await getUniqueVisitorCount();
+
   return (
-    <div className="flex flex-1 flex-col items-center justify-center bg-surface font-sans">
-      <main className="flex w-full max-w-3xl flex-col items-center gap-6 px-16 py-32 text-center">
-        <h1 className="sr-only">DriveScore</h1>
-        <Image
-          src="/icon.svg"
-          alt="DriveScore"
-          width={128}
-          height={128}
-          priority
-          unoptimized
-        />
-        <p className="max-w-md text-lg leading-7 font-normal text-text-secondary [text-wrap:balance]">
-          Know what it&apos;s really like to own a car before you buy it.
-        </p>
-      </main>
-    </div>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildJsonLd()) }}
+      />
+      <LandingPage visitorCount={visitorCount} />
+    </>
   );
 }

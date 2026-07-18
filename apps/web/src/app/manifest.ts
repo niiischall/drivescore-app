@@ -5,11 +5,12 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "DriveScore",
     short_name: "DriveScore",
     description:
-      "AI-powered ownership advisor — know what it's really like to own a car before you buy it.",
+      "Check your car's E20 (20% ethanol petrol) compatibility score — built for Indian cars.",
     start_url: "/",
     display: "standalone",
-    background_color: "#F4F1E8",
-    theme_color: "#6815E5",
+    background_color: "#0b0910",
+    theme_color: "#0b0910",
+    lang: "en-IN",
     icons: [
       { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
       { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
