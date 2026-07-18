@@ -1,17 +1,25 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const euclid = localFont({
+  src: [
+    { path: "./fonts/EuclidCircularB-Regular.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/EuclidCircularB-Medium.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/EuclidCircularB-Semibold.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/EuclidCircularB-Bold.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--font-euclid",
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -24,7 +32,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#6815E5",
+  themeColor: "#6841E6",
 };
 
 export default function RootLayout({
@@ -35,9 +43,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${euclid.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col font-sans">
         {children}
         <Analytics />
         <SpeedInsights />
