@@ -3,6 +3,7 @@ import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { QueryProvider } from "@/components/providers/query-provider";
 import { getSiteUrl, siteConfig } from "@/lib/site";
 import "./globals.css";
 
@@ -123,7 +124,7 @@ export default function RootLayout({
       className={`${euclid.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-surface-starfield font-sans text-text-primary">
-        {children}
+        <QueryProvider>{children}</QueryProvider>
         <Analytics />
         <SpeedInsights />
       </body>
