@@ -20,7 +20,7 @@ export function buildWaitlistConfirmationEmail(
 ): WaitlistEmailContent {
   const siteUrl = getSiteUrl();
   const safeEmail = escapeHtml(email);
-  const heroImg = `${siteUrl}/illustrations/car-suv-india-hero-light.png`;
+  const logoImg = `${siteUrl}/icons/icon-512.png`;
   const subject = "You're on the DriveScore waitlist — E20 clarity is coming";
 
   const text = [
@@ -77,12 +77,13 @@ export function buildWaitlistConfirmationEmail(
           </tr>
 
           <tr>
-            <td style="padding:0;background:#f5f6f9;">
+            <td align="center" style="padding:36px 32px;background:#f5f6f9;">
               <img
-                src="${heroImg}"
-                width="640"
-                alt="Indian compact SUV — DriveScore E20 compatibility"
-                style="display:block;width:100%;max-width:640px;height:auto;border:0;outline:none;"
+                src="${logoImg}"
+                width="160"
+                height="160"
+                alt="DriveScore"
+                style="display:block;width:160px;height:160px;border:0;outline:none;border-radius:36px;"
               />
             </td>
           </tr>
