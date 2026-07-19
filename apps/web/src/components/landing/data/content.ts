@@ -1,3 +1,5 @@
+import { METHOD_VERSION } from "@/lib/method";
+
 export const VISITOR_COUNT = 12_438;
 
 export const PROBLEMS = [
@@ -99,7 +101,7 @@ export const FAQS = [
   },
   {
     q: 'Why might my score change?',
-    a: 'Our scoring method is versioned (currently v0.2). When weights or markers improve, scores are re-evaluated under the new version — always labelled, never silent.',
+    a: `Our scoring method is versioned (currently ${METHOD_VERSION}). When weights or markers improve, scores are re-evaluated under the new version — always labelled, never silent.`,
   },
   {
     q: "What if my exact model isn't listed?",

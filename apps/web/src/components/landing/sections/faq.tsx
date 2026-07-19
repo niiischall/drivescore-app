@@ -2,6 +2,7 @@
 
 import { Plus, X } from "@phosphor-icons/react";
 import { useState } from "react";
+import { track } from "@/lib/analytics";
 import { FAQS } from "../data/content";
 
 export function FaqSection() {
@@ -22,7 +23,15 @@ export function FaqSection() {
           <div key={f.q} className="border-b border-[var(--landing-hairline)]">
             <button
               type="button"
-              onClick={() => setOpenFaq(open ? -1 : i)}
+              onClick={() => {
+                const nextOpen = !open;
+                setOpenFaq(nextOpen ? i : -1);
+                track("landing_faq_toggled", {
+                  question: f.q,
+                  open: nextOpen,
+                  index: i,
+                });
+              }}
               className="flex w-full cursor-pointer items-center justify-between gap-3.5 border-none bg-transparent py-[18px] text-left text-text-primary"
             >
               <span className="text-[15.5px] leading-snug font-bold">{f.q}</span>
