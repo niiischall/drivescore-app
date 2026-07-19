@@ -2,6 +2,7 @@
 
 import { Plus, X } from "@phosphor-icons/react";
 import { useState } from "react";
+import { track } from "@/lib/analytics";
 import { SCORE_COMPOSITION } from "../data/content";
 
 export function MethodSection() {
@@ -71,7 +72,13 @@ export function MethodSection() {
 
       <button
         type="button"
-        onClick={() => setShowMarkers((v) => !v)}
+        onClick={() => {
+          setShowMarkers((v) => {
+            const next = !v;
+            track("landing_markers_toggled", { open: next });
+            return next;
+          });
+        }}
         className="landing-reveal flex w-full cursor-pointer items-center justify-between rounded-full border border-[var(--landing-card-border)] bg-[var(--landing-card)] px-5 py-3.5 text-left text-[15px] font-semibold text-text-primary"
       >
         <span>

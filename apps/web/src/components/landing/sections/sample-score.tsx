@@ -1,9 +1,14 @@
 import Image from "next/image";
 import { ArrowRight, Flag } from "@phosphor-icons/react";
+import { METHOD_VERSION } from "@/lib/method";
 import { SAMPLE_MARKERS } from "../data/content";
-import { scrollToTop, toneColor } from "../ui/brand";
+import { toneColor } from "../ui/brand";
 
-export function SampleScoreSection() {
+export function SampleScoreSection({
+  onJoinClick,
+}: {
+  onJoinClick: () => void;
+}) {
   return (
     <section id="sample" className="flex flex-col gap-4 px-4 pb-11">
       <span className="text-xs font-bold tracking-[0.12em] text-[var(--landing-lilac)]">
@@ -84,7 +89,7 @@ export function SampleScoreSection() {
 
           <button
             type="button"
-            onClick={scrollToTop}
+            onClick={onJoinClick}
             className="landing-cta sample-card__cta"
           >
             Check my car
@@ -92,7 +97,7 @@ export function SampleScoreSection() {
           </button>
 
           <p className="sample-card__caption">
-            Illustrative sample · Scoring method v0.2
+            Illustrative sample · Scoring method {METHOD_VERSION}
           </p>
         </div>
       </article>

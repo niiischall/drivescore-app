@@ -1,4 +1,5 @@
 import { FAQS, SCORE_COMPOSITION } from "@/components/landing/data/content";
+import { METHOD_VERSION } from "@/lib/method";
 import { getSiteUrl, siteConfig } from "@/lib/site";
 
 /** Compact index for AI agents — https://llmstxt.org */
@@ -49,7 +50,7 @@ export function buildLlmsFullTxt() {
 
 ## What it does
 
-DriveScore estimates how compatible a specific vehicle is with E20 petrol using a weighted, versioned scoring method (currently v0.2). Results include:
+DriveScore estimates how compatible a specific vehicle is with E20 petrol using a weighted, versioned scoring method (currently ${METHOD_VERSION}). Results include:
 
 1. A 0–100 score and band (e.g. caution)
 2. Marker-level reasons (what drove the score)

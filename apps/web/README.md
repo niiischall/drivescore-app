@@ -11,6 +11,7 @@ Currently ships the **marketing landing page** and a **Resend-backed waitlist** 
 - [Resend](https://resend.com) for waitlist contacts + confirmation email
 - PostHog (client analytics via `/pulse` proxy; server HogQL for visitor count)
 - Vercel Analytics + Speed Insights
+- Light / dark UI via `prefers-color-scheme` (`data-theme` on `<html>`, see `theme-sync.tsx`)
 
 ## Getting started
 
@@ -40,9 +41,27 @@ Copy from [`.env.example`](.env.example):
 
 Full waitlist / DNS setup: [`docs/06-waitlist-and-email.md`](../../docs/06-waitlist-and-email.md).
 
+## Analytics (PostHog)
+
+Client events via `src/lib/analytics.ts` (no-op if key unset):
+
+| Event | When |
+| ----- | ---- |
+| `landing_page_viewed` | Landing mounts |
+| `landing_section_viewed` | Section enters viewport (`section`) |
+| `landing_quick_action_clicked` | Quick-action card (`target`, `label`) |
+| `landing_faq_toggled` | FAQ open/close (`question`, `open`) |
+| `landing_markers_toggled` | Method “10 markers” expand (`open`) |
+| `landing_footer_link_clicked` | Footer link (`group`, `label`, `href`) |
+| `waitlist_cta_clicked` | Join CTA (`source`: hero / sticky / sample) |
+| `waitlist_modal_closed` | Modal closed (`source`, `joined`) |
+| `waitlist_submit_attempted` | Email submit (`source`, `email_domain`) |
+| `waitlist_joined` | Successful join (`email_domain`) |
+| `waitlist_submit_failed` | Join API error (`error`) |
+
 ## Waitlist (Resend)
 
-Hero form → `useJoinWaitlist` (React Query) → `POST /api/waitlist` → upsert Resend Segment contact + send confirmation email → success UI + PostHog `waitlist_joined`.
+Join CTA → modal → `useJoinWaitlist` (React Query) → `POST /api/waitlist` → Resend Segment + confirmation email → success UI + PostHog events above.
 
 | File | Role |
 | ---- | ---- |

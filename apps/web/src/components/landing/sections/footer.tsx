@@ -1,5 +1,29 @@
+"use client";
+
+import Link from "next/link";
+import { track } from "@/lib/analytics";
 import { BrandMark, BrandWordmark } from "../ui/brand";
 import { IndiaFlag } from "../ui/india-flag";
+
+const METHOD_LINKS = [
+  { href: "#how", label: "How we score" },
+  { href: "#confidence", label: "Confidence bands" },
+  { href: "#scores-improve", label: "How scores improve" },
+] as const;
+
+const COMPANY_LINKS = [
+  { href: "/privacy", label: "Privacy" },
+  { href: "/contact", label: "Contact" },
+  { href: "/faq", label: "FAQ" },
+] as const;
+
+function trackFooterLink(
+  group: "method" | "company",
+  label: string,
+  href: string,
+) {
+  track("landing_footer_link_clicked", { group, label, href });
+}
 
 export function LandingFooter() {
   return (
@@ -24,20 +48,32 @@ export function LandingFooter() {
         <span className="text-[11px] font-bold tracking-[0.1em] text-[var(--landing-faint)]">
           METHOD
         </span>
-        <div className="flex flex-wrap gap-x-3.5 gap-y-1.5 text-[13.5px]">
-          <a href="#how">How we score</a>
-          <a href="#how">Confidence bands</a>
-          <a href="#how">How scores improve</a>
+        <div className="flex flex-col gap-2 text-[13.5px]">
+          {METHOD_LINKS.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              onClick={() => trackFooterLink("method", link.label, link.href)}
+            >
+              {link.label}
+            </a>
+          ))}
         </div>
       </div>
       <div className="flex flex-col gap-1.5">
         <span className="text-[11px] font-bold tracking-[0.1em] text-[var(--landing-faint)]">
           COMPANY
         </span>
-        <div className="flex flex-wrap gap-x-3.5 gap-y-1.5 text-[13.5px]">
-          <a href="#faq">Privacy</a>
-          <a href="#faq">Contact</a>
-          <a href="#faq">FAQ</a>
+        <div className="flex flex-col gap-2 text-[13.5px]">
+          {COMPANY_LINKS.map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              onClick={() => trackFooterLink("company", link.label, link.href)}
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
       </div>
       <p className="m-0 text-[11.5px] leading-[1.55] text-[var(--landing-faint)]">

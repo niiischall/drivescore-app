@@ -85,8 +85,15 @@ Local-only shortcut before domain verify: `RESEND_FROM_EMAIL=DriveScore <onboard
 
 ## Email content
 
-- Subject: `You're on the DriveScore waitlist`
-- Body: confirm address, launch follow-up, free first check, no-spam / unsubscribe note
+Template: `apps/web/src/lib/waitlist-email.ts`  
+Hero image (absolute URL): `{NEXT_PUBLIC_SITE_URL}/illustrations/car-suv-india-hero-light.png` — same asset as the light-theme landing hero
+
+Landing page theme art: `car-suv-india-hero-light.png` (light) / `car-suv-india-hero.png` (dark), swapped via `data-theme` in CSS.
+
+- Subject: waitlist confirmed + E20 positioning
+- HTML: ~640px light marketing layout — brand header, hero car, product pillars (free check, 10 markers, confidence, AI explains), stats strip, CTA
+- Plain-text alternative with the same beats
+- Images require a publicly reachable `NEXT_PUBLIC_SITE_URL` (localhost URLs will break the image in the inbox)
 
 ## Out of scope (later)
 

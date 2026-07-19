@@ -2,25 +2,14 @@
 
 import Image from "next/image";
 import { ArrowRight, Check, GasPump } from "@phosphor-icons/react";
-import { useState, type SubmitEvent } from "react";
-import { useJoinWaitlist } from "@/hooks/use-join-waitlist";
 
-export function HeroSection() {
-  const [email, setEmail] = useState("");
-  const joinWaitlist = useJoinWaitlist();
+type HeroSectionProps = {
+  joinedEmail: string | null;
+  onJoinClick: () => void;
+};
 
-  const joined = joinWaitlist.isSuccess;
-  const loading = joinWaitlist.isPending;
-  const errorMessage =
-    joinWaitlist.error instanceof Error
-      ? joinWaitlist.error.message
-      : "Couldn't join — try again";
-
-  function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (loading) return;
-    joinWaitlist.mutate(email);
-  }
+export function HeroSection({ joinedEmail, onJoinClick }: HeroSectionProps) {
+  const joined = Boolean(joinedEmail);
 
   return (
     <section className="flex flex-col gap-[18px] px-4 pb-9 pt-5">
@@ -40,21 +29,38 @@ export function HeroSection() {
       <div className="landing-hero-in landing-hero-in--2 landing-hero-car">
         <div className="landing-hero-car__glow" aria-hidden />
         <Image
-          src="/illustrations/car-suv-india-hero.png"
+          src="/illustrations/car-suv-india-hero-light.png"
           alt="Illustrated Indian compact SUV"
           width={640}
           height={360}
           priority
           unoptimized
-          className="landing-hero-car__img"
+          className="landing-hero-car__img landing-hero-car__img--light"
+        />
+        <Image
+          src="/illustrations/car-suv-india-hero.png"
+          alt=""
+          width={640}
+          height={360}
+          priority
+          unoptimized
+          aria-hidden
+          className="landing-hero-car__img landing-hero-car__img--dark"
         />
       </div>
 
       <div className="landing-hero-in landing-hero-in--3 flex flex-col gap-2.5">
         {[
-          "Free detailed score for your exact model",
+          <>
+            Score for your exact{" "}
+            <b className="text-text-primary">make, model, and year</b>
+          </>,
           <>
             Result in under <b className="text-text-primary">60</b> seconds
+          </>,
+          <>
+            Clear <b className="text-text-primary">reasons</b> and{" "}
+            <b className="text-text-primary">confidence</b> — not just a number
           </>,
         ].map((line, i) => (
           <div key={i} className="flex items-center gap-2.5">
@@ -119,43 +125,19 @@ export function HeroSection() {
       </div>
 
       {!joined ? (
-        <form
-          onSubmit={handleSubmit}
-          className="landing-hero-in flex flex-col gap-2.5 [animation-delay:0.48s]"
-        >
-          <input
-            type="email"
-            name="email"
-            autoComplete="email"
-            inputMode="email"
-            required
-            placeholder="you@email.com"
-            value={email}
-            disabled={loading}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              if (joinWaitlist.isError) {
-                joinWaitlist.reset();
-              }
-            }}
-            className="h-[54px] rounded-full border border-[color-mix(in_srgb,var(--color-text-invert)_18%,transparent)] bg-[color-mix(in_srgb,var(--color-text-invert)_5%,transparent)] px-5 text-base text-text-primary outline-none placeholder:text-text-secondary disabled:opacity-60"
-          />
+        <div className="landing-hero-in flex flex-col gap-2.5 [animation-delay:0.48s]">
           <button
-            type="submit"
-            disabled={loading}
-            className="landing-cta flex h-[54px] cursor-pointer items-center justify-center rounded-full border-none text-[17px] font-bold disabled:cursor-wait disabled:opacity-70"
+            type="button"
+            onClick={onJoinClick}
+            className="landing-cta landing-cta--pulse flex h-[54px] cursor-pointer items-center justify-center rounded-full border-none text-[17px] font-bold"
           >
-            {loading ? "Joining…" : "Join the waitlist"}
-            {!loading ? (
-              <ArrowRight weight="bold" size={18} className="ml-1.5" />
-            ) : null}
+            Join the waitlist
+            <ArrowRight weight="bold" size={18} className="ml-1.5" />
           </button>
-          {joinWaitlist.isError ? (
-            <p className="m-0 text-center text-[13px] text-score-risk" role="alert">
-              {errorMessage}
-            </p>
-          ) : null}
-        </form>
+          <p className="m-0 text-center text-[12.5px] text-[var(--landing-faint)]">
+            Launching soon · Free first check · No spam
+          </p>
+        </div>
       ) : (
         <div className="landing-joined" role="status" aria-live="polite">
           <div className="landing-joined__card">
@@ -166,7 +148,9 @@ export function HeroSection() {
               <p className="landing-joined__title">You&apos;re on the waitlist</p>
               <p className="landing-joined__body">
                 We&apos;ll email{" "}
-                <span className="font-medium text-text-primary">{email}</span>{" "}
+                <span className="font-medium text-text-primary">
+                  {joinedEmail}
+                </span>{" "}
                 when DriveScore launches. Your first check stays free.
               </p>
             </div>
@@ -176,11 +160,6 @@ export function HeroSection() {
           </p>
         </div>
       )}
-      {!joined ? (
-        <p className="m-0 text-center text-[12.5px] text-[var(--landing-faint)]">
-          Launching soon · Free first check · No spam
-        </p>
-      ) : null}
     </section>
   );
 }

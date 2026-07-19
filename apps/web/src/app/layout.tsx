@@ -1,9 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
+import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { QueryProvider } from "@/components/providers/query-provider";
+import {
+  ThemeSync,
+  themeInitScript,
+} from "@/components/providers/theme-sync";
 import { getSiteUrl, siteConfig } from "@/lib/site";
 import "./globals.css";
 
@@ -120,10 +125,14 @@ export default function RootLayout({
   return (
     <html
       lang="en-IN"
-      data-theme="dark"
       className={`${euclid.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col bg-surface-starfield font-sans text-text-primary">
+        <Script id="theme-init" strategy="beforeInteractive">
+          {themeInitScript}
+        </Script>
+        <ThemeSync />
         <QueryProvider>{children}</QueryProvider>
         <Analytics />
         <SpeedInsights />
