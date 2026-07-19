@@ -1,10 +1,25 @@
 # DriveScore — Landing Page Architecture
 
-Status: v1 draft (research-backed, pre-build)
-Related: `03-multi-stage-form.md`, `04-ai-report-and-monetization.md`
+Status: **landing UI implemented** in `apps/web` (waitlist CTA); original “Check your car” form flow still planned  
+Related: `03-multi-stage-form.md`, `04-ai-report-and-monetization.md`, `06-waitlist-and-email.md`
 
 ## Purpose
-Convert an anxious Indian car owner (worried about E20's effect on their vehicle) into someone who starts the compatibility check. The page leads with the tool itself rather than describing it — the calculator/form *is* the hero, not a supporting feature.
+Convert an anxious Indian car owner (worried about E20's effect on their vehicle) into someone who starts the compatibility check. The long-term page leads with the tool itself — the calculator/form *is* the hero. **Pre-launch ship:** the hero collects a waitlist email (Resend confirmation) instead of starting the multi-stage form. See `06-waitlist-and-email.md`.
+
+## Implemented surface (`apps/web`)
+
+Code: `apps/web/src/components/landing/`.
+
+Current section order roughly matches the draft below, with these deltas:
+
+| Draft | Shipped |
+| ----- | ------- |
+| Primary CTA “Check your car” | “Join the waitlist” → `POST /api/waitlist` (React Query `useJoinWaitlist`) |
+| Micro-copy “no signup required” | Waitlist email + confirmation; “Free first check · No spam” |
+| Trust / social proof | Visitor marquee (PostHog unique `$pageview` persons when server keys set) |
+| Visual identity (cream/green draft) | Dark starfield landing tokens in `landing.css` + design-system semantic colors |
+
+SEO / discoverability also live in app: metadata, `sitemap.ts`, `robots.ts`, `/llms.txt`, JSON-LD.
 
 ## Visual identity (shared with the in-app scoring tool)
 - Colors: Ink `#1B1F1D` (background), Panel `#242A27`, Paper `#F4F1E8` (text), Ethanol `#7FB238` (primary accent / "compatible"), Amber `#D99A3D` (caution), Danger `#C1503F` (risk)
@@ -63,6 +78,7 @@ Placed after Confidence & Transparency, before the final CTA. Minimum question s
 6. Final CTA + footer
 
 ## Open items for build phase
-- Trust bar / social proof section not yet designed (no usage numbers exist pre-launch — add once live, e.g. "X cars checked")
+- Swap waitlist hero CTA for “Check your car” when the multi-stage form ships (`03`)
+- Trust bar / social proof: visitor marquee is live; replace or augment with “X cars checked” once scoring launches
 - Confirm whether FAQ needs Hindi/regional-language support at launch or post-launch
-- Mobile-first build priority: ~79–80% of Indian web traffic is mobile — design and test mobile layout first, desktop second
+- Mobile-first: landing is mobile-first; keep testing as form flows land

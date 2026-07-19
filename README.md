@@ -21,8 +21,12 @@ Every vehicle gets a 0–100 compatibility score with an explicit confidence rat
 ## How it Works
 
 ```
-Landing Page → Multi-Stage Form → Scoring Engine → AI Report
+Landing Page (+ waitlist) → Multi-Stage Form → Scoring Engine → AI Report
 ```
+
+**Live today (`apps/web`):** marketing landing page and waitlist signup (Resend segment + confirmation email).
+
+**Planned product flow:**
 
 1. **Identify your vehicle** — registration number triggers an RC/VAHAN lookup (make, model, manufacture date); manual fallback if it fails
 2. **Confirm the details** — variant/trim selection keys the rules engine; optional flex-fuel confirmation boosts confidence
@@ -57,13 +61,16 @@ Full spec: [`docs/02-scoring-engine-rubric.md`](docs/02-scoring-engine-rubric.md
 
 ## Documentation
 
-Design specs live in [`docs/`](docs/):
+Design specs and implementation notes live in [`docs/`](docs/):
 
 1. [`01-landing-page.md`](docs/01-landing-page.md) — page structure, visual identity, content per section
 2. [`02-scoring-engine-rubric.md`](docs/02-scoring-engine-rubric.md) — the 10-marker rubric, weights, confidence bands, data sourcing
 3. [`03-multi-stage-form.md`](docs/03-multi-stage-form.md) — the 4-stage intake form and field-to-marker mapping
 4. [`04-ai-report-and-monetization.md`](docs/04-ai-report-and-monetization.md) — free/paid split, subscription model, report-caching architecture
 5. [`05-system-architecture.md`](docs/05-system-architecture.md) — component overview, request flow, data model, regeneration policy
+6. [`06-waitlist-and-email.md`](docs/06-waitlist-and-email.md) — Resend waitlist, confirmation email, env + DNS setup (**implemented**)
+
+Web app runbook: [`apps/web/README.md`](apps/web/README.md).
 
 ---
 
@@ -73,21 +80,27 @@ Design specs live in [`docs/`](docs/):
 cd apps/web
 pnpm install
 cp .env.example .env.local
+# Set at least Resend vars for waitlist (see docs/06-waitlist-and-email.md)
 pnpm dev
 ```
+
+Required for waitlist locally / in production:
+
+- `RESEND_API_KEY`
+- `RESEND_AUDIENCE_ID` (Resend Segment ID)
+- `RESEND_FROM_EMAIL` (verified domain sender, e.g. `DriveScore <hello@drivescore.club>`)
+
+Also commonly set: `NEXT_PUBLIC_SITE_URL`, PostHog keys (see [`apps/web/.env.example`](apps/web/.env.example)).
 
 ---
 
 ## Tech Stack
 
-- Next.js
-- React
-- TypeScript
-- Tailwind CSS
-- PostgreSQL
-- Prisma
-- OpenAI API
+- Next.js / React / TypeScript / Tailwind CSS (`apps/web`)
+- TanStack Query (client API mutations)
+- Resend (waitlist contacts + transactional confirmation email)
 - PostHog (product analytics, proxied first-party)
+- PostgreSQL / Prisma / OpenAI API (planned for scoring + reports)
 
 Monorepo layout: `apps/web` (Next.js app) + `packages/` (`scoring-engine`, `ai`, `cars`, `database`, `types`, `ui`, `config`).
 
@@ -95,7 +108,10 @@ Monorepo layout: `apps/web` (Next.js app) + `packages/` (`scoring-engine`, `ai`,
 
 ## Status
 
-🚧 DriveScore is currently under active development. The design docs are v1 research-backed drafts — open items are listed at the bottom of each file.
+🚧 DriveScore is under active development.
+
+- **Shipped:** landing page + waitlist (Resend confirmation email) in `apps/web`
+- **In progress / planned:** multi-stage form, scoring engine, AI report — see design docs; open items are listed at the bottom of each file
 
 ---
 

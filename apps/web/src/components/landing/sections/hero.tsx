@@ -2,11 +2,25 @@
 
 import Image from "next/image";
 import { ArrowRight, Check, GasPump } from "@phosphor-icons/react";
-import { useState } from "react";
+import { useState, type SubmitEvent } from "react";
+import { useJoinWaitlist } from "@/hooks/use-join-waitlist";
 
 export function HeroSection() {
   const [email, setEmail] = useState("");
-  const [joined, setJoined] = useState(false);
+  const joinWaitlist = useJoinWaitlist();
+
+  const joined = joinWaitlist.isSuccess;
+  const loading = joinWaitlist.isPending;
+  const errorMessage =
+    joinWaitlist.error instanceof Error
+      ? joinWaitlist.error.message
+      : "Couldn't join — try again";
+
+  function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (loading) return;
+    joinWaitlist.mutate(email);
+  }
 
   return (
     <section className="flex flex-col gap-[18px] px-4 pb-9 pt-5">
@@ -105,25 +119,43 @@ export function HeroSection() {
       </div>
 
       {!joined ? (
-        <div className="landing-hero-in flex flex-col gap-2.5 [animation-delay:0.48s]">
+        <form
+          onSubmit={handleSubmit}
+          className="landing-hero-in flex flex-col gap-2.5 [animation-delay:0.48s]"
+        >
           <input
             type="email"
+            name="email"
+            autoComplete="email"
+            inputMode="email"
+            required
             placeholder="you@email.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="h-[54px] rounded-full border border-[color-mix(in_srgb,var(--color-text-invert)_18%,transparent)] bg-[color-mix(in_srgb,var(--color-text-invert)_5%,transparent)] px-5 text-base text-text-primary outline-none placeholder:text-text-secondary"
+            disabled={loading}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (joinWaitlist.isError) {
+                joinWaitlist.reset();
+              }
+            }}
+            className="h-[54px] rounded-full border border-[color-mix(in_srgb,var(--color-text-invert)_18%,transparent)] bg-[color-mix(in_srgb,var(--color-text-invert)_5%,transparent)] px-5 text-base text-text-primary outline-none placeholder:text-text-secondary disabled:opacity-60"
           />
           <button
-            type="button"
-            onClick={() => {
-              if (email.includes("@")) setJoined(true);
-            }}
-            className="landing-cta flex h-[54px] cursor-pointer items-center justify-center rounded-full border-none text-[17px] font-bold"
+            type="submit"
+            disabled={loading}
+            className="landing-cta flex h-[54px] cursor-pointer items-center justify-center rounded-full border-none text-[17px] font-bold disabled:cursor-wait disabled:opacity-70"
           >
-            Join the waitlist
-            <ArrowRight weight="bold" size={18} className="ml-1.5" />
+            {loading ? "Joining…" : "Join the waitlist"}
+            {!loading ? (
+              <ArrowRight weight="bold" size={18} className="ml-1.5" />
+            ) : null}
           </button>
-        </div>
+          {joinWaitlist.isError ? (
+            <p className="m-0 text-center text-[13px] text-score-risk" role="alert">
+              {errorMessage}
+            </p>
+          ) : null}
+        </form>
       ) : (
         <div className="landing-joined" role="status" aria-live="polite">
           <div className="landing-joined__card">

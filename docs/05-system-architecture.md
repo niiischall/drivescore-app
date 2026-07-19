@@ -1,24 +1,48 @@
 # DriveScore — System Architecture
 
-Status: v1 draft (pre-build)
-Related: `01-landing-page.md`, `02-scoring-engine-rubric.md`, `03-multi-stage-form.md`, `04-ai-report-and-monetization.md`
+Status: v1 draft (scoring path pre-build); **waitlist path implemented**  
+Related: `01-landing-page.md`, `02-scoring-engine-rubric.md`, `03-multi-stage-form.md`, `04-ai-report-and-monetization.md`, `06-waitlist-and-email.md`
 
 ## Purpose
 
 This doc describes how the pieces already specified (landing page, form, rubric, monetization) connect as a system — the request/data flow from a user landing on the page through to a generated report, and the data model that makes report caching actually work.
 
-## Component overview
+## Implemented today (`apps/web`)
 
-| Component            | Role                                                                                                                        |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Client               | Landing page + multi-stage form (the only user-facing layer)                                                                |
-| Vehicle lookup       | RC/VAHAN registration API integration — resolves registration number to make, model, manufacture date, fuel type, RTO/state |
-| Scoring engine       | Computes the 10-marker score; wraps the rules engine (Markers 3–9 inference) and the OEM declaration table (Marker 1)       |
-| Report cache         | Stores generated AI reports, keyed on vehicle + usage fingerprint — not per-user                                            |
-| AI report generator  | LLM call that produces the paid deep report narrative; invoked only on a cache miss                                         |
-| Subscription service | Gates access to fresh AI report generation; enforces the fair-use cap described in `04-ai-report-and-monetization.md`       |
+| Component | Role |
+| --------- | ---- |
+| Landing client | Marketing page; hero waitlist form via TanStack Query |
+| Waitlist API | `POST /api/waitlist` — validate email, upsert Resend Segment contact, send confirmation |
+| Resend | Contact storage (Segment) + transactional confirmation email |
+| PostHog | Client analytics (`/pulse` proxy); optional server HogQL for unique visitor count |
+
+Details: `06-waitlist-and-email.md`, `apps/web/README.md`.
+
+## Component overview (full product)
+
+| Component            | Role                                                                                                                        | Status |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------ |
+| Client               | Landing page + multi-stage form (the only user-facing layer)                                                                | Landing live; form planned |
+| Waitlist / email     | Resend Segment + confirmation email (`06`)                                                                                | **Live** |
+| Vehicle lookup       | RC/VAHAN registration API integration — resolves registration number to make, model, manufacture date, fuel type, RTO/state | Planned |
+| Scoring engine       | Computes the 10-marker score; wraps the rules engine (Markers 3–9 inference) and the OEM declaration table (Marker 1)       | Planned |
+| Report cache         | Stores generated AI reports, keyed on vehicle + usage fingerprint — not per-user                                            | Planned |
+| AI report generator  | LLM call that produces the paid deep report narrative; invoked only on a cache miss                                         | Planned |
+| Subscription service | Gates access to fresh AI report generation; enforces the fair-use cap described in `04-ai-report-and-monetization.md`       | Planned |
 
 ## Request flow
+
+### Pre-launch waitlist (live)
+
+```mermaid
+flowchart LR
+    U([User]) --> H[Landing hero]
+    H -->|email| API["POST /api/waitlist"]
+    API --> RS[Resend Segment]
+    API --> EM[Confirmation email]
+```
+
+### Full product (planned)
 
 ```mermaid
 flowchart TD
@@ -100,4 +124,5 @@ Carried over from `04-ai-report-and-monetization.md` for completeness at the arc
 - Define exact cache invalidation process for the "OEM issues new declaration" trigger — likely needs an admin/ops workflow, not just a code path
 - Define subscription service's fair-use cap enforcement point precisely: checked before generation is attempted, with a clear user-facing message if the cap is hit (e.g. "you've used your fresh reports this period — here's your cached/free summary instead")
 - Decide whether report cache lookups are exact-match only on fingerprint, or allow a "close enough" fuzzy match (e.g. usage bucket boundaries) — exact-match is simpler and recommended for v1
-- Infra/hosting choices not yet made (out of scope for this doc)
+- Waitlist hardening (rate limit, double opt-in) — see out-of-scope in `06-waitlist-and-email.md`
+- Infra beyond current Vercel + Resend + PostHog for the scoring path still TBD
