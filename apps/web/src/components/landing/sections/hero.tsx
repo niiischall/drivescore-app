@@ -2,13 +2,20 @@
 
 import Image from "next/image";
 import { ArrowRight, Check, GasPump } from "@phosphor-icons/react";
+import type { LandingPage } from "@/sanity/types";
+import { AccentTitle } from "../ui/rich-inline";
 
 type HeroSectionProps = {
+  content: LandingPage["hero"];
   joinedEmail: string | null;
   onJoinClick: () => void;
 };
 
-export function HeroSection({ joinedEmail, onJoinClick }: HeroSectionProps) {
+export function HeroSection({
+  content,
+  joinedEmail,
+  onJoinClick,
+}: HeroSectionProps) {
   const joined = Boolean(joinedEmail);
 
   return (
@@ -16,21 +23,23 @@ export function HeroSection({ joinedEmail, onJoinClick }: HeroSectionProps) {
       <div className="landing-hero__badge">
         <span className="size-2 rounded-full bg-score-compatible" />
         <span className="text-[13px] font-bold text-[color-mix(in_srgb,var(--color-text-primary)_85%,transparent)]">
-          E20 is now standard at pumps across India
+          {content.badge}
         </span>
       </div>
 
       <h1 className="landing-hero__title">
-        India&apos;s most{" "}
-        <span className="text-[var(--landing-lilac)]">transparent</span> E20
-        compatibility score
+        <AccentTitle
+          before={content.titleBefore}
+          accent={content.titleAccent}
+          after={content.titleAfter}
+        />
       </h1>
 
       <div className="landing-hero__media landing-hero-car">
         <div className="landing-hero-car__glow" aria-hidden />
         <Image
-          src="/illustrations/car-suv-india-hero-light.png"
-          alt="Illustrated Indian compact SUV"
+          src={content.heroImageLight}
+          alt={content.heroImageAlt}
           width={640}
           height={360}
           priority
@@ -38,7 +47,7 @@ export function HeroSection({ joinedEmail, onJoinClick }: HeroSectionProps) {
           className="landing-hero-car__img landing-hero-car__img--light"
         />
         <Image
-          src="/illustrations/car-suv-india-hero.png"
+          src={content.heroImageDark}
           alt=""
           width={640}
           height={360}
@@ -50,36 +59,28 @@ export function HeroSection({ joinedEmail, onJoinClick }: HeroSectionProps) {
       </div>
 
       <div className="landing-hero__points">
-        {[
-          <>
-            Score for your exact{" "}
-            <b className="text-text-primary">make, model, and year</b>
-          </>,
-          <>
-            Result in under <b className="text-text-primary">60</b> seconds
-          </>,
-          <>
-            Clear <b className="text-text-primary">reasons</b> and{" "}
-            <b className="text-text-primary">confidence</b> — not just a number
-          </>,
-        ].map((line, i) => (
+        {content.bullets.map((bullet, i) => (
           <div key={i} className="flex items-center gap-2.5">
             <span className="flex size-[22px] flex-none items-center justify-center rounded-full bg-primary text-surface-paper">
               <Check weight="bold" size={13} />
             </span>
             <span className="text-[15px] text-[color-mix(in_srgb,var(--color-text-primary)_85%,transparent)]">
-              {line}
+              {bullet.segments.map((seg, j) =>
+                seg.emphasis ? (
+                  <b key={j} className="text-text-primary">
+                    {seg.text}
+                  </b>
+                ) : (
+                  <span key={j}>{seg.text}</span>
+                ),
+              )}
             </span>
           </div>
         ))}
       </div>
 
       <div className="landing-hero__stats">
-        {[
-          { value: "10", label: "Markers checked" },
-          { value: "3", label: "Confidence bands" },
-          { value: "₹0", label: "First check" },
-        ].map((stat, i) => (
+        {content.stats.map((stat, i) => (
           <div
             key={stat.label}
             className={`flex flex-1 flex-col gap-0.5 py-3.5 ${i > 0 ? "border-l border-[var(--landing-hairline)] pl-3.5" : ""}`}
@@ -96,9 +97,9 @@ export function HeroSection({ joinedEmail, onJoinClick }: HeroSectionProps) {
         <div className="flex justify-between text-[11px] font-semibold text-text-secondary">
           <span className="flex items-center gap-1.5">
             <GasPump size={13} />
-            PETROL BLEND AT YOUR PUMP
+            {content.gaugeLabel}
           </span>
-          <span className="text-score-compatible">MANDATE: E20</span>
+          <span className="text-score-compatible">{content.gaugeMandate}</span>
         </div>
         <div className="relative h-3.5 rounded-[7px] bg-[color-mix(in_srgb,var(--color-text-invert)_10%,transparent)]">
           <div
@@ -131,33 +132,35 @@ export function HeroSection({ joinedEmail, onJoinClick }: HeroSectionProps) {
             onClick={onJoinClick}
             className="landing-cta flex h-[54px] cursor-pointer items-center justify-center rounded-full border-none text-[17px] font-bold"
           >
-            Join the waitlist
+            {content.ctaLabel}
             <ArrowRight weight="bold" size={18} className="ml-1.5" />
           </button>
           <p className="m-0 text-center text-[12.5px] text-[var(--landing-faint)]">
-            Launching soon · Free first check · No spam
+            {content.ctaMicrocopy}
           </p>
         </div>
       ) : (
-        <div className="landing-hero__cta landing-joined" role="status" aria-live="polite">
+        <div
+          className="landing-hero__cta landing-joined"
+          role="status"
+          aria-live="polite"
+        >
           <div className="landing-joined__card">
             <span className="landing-joined__icon" aria-hidden>
               <Check weight="bold" size={18} />
             </span>
             <div>
-              <p className="landing-joined__title">You&apos;re on the waitlist</p>
+              <p className="landing-joined__title">{content.joinedTitle}</p>
               <p className="landing-joined__body">
-                We&apos;ll email{" "}
+                {content.joinedBodyBefore}{" "}
                 <span className="font-medium text-text-primary">
                   {joinedEmail}
                 </span>{" "}
-                when DriveScore launches. Your first check stays free.
+                {content.joinedBodyAfter}
               </p>
             </div>
           </div>
-          <p className="landing-joined__meta">
-            No spam · Unsubscribe anytime · Built for Indian cars
-          </p>
+          <p className="landing-joined__meta">{content.joinedMeta}</p>
         </div>
       )}
     </section>

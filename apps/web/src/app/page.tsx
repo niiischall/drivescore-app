@@ -1,34 +1,44 @@
 import type { Metadata } from "next";
 import { LandingPage } from "@/components/landing";
-import { FAQS } from "@/components/landing/data/content";
 import { getUniqueVisitorCount } from "@/lib/posthog-visitors";
-import { getSiteUrl, siteConfig } from "@/lib/site";
+import { getSiteUrl } from "@/lib/site";
+import {
+  getFaqItems,
+  getLandingPage,
+  getSiteSettings,
+} from "@/sanity/lib/fetch";
 
-export const metadata: Metadata = {
-  title: {
-    absolute: siteConfig.title,
-  },
-  description: siteConfig.description,
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    title: siteConfig.title,
-    description: siteConfig.description,
-    url: "/",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  return {
+    title: {
+      absolute: settings.title,
+    },
+    description: settings.description,
+    alternates: {
+      canonical: "/",
+    },
+    openGraph: {
+      title: settings.title,
+      description: settings.description,
+      url: "/",
+    },
+  };
+}
 
-function buildJsonLd() {
+function buildJsonLd(
+  settings: Awaited<ReturnType<typeof getSiteSettings>>,
+  faqs: Awaited<ReturnType<typeof getFaqItems>>,
+) {
   const base = getSiteUrl();
 
   return [
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
-      name: siteConfig.name,
+      name: settings.name,
       url: base,
-      description: siteConfig.description,
+      description: settings.description,
       applicationCategory: "AutomotiveApplication",
       operatingSystem: "Web",
       inLanguage: "en-IN",
@@ -51,36 +61,48 @@ function buildJsonLd() {
     {
       "@context": "https://schema.org",
       "@type": "FAQPage",
-      mainEntity: FAQS.map((f) => ({
+      mainEntity: faqs.map((f) => ({
         "@type": "Question",
-        name: f.q,
+        name: f.question,
         acceptedAnswer: {
           "@type": "Answer",
-          text: f.a,
+          text: f.answerPlain,
         },
       })),
     },
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      name: siteConfig.name,
+      name: settings.name,
       url: base,
-      description: siteConfig.description,
+      description: settings.description,
       inLanguage: "en-IN",
     },
   ];
 }
 
 export default async function Home() {
-  const visitorCount = await getUniqueVisitorCount();
+  const [visitorCount, content, faqs, siteSettings] = await Promise.all([
+    getUniqueVisitorCount(),
+    getLandingPage(),
+    getFaqItems(),
+    getSiteSettings(),
+  ]);
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildJsonLd()) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(buildJsonLd(siteSettings, faqs)),
+        }}
       />
-      <LandingPage visitorCount={visitorCount} />
+      <LandingPage
+        visitorCount={visitorCount}
+        content={content}
+        faqs={faqs}
+        siteSettings={siteSettings}
+      />
     </>
   );
 }

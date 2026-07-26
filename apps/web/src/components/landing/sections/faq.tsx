@@ -3,23 +3,34 @@
 import { Plus, X } from "@phosphor-icons/react";
 import { useState } from "react";
 import { track } from "@/lib/analytics";
-import { FAQS } from "../data/content";
+import { PortableBody } from "@/sanity/lib/portable-text";
+import type { FaqItem, LandingPage } from "@/sanity/types";
+import { AccentTitle } from "../ui/rich-inline";
 
-export function FaqSection() {
+export function FaqSection({
+  content,
+  items,
+}: {
+  content: LandingPage["faq"];
+  items: FaqItem[];
+}) {
   const [openFaq, setOpenFaq] = useState(0);
 
   return (
     <section id="faq" className="landing-section landing-section--faq">
-      <span className="landing-section__eyebrow">QUESTIONS, ANSWERED</span>
+      <span className="landing-section__eyebrow">{content.eyebrow}</span>
       <h2 className="landing-section__title">
-        First time? <span className="text-[var(--landing-lilac)]">Read</span>{" "}
-        these first.
+        <AccentTitle
+          before={content.titleBefore}
+          accent={content.titleAccent}
+          after={content.titleAfter}
+        />
       </h2>
-      {FAQS.map((f, i) => {
+      {items.map((f, i) => {
         const open = openFaq === i;
         return (
           <div
-            key={f.q}
+            key={f._id}
             className="landing-faq__item border-b border-[var(--landing-hairline)]"
           >
             <button
@@ -29,14 +40,14 @@ export function FaqSection() {
                 const nextOpen = !open;
                 setOpenFaq(nextOpen ? i : -1);
                 track("landing_faq_toggled", {
-                  question: f.q,
+                  question: f.question,
                   open: nextOpen,
                   index: i,
                 });
               }}
               className="landing-faq__question flex w-full cursor-pointer items-center justify-between gap-4 border-none bg-transparent text-left text-text-primary"
             >
-              <span className="landing-faq__question-text">{f.q}</span>
+              <span className="landing-faq__question-text">{f.question}</span>
               <span
                 className="landing-faq__toggle flex flex-none items-center justify-center rounded-full border font-bold"
                 style={{
@@ -56,7 +67,11 @@ export function FaqSection() {
                 )}
               </span>
             </button>
-            {open ? <p className="landing-faq__answer m-0">{f.a}</p> : null}
+            {open ? (
+              <div className="landing-faq__answer [&_p]:m-0">
+                <PortableBody value={f.answer} />
+              </div>
+            ) : null}
           </div>
         );
       })}

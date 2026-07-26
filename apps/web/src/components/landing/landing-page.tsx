@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { track } from "@/lib/analytics";
+import type { FaqItem, LandingPage as LandingContent, SiteSettings } from "@/sanity/types";
 import { useLandingAnalytics } from "./hooks/use-landing-analytics";
 import {
   ConfidenceSection,
@@ -22,7 +23,17 @@ import {
 } from "./ui/waitlist-modal";
 import "./styles/landing.css";
 
-export function LandingPage({ visitorCount }: { visitorCount: number }) {
+export function LandingPage({
+  visitorCount,
+  content,
+  faqs,
+  siteSettings,
+}: {
+  visitorCount: number;
+  content: LandingContent;
+  faqs: FaqItem[];
+  siteSettings: SiteSettings;
+}) {
   const rootRef = useRef<HTMLDivElement>(null);
   useLandingAnalytics(rootRef);
   const [waitlistOpen, setWaitlistOpen] = useState(false);
@@ -46,39 +57,52 @@ export function LandingPage({ visitorCount }: { visitorCount: number }) {
   return (
     <div ref={rootRef} className="landing font-sans">
       <div data-section="marquee">
-        <VisitorMarquee visitorCount={visitorCount} />
+        <VisitorMarquee
+          visitorCount={visitorCount}
+          suffix={content.marqueeSuffix}
+        />
       </div>
       <div data-section="header">
-        <LandingHeader />
+        <LandingHeader badge={content.headerBadge} />
       </div>
       <div data-section="hero">
         <HeroSection
+          content={content.hero}
           joinedEmail={joinedEmail}
           onJoinClick={() => openWaitlist("hero")}
         />
       </div>
       <div data-section="quick_actions">
-        <QuickActions />
+        <QuickActions actions={content.quickActions} />
       </div>
       <div data-section="problem">
-        <ProblemSection />
+        <ProblemSection content={content.problem} />
       </div>
       <div data-section="sample_score">
-        <SampleScoreSection onJoinClick={() => openWaitlist("sample")} />
+        <SampleScoreSection
+          content={content.sampleScore}
+          onJoinClick={() => openWaitlist("sample")}
+        />
       </div>
       <div data-section="method">
-        <MethodSection />
+        <MethodSection content={content.method} />
       </div>
       <div data-section="confidence">
-        <ConfidenceSection />
+        <ConfidenceSection content={content.confidence} />
       </div>
       <div data-section="faq">
-        <FaqSection />
+        <FaqSection content={content.faq} items={faqs} />
       </div>
       <div data-section="footer">
-        <LandingFooter />
+        <LandingFooter
+          content={content.footer}
+          disclaimer={siteSettings.footerDisclaimer}
+        />
       </div>
-      <StickyCta onJoinClick={() => openWaitlist("sticky")} />
+      <StickyCta
+        content={content.stickyCta}
+        onJoinClick={() => openWaitlist("sticky")}
+      />
       <WaitlistModal
         open={waitlistOpen}
         joinedEmail={joinedEmail}

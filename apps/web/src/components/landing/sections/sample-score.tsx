@@ -1,39 +1,46 @@
 import Image from "next/image";
 import { ArrowRight, Flag } from "@phosphor-icons/react";
-import { METHOD_VERSION } from "@/lib/method";
-import { SAMPLE_MARKERS } from "../data/content";
+import type { LandingPage } from "@/sanity/types";
 import { toneColor } from "../ui/brand";
+import { AccentTitle, applyCaptionTemplate } from "../ui/rich-inline";
 
 export function SampleScoreSection({
+  content,
   onJoinClick,
 }: {
+  content: LandingPage["sampleScore"];
   onJoinClick: () => void;
 }) {
   return (
     <section id="sample" className="landing-section">
-      <span className="landing-section__eyebrow">WHAT YOU GET</span>
+      <span className="landing-section__eyebrow">{content.eyebrow}</span>
       <h2 className="landing-section__title">
-        A score. <span className="text-[var(--landing-lilac)]">And the why</span>{" "}
-        behind it.
+        <AccentTitle
+          before={content.titleBefore}
+          accent={content.titleAccent}
+          after={content.titleAfter}
+        />
       </h2>
-      <p className="landing-section__lede">
-        Here&apos;s what a real result looks like for a common Indian car —
-        number, band, and the markers that drove it.
-      </p>
+      <p className="landing-section__lede">{content.lede}</p>
 
       <article className="sample-card">
         <div className="sample-card__media">
           <Image
-            src="/images/tata-nexon.jpg"
-            alt="Tata Nexon, a popular Indian compact SUV"
+            src={content.imagePath}
+            alt={content.imageAlt}
             width={1024}
             height={610}
             className="sample-card__img"
             sizes="(max-width: 767px) 100vw, (max-width: 1023px) 720px, 560px"
           />
-          <div className="sample-card__score" aria-label="Score 68, caution">
-            <span className="sample-card__score-value tabular-nums">68</span>
-            <span className="sample-card__score-band">Caution</span>
+          <div
+            className="sample-card__score"
+            aria-label={`Score ${content.scoreValue}, ${content.scoreBand}`}
+          >
+            <span className="sample-card__score-value tabular-nums">
+              {content.scoreValue}
+            </span>
+            <span className="sample-card__score-band">{content.scoreBand}</span>
           </div>
         </div>
 
@@ -41,18 +48,18 @@ export function SampleScoreSection({
           <header className="sample-card__identity">
             <div className="min-w-0">
               <h3 className="m-0 text-lg font-semibold tracking-tight text-text-primary">
-                Tata Nexon XZ+
+                {content.vehicleName}
               </h3>
               <p className="m-0 mt-1 text-sm text-text-secondary">
-                2021 · Petrol · MPFI · BS6
+                {content.vehicleMeta}
               </p>
             </div>
           </header>
 
           <div className="sample-card__why">
-            <p className="sample-card__why-label">What drove this score</p>
+            <p className="sample-card__why-label">{content.markersLabel}</p>
             <ul className="sample-card__markers">
-              {SAMPLE_MARKERS.map((m) => (
+              {content.markers.map((m) => (
                 <li key={m.label} className="sample-card__marker">
                   <div className="sample-card__marker-top">
                     <span className="sample-card__marker-name">{m.label}</span>
@@ -79,10 +86,7 @@ export function SampleScoreSection({
 
           <p className="sample-card__confidence">
             <Flag weight="fill" size={14} className="sample-card__flag" />
-            <span>
-              Low confidence — Tata hasn&apos;t published an official E20 stance
-              for this variant.
-            </span>
+            <span>{content.confidenceNote}</span>
           </p>
 
           <button
@@ -90,12 +94,12 @@ export function SampleScoreSection({
             onClick={onJoinClick}
             className="landing-cta sample-card__cta"
           >
-            Check my car
+            {content.ctaLabel}
             <ArrowRight weight="bold" size={18} className="ml-1.5" />
           </button>
 
           <p className="sample-card__caption">
-            Illustrative sample · Scoring method {METHOD_VERSION}
+            {applyCaptionTemplate(content.captionTemplate)}
           </p>
         </div>
       </article>

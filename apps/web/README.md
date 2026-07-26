@@ -7,6 +7,7 @@ Currently ships the **marketing landing page** and a **Resend-backed waitlist** 
 ## Stack
 
 - Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4
+- [Sanity](https://www.sanity.io) for marketing + static page content (embedded Studio at `/studio`)
 - [TanStack Query](https://tanstack.com/query) for client mutations
 - [Resend](https://resend.com) for waitlist contacts + confirmation email
 - PostHog (client analytics via `/pulse` proxy; server HogQL for visitor count)
@@ -31,6 +32,10 @@ Copy from [`.env.example`](.env.example):
 | Variable | Required for | Notes |
 | -------- | ------------ | ----- |
 | `NEXT_PUBLIC_SITE_URL` | SEO / OG / sitemap | Production canonical URL, e.g. `https://drivescore.club` |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID` | Live CMS content | Required — marketing pages load from Sanity |
+| `NEXT_PUBLIC_SANITY_DATASET` | CMS | Defaults to `production` |
+| `NEXT_PUBLIC_SANITY_API_VERSION` | CMS | Defaults to `2025-01-01` |
+| `SANITY_API_READ_TOKEN` | Private/draft reads | Optional for published CDN reads |
 | `NEXT_PUBLIC_POSTHOG_KEY` | Client analytics | Optional in local; skip if unused |
 | `POSTHOG_PERSONAL_API_KEY` | Visitor marquee | With `POSTHOG_PROJECT_ID`; falls back to static count |
 | `POSTHOG_PROJECT_ID` | Visitor marquee | |
@@ -83,6 +88,26 @@ Components live under `src/components/landing/`:
 - Footer, sticky CTA
 
 Design / product notes: [`docs/01-landing-page.md`](../../docs/01-landing-page.md).
+
+## Sanity CMS
+
+Marketing copy (landing sections, FAQs, `/privacy`, `/contact`, `/faq`) is authored in Sanity Studio.
+
+| Piece | Location |
+| ----- | -------- |
+| Schemas / queries / fetch | `src/sanity/` |
+| Studio | [http://localhost:3000/studio](http://localhost:3000/studio) |
+
+### Setup
+
+1. Create a Sanity project + `production` dataset at [sanity.io/manage](https://www.sanity.io/manage).
+2. Set `NEXT_PUBLIC_SANITY_PROJECT_ID` (and optional read token) in `.env.local` / Vercel.
+3. Add CORS origin for `http://localhost:3000` and your production host in the Sanity project.
+4. Author content in Studio at `/studio`.
+
+Published CMS content is cached for up to ~1 hour (`revalidate: 3600`).
+
+`METHOD_VERSION` in `src/lib/method.ts` remains the scoring-engine stamp; CMS may show a display label but is not the engine source of truth.
 
 ## Scripts
 

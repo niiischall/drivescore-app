@@ -1,14 +1,21 @@
-import { FAQS, SCORE_COMPOSITION } from "@/components/landing/data/content";
 import { METHOD_VERSION } from "@/lib/method";
-import { getSiteUrl, siteConfig } from "@/lib/site";
+import { getSiteUrl } from "@/lib/site";
+import {
+  getFaqItems,
+  getLandingPage,
+  getSiteSettings,
+} from "@/sanity/lib/fetch";
 
 /** Compact index for AI agents — https://llmstxt.org */
-export function buildLlmsTxt() {
-  const base = getSiteUrl();
+export async function buildLlmsTxt() {
+  const [settings, base] = await Promise.all([
+    getSiteSettings(),
+    Promise.resolve(getSiteUrl()),
+  ]);
 
-  return `# ${siteConfig.name}
+  return `# ${settings.name}
 
-> ${siteConfig.description}
+> ${settings.description}
 
 DriveScore helps Indian car owners understand whether their vehicle is ready for E20 (20% ethanol-blended petrol). It produces a transparent 0–100 compatibility score from a documented, versioned 10-marker method, plus a confidence flag when OEM stance data is missing. The first check is free. DriveScore is an estimate — not an OEM certification or government advisory.
 
@@ -26,26 +33,36 @@ DriveScore helps Indian car owners understand whether their vehicle is ready for
 }
 
 /** Fuller context file linked from llms.txt */
-export function buildLlmsFullTxt() {
+export async function buildLlmsFullTxt() {
+  const [settings, landing, faqs] = await Promise.all([
+    getSiteSettings(),
+    getLandingPage(),
+    getFaqItems(),
+  ]);
   const base = getSiteUrl();
-  const composition = SCORE_COMPOSITION.map(
-    (slice) =>
-      `### ${slice.label} (${slice.share}%)\n${slice.blurb}\n` +
-      slice.markers.map((m) => `- ${m.name}: ${m.weight}%`).join("\n"),
-  ).join("\n\n");
 
-  const faqs = FAQS.map((f) => `### ${f.q}\n${f.a}`).join("\n\n");
+  const composition = landing.method.slices
+    .map(
+      (slice) =>
+        `### ${slice.label} (${slice.share}%)\n${slice.blurb}\n` +
+        slice.markers.map((m) => `- ${m.name}: ${m.weight}%`).join("\n"),
+    )
+    .join("\n\n");
 
-  return `# ${siteConfig.name} — full summary
+  const faqText = faqs
+    .map((f) => `### ${f.question}\n${f.answerPlain}`)
+    .join("\n\n");
 
-> ${siteConfig.description}
+  return `# ${settings.name} — full summary
+
+> ${settings.description}
 
 ## About
 
-- Product: ${siteConfig.name}
+- Product: ${settings.name}
 - URL: ${base}/
 - Audience: Indian car owners concerned about E20 fuel
-- Locale: ${siteConfig.locale}
+- Locale: ${settings.locale}
 - Pricing: First compatibility check is free (waitlist / early access)
 
 ## What it does
@@ -69,7 +86,7 @@ ${composition}
 
 ## FAQ
 
-${faqs}
+${faqText}
 
 ## Links
 

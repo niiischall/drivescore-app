@@ -3,31 +3,36 @@
 import { Plus, X } from "@phosphor-icons/react";
 import { useState } from "react";
 import { track } from "@/lib/analytics";
-import { SCORE_COMPOSITION } from "../data/content";
+import type { LandingPage } from "@/sanity/types";
+import { AccentTitle } from "../ui/rich-inline";
 
-export function MethodSection() {
+export function MethodSection({
+  content,
+}: {
+  content: LandingPage["method"];
+}) {
   const [showMarkers, setShowMarkers] = useState(false);
+  const slices = content.slices;
 
   return (
     <section id="how" className="landing-section">
-      <span className="landing-section__eyebrow">THE METHOD</span>
+      <span className="landing-section__eyebrow">{content.eyebrow}</span>
       <h2 className="landing-section__title">
-        One score.{" "}
-        <span className="text-[var(--landing-lilac)]">Four things</span> that
-        decide it.
+        <AccentTitle
+          before={content.titleBefore}
+          accent={content.titleAccent}
+          after={content.titleAfter}
+        />
       </h2>
-      <p className="landing-section__lede">
-        Every check adds up to 100%. Bigger slices matter more — official stance
-        and parts durability outweigh how the car is driven day to day.
-      </p>
+      <p className="landing-section__lede">{content.lede}</p>
 
       <div className="flex flex-col gap-3">
         <div className="flex items-baseline justify-between text-[12px] text-text-secondary">
-          <span>What makes up your score</span>
+          <span>{content.compositionLabel}</span>
           <span className="tabular-nums font-medium text-text-primary">100%</span>
         </div>
         <div className="landing-compose" aria-hidden="true">
-          {SCORE_COMPOSITION.map((slice) => (
+          {slices.map((slice) => (
             <div
               key={slice.id}
               data-slice={slice.id}
@@ -40,7 +45,7 @@ export function MethodSection() {
       </div>
 
       <ol className="landing-method__slices">
-        {SCORE_COMPOSITION.map((slice) => (
+        {slices.map((slice) => (
           <li key={slice.id}>
             <span
               data-slice={slice.id}
@@ -78,7 +83,9 @@ export function MethodSection() {
         className="landing-method__toggle flex w-full cursor-pointer items-center justify-between rounded-full border border-[var(--landing-card-border)] bg-[var(--landing-card)] px-5 py-3.5 text-left text-[15px] font-semibold text-text-primary"
       >
         <span>
-          {showMarkers ? "Hide the 10 markers" : "See the 10 markers"}
+          {showMarkers
+            ? content.hideMarkersLabel
+            : content.showMarkersLabel}
         </span>
         {showMarkers ? (
           <X weight="bold" size={16} className="text-[var(--landing-lilac)]" />
@@ -89,7 +96,7 @@ export function MethodSection() {
 
       {showMarkers ? (
         <ol className="landing-method__markers m-0 flex list-none flex-col gap-0 border-t border-[var(--landing-hairline)] p-0 pt-1">
-          {SCORE_COMPOSITION.flatMap((slice) =>
+          {slices.flatMap((slice) =>
             slice.markers.map((m) => (
               <li
                 key={m.name}
