@@ -10,20 +10,18 @@ export function SampleScoreSection({
   onJoinClick: () => void;
 }) {
   return (
-    <section id="sample" className="flex flex-col gap-4 px-4 pb-11">
-      <span className="text-xs font-bold tracking-[0.12em] text-[var(--landing-lilac)]">
-        WHAT YOU GET
-      </span>
-      <h2 className="landing-reveal m-0 text-[27px] leading-[1.2] font-bold tracking-tight text-balance">
+    <section id="sample" className="landing-section">
+      <span className="landing-section__eyebrow">WHAT YOU GET</span>
+      <h2 className="landing-section__title">
         A score. <span className="text-[var(--landing-lilac)]">And the why</span>{" "}
         behind it.
       </h2>
-      <p className="landing-reveal m-0 text-[15px] leading-[1.55] text-[var(--landing-muted)]">
-        Here&apos;s what a real result looks like for a common Indian car — number,
-        band, and the markers that drove it.
+      <p className="landing-section__lede">
+        Here&apos;s what a real result looks like for a common Indian car —
+        number, band, and the markers that drove it.
       </p>
 
-      <article className="landing-reveal sample-card">
+      <article className="sample-card">
         <div className="sample-card__media">
           <Image
             src="/images/tata-nexon.jpg"
@@ -31,7 +29,7 @@ export function SampleScoreSection({
             width={1024}
             height={610}
             className="sample-card__img"
-            sizes="(max-width: 480px) 100vw, 480px"
+            sizes="(max-width: 767px) 100vw, (max-width: 1023px) 720px, 560px"
           />
           <div className="sample-card__score" aria-label="Score 68, caution">
             <span className="sample-card__score-value tabular-nums">68</span>
@@ -67,7 +65,7 @@ export function SampleScoreSection({
                   </div>
                   <div className="sample-card__track">
                     <div
-                      className="landing-bar sample-card__fill"
+                      className="sample-card__fill"
                       style={{
                         width: m.width,
                         background: toneColor[m.tone],

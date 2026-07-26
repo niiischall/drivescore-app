@@ -3,7 +3,7 @@ import { IndiaFlag } from "../ui/india-flag";
 
 export function LandingHeader() {
   return (
-    <header className="flex items-center justify-between border-b border-[color-mix(in_srgb,var(--color-text-invert)_7%,transparent)] px-4 py-3.5">
+    <header className="landing-header flex items-center justify-between border-b border-[color-mix(in_srgb,var(--color-text-invert)_7%,transparent)] px-4 py-3.5 md:px-6">
       <div className="flex items-center gap-2.5">
         <BrandMark size={28} />
         <BrandWordmark />
