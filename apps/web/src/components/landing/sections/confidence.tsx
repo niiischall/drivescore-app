@@ -51,28 +51,25 @@ const POINTERS: {
 
 export function ConfidenceSection() {
   return (
-    <section id="confidence" className="flex flex-col gap-4 px-4 pb-11">
-      <span className="text-xs font-bold tracking-[0.12em] text-[var(--landing-lilac)]">
-        CONFIDENCE FIRST
-      </span>
-      <h2 className="landing-reveal m-0 text-[27px] leading-[1.2] font-bold tracking-tight text-balance">
+    <section id="confidence" className="landing-section">
+      <span className="landing-section__eyebrow">CONFIDENCE FIRST</span>
+      <h2 className="landing-section__title">
         A score is useless without the{" "}
         <span className="text-[var(--landing-lilac)]">why</span>.
       </h2>
-      <p className="landing-reveal m-0 text-[15px] leading-[1.55] text-[var(--landing-muted)]">
+      <p className="landing-section__lede">
         Many Indian brands still haven&apos;t published a clear E20 position. We
         don&apos;t hide that — we show confidence, markers, and method so you can
         decide with eyes open.
       </p>
-      <div className="flex flex-col gap-3">
-        {POINTERS.map((item, i) => {
+      <div className="landing-confidence__grid">
+        {POINTERS.map((item) => {
           const Icon = item.icon;
           return (
             <div
               key={item.title}
               id={item.id}
-              className="landing-reveal flex gap-3.5 rounded-[18px] border border-[var(--landing-card-border)] bg-[var(--landing-card)] p-[18px]"
-              style={i > 0 ? { transitionDelay: `${i * 80}ms` } : undefined}
+              className="landing-lift flex gap-3.5 rounded-[18px] border border-[var(--landing-card-border)] bg-[var(--landing-card)] p-[18px]"
             >
               <span className="flex size-10 flex-none items-center justify-center rounded-2xl bg-[color-mix(in_srgb,var(--color-primary)_22%,transparent)] text-[var(--landing-lilac)]">
                 <Icon weight="fill" size={20} />

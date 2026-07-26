@@ -3,7 +3,6 @@
 import { useRef, useState } from "react";
 import { track } from "@/lib/analytics";
 import { useLandingAnalytics } from "./hooks/use-landing-analytics";
-import { useLandingReveal } from "./hooks/use-landing-reveal";
 import {
   ConfidenceSection,
   FaqSection,
@@ -25,7 +24,6 @@ import "./styles/landing.css";
 
 export function LandingPage({ visitorCount }: { visitorCount: number }) {
   const rootRef = useRef<HTMLDivElement>(null);
-  useLandingReveal(rootRef);
   useLandingAnalytics(rootRef);
   const [waitlistOpen, setWaitlistOpen] = useState(false);
   const [joinedEmail, setJoinedEmail] = useState<string | null>(null);
