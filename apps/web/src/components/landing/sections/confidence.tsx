@@ -1,74 +1,36 @@
 import { Flag, ListChecks, TrendUp } from "@phosphor-icons/react";
-import type { ReactNode } from "react";
-import { METHOD_VERSION } from "@/lib/method";
+import type { LandingPage } from "@/sanity/types";
+import { AccentTitle, RichInline } from "../ui/rich-inline";
 
-const POINTERS: {
-  id?: string;
-  icon: typeof Flag;
-  title: string;
-  body: ReactNode;
-}[] = [
-  {
-    icon: Flag,
-    title: "We flag what isn't confirmed",
-    body: (
-      <>
-        If your OEM hasn&apos;t published an E20 stance for your{" "}
-        <b className="font-semibold text-text-primary">exact model</b>, you get
-        a <b className="font-semibold text-text-primary">low-confidence</b>{" "}
-        flag — even when the number looks fine.
-      </>
-    ),
-  },
-  {
-    icon: ListChecks,
-    title: "You see every marker that mattered",
-    body: (
-      <>
-        Not a black box. Each result shows the{" "}
-        <b className="font-semibold text-text-primary">10 markers</b> and their
-        weights — so you know{" "}
-        <b className="font-semibold text-text-primary">why</b> the score landed
-        where it did.
-      </>
-    ),
-  },
-  {
-    id: "scores-improve",
-    icon: TrendUp,
-    title: "The method stays versioned",
-    body: (
-      <>
-        Every score is stamped with a{" "}
-        <b className="font-semibold text-text-primary">method version</b> (now{" "}
-        {METHOD_VERSION}). When India data improves, we update openly — you&apos;ll
-        see{" "}
-        <b className="font-semibold text-text-primary">what changed</b>.
-      </>
-    ),
-  },
-];
+const confidenceIcon = {
+  flag: Flag,
+  listChecks: ListChecks,
+  trendUp: TrendUp,
+};
 
-export function ConfidenceSection() {
+export function ConfidenceSection({
+  content,
+}: {
+  content: LandingPage["confidence"];
+}) {
   return (
     <section id="confidence" className="landing-section">
-      <span className="landing-section__eyebrow">CONFIDENCE FIRST</span>
+      <span className="landing-section__eyebrow">{content.eyebrow}</span>
       <h2 className="landing-section__title">
-        A score is useless without the{" "}
-        <span className="text-[var(--landing-lilac)]">why</span>.
+        <AccentTitle
+          before={content.titleBefore}
+          accent={content.titleAccent}
+          after={content.titleAfter}
+        />
       </h2>
-      <p className="landing-section__lede">
-        Many Indian brands still haven&apos;t published a clear E20 position. We
-        don&apos;t hide that — we show confidence, markers, and method so you can
-        decide with eyes open.
-      </p>
+      <p className="landing-section__lede">{content.lede}</p>
       <div className="landing-confidence__grid">
-        {POINTERS.map((item) => {
-          const Icon = item.icon;
+        {content.pointers.map((item) => {
+          const Icon = confidenceIcon[item.icon];
           return (
             <div
               key={item.title}
-              id={item.id}
+              id={item.id ?? undefined}
               className="landing-lift flex gap-3.5 rounded-[18px] border border-[var(--landing-card-border)] bg-[var(--landing-card)] p-[18px]"
             >
               <span className="flex size-10 flex-none items-center justify-center rounded-2xl bg-[color-mix(in_srgb,var(--color-primary)_22%,transparent)] text-[var(--landing-lilac)]">
@@ -79,7 +41,7 @@ export function ConfidenceSection() {
                   {item.title}
                 </span>
                 <span className="text-sm leading-normal text-[var(--landing-muted)]">
-                  {item.body}
+                  <RichInline text={item.body} />
                 </span>
               </div>
             </div>

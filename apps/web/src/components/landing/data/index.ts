@@ -1,7 +1,1 @@
-export {
-  FAQS,
-  PROBLEMS,
-  SAMPLE_MARKERS,
-  SCORE_COMPOSITION,
-  VISITOR_COUNT,
-} from "./content";
+export { VISITOR_COUNT } from "./content";

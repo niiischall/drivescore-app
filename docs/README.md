@@ -21,7 +21,7 @@ Landing Page (+ waitlist) → Multi-Stage Form → Scoring Engine → AI Report
 App runbook: [`apps/web/README.md`](../apps/web/README.md).
 
 ## Status
-- **Implemented:** landing page UI in `apps/web`, waitlist API + Resend confirmation (`06`)
+- **Implemented:** landing page UI in `apps/web`, waitlist API + Resend confirmation (`06`), Sanity CMS for marketing/static copy
 - **Draft / not yet built:** scoring form, rubric engine, AI report, subscriptions (`02`–`05` open items still apply)
 
 Known open items are listed at the bottom of each file — several require product decisions (pricing point, cache-drift thresholds, RC-lookup vendor) rather than further research.
@@ -30,4 +30,4 @@ Known open items are listed at the bottom of each file — several require produ
 - Payment/subscription state machine (trial vs active vs lapsed — flagged in `04` and `05` open items)
 - OEM E20-declaration table sourcing/maintenance plan
 - Markers 3–9 rules engine — exact logic spec (era + variant → inferred material/calibration profile)
-- Backend/infra choices beyond current `apps/web` + Resend/PostHog
+- Backend/infra choices beyond current `apps/web` + Resend/PostHog/Sanity

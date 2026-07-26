@@ -3,8 +3,9 @@ import {
   SealQuestion,
   TrendDown,
 } from "@phosphor-icons/react";
-import { PROBLEMS } from "../data/content";
+import type { LandingPage } from "@/sanity/types";
 import { IconChip } from "../ui/brand";
+import { AccentTitle } from "../ui/rich-inline";
 
 const problemIcon = {
   trendDown: <TrendDown weight="fill" size={22} />,
@@ -12,22 +13,24 @@ const problemIcon = {
   seal: <SealQuestion weight="fill" size={22} />,
 };
 
-export function ProblemSection() {
+export function ProblemSection({
+  content,
+}: {
+  content: LandingPage["problem"];
+}) {
   return (
     <section id="problem" className="landing-section">
-      <span className="landing-section__eyebrow">
-        ● AT EVERY PUMP · SINCE 2025
-      </span>
+      <span className="landing-section__eyebrow">{content.eyebrow}</span>
       <h2 className="landing-section__title">
-        E20 is here.{" "}
-        <span className="text-[var(--landing-lilac)]">Your car</span> may not be
-        ready.
+        <AccentTitle
+          before={content.titleBefore}
+          accent={content.titleAccent}
+          after={content.titleAfter}
+        />
       </h2>
-      <p className="landing-section__lede mb-1">
-        Three real risks — and none of them show up on day one.
-      </p>
+      <p className="landing-section__lede mb-1">{content.lede}</p>
       <div className="landing-problem__grid">
-        {PROBLEMS.map((p) => (
+        {content.cards.map((p) => (
           <div
             key={p.title}
             className="landing-lift flex items-start gap-3.5 rounded-[18px] border border-[var(--landing-card-border)] bg-[var(--landing-card)] p-4"

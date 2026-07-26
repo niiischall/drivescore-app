@@ -11,16 +11,23 @@
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
+    "@portabletext/react": "^7.0.1",
+    "@portabletext/types": "^4.0.2",
+    "@sanity/image-url": "^2.1.1",
     "@tanstack/react-query": "^5.101.2",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "next": "16.2.10",
+    "next-sanity": "^13.2.1",
     "posthog-js": "^1.402.2",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "resend": "^6.17.2"
+    "resend": "^6.17.2",
+    "sanity": "^6.6.0",
+    "styled-components": "^6.4.4"
   },
   "devDependencies": {
+    "@sanity/vision": "^6.6.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

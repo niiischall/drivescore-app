@@ -10,6 +10,8 @@ Convert an anxious Indian car owner (worried about E20's effect on their vehicle
 
 Code: `apps/web/src/components/landing/`.
 
+**Content source:** section copy, FAQs, and company pages (`/privacy`, `/contact`, `/faq`) are loaded from Sanity (`apps/web/src/sanity/`). Presentation (layout, CSS, motion) stays in React. Studio: `/studio`.
+
 Current section order roughly matches the draft below, with these deltas:
 
 | Draft | Shipped |

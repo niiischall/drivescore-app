@@ -1,6 +1,12 @@
 import { UsersThree } from "@phosphor-icons/react";
 
-export function VisitorMarquee({ visitorCount }: { visitorCount: number }) {
+export function VisitorMarquee({
+  visitorCount,
+  suffix,
+}: {
+  visitorCount: number;
+  suffix: string;
+}) {
   const visitorLabel = visitorCount.toLocaleString("en-IN");
 
   return (
@@ -8,8 +14,7 @@ export function VisitorMarquee({ visitorCount }: { visitorCount: number }) {
       <div className="landing-marquee__track">
         <span className="flex items-center gap-2 whitespace-nowrap text-[13px] font-semibold text-surface-paper">
           <UsersThree weight="fill" size={15} />
-          <b className="font-bold">{visitorLabel}</b> car owners have visited so
-          far
+          <b className="font-bold">{visitorLabel}</b> {suffix}
         </span>
       </div>
     </div>
