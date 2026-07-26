@@ -25,7 +25,7 @@ Every vehicle gets a 0–100 compatibility score with an explicit confidence rat
 Landing Page (+ waitlist) → Multi-Stage Form → Scoring Engine → AI Report
 ```
 
-**Live today (`apps/web`):** marketing landing page and waitlist signup (Resend segment + confirmation email).
+**Live today (`apps/web`):** marketing landing page and waitlist signup (Resend segment + confirmation email). **Marketing and static page copy are served from Sanity CMS** — see [`docs/07-sanity-cms.md`](docs/07-sanity-cms.md).
 
 **Planned product flow:**
 
@@ -70,8 +70,23 @@ Design specs and implementation notes live in [`docs/`](docs/):
 4. [`04-ai-report-and-monetization.md`](docs/04-ai-report-and-monetization.md) — free/paid split, subscription model, report-caching architecture
 5. [`05-system-architecture.md`](docs/05-system-architecture.md) — component overview, request flow, data model, regeneration policy
 6. [`06-waitlist-and-email.md`](docs/06-waitlist-and-email.md) — Resend waitlist, confirmation email, env + DNS setup (**implemented**)
+7. [`07-sanity-cms.md`](docs/07-sanity-cms.md) — **Sanity CMS** for marketing + static pages (**implemented**; required for `apps/web`)
 
 Web app runbook: [`apps/web/README.md`](apps/web/README.md).
+
+---
+
+## Sanity CMS (required)
+
+Marketing copy for the landing page, FAQs, Privacy, and Contact is **not** in the repo — it is loaded from [Sanity](https://www.sanity.io).
+
+| | |
+| --- | --- |
+| Spec | [`docs/07-sanity-cms.md`](docs/07-sanity-cms.md) |
+| Studio | `/studio` on the web app (e.g. `http://localhost:3000/studio`) |
+| Code | `apps/web/src/sanity/` |
+
+`NEXT_PUBLIC_SANITY_PROJECT_ID` must be set, and the dataset must contain published `siteSettings`, `landingPage`, `faqItem`, and `companyPage` documents. Scoring rubric / `METHOD_VERSION` stay in code.
 
 ---
 
@@ -81,9 +96,13 @@ Web app runbook: [`apps/web/README.md`](apps/web/README.md).
 cd apps/web
 pnpm install
 cp .env.example .env.local
-# Set at least Resend vars for waitlist (see docs/06-waitlist-and-email.md)
+# Set Sanity project id (required) + Resend vars for waitlist
 pnpm dev
 ```
+
+Required for the marketing site:
+
+- `NEXT_PUBLIC_SANITY_PROJECT_ID` (see [`docs/07-sanity-cms.md`](docs/07-sanity-cms.md))
 
 Required for waitlist locally / in production:
 
@@ -91,13 +110,14 @@ Required for waitlist locally / in production:
 - `RESEND_AUDIENCE_ID` (Resend Segment ID)
 - `RESEND_FROM_EMAIL` (verified domain sender, e.g. `DriveScore <hello@drivescore.club>`)
 
-Also commonly set: `NEXT_PUBLIC_SITE_URL`, PostHog keys (see [`apps/web/.env.example`](apps/web/.env.example)).
+Also commonly set: `NEXT_PUBLIC_SITE_URL`, `SANITY_API_READ_TOKEN`, PostHog keys (see [`apps/web/.env.example`](apps/web/.env.example)).
 
 ---
 
 ## Tech Stack
 
 - Next.js / React / TypeScript / Tailwind CSS (`apps/web`)
+- **Sanity** (marketing + static page CMS; embedded Studio at `/studio`)
 - TanStack Query (client API mutations)
 - Resend (waitlist contacts + transactional confirmation email)
 - PostHog (product analytics, proxied first-party)
@@ -111,7 +131,7 @@ Monorepo layout: `apps/web` (Next.js app) + `packages/` (`scoring-engine`, `ai`,
 
 🚧 DriveScore is under active development.
 
-- **Shipped:** landing page + waitlist (Resend confirmation email) in `apps/web`
+- **Shipped:** landing page + waitlist (Resend) + Sanity CMS for marketing/static copy in `apps/web`
 - **In progress / planned:** multi-stage form, scoring engine, AI report — see design docs; open items are listed at the bottom of each file
 
 ---

@@ -1,7 +1,7 @@
 # DriveScore — System Architecture
 
-Status: v1 draft (scoring path pre-build); **waitlist path implemented**  
-Related: `01-landing-page.md`, `02-scoring-engine-rubric.md`, `03-multi-stage-form.md`, `04-ai-report-and-monetization.md`, `06-waitlist-and-email.md`
+Status: v1 draft (scoring path pre-build); **waitlist path + Sanity CMS implemented**  
+Related: `01-landing-page.md`, `02-scoring-engine-rubric.md`, `03-multi-stage-form.md`, `04-ai-report-and-monetization.md`, `06-waitlist-and-email.md`, `07-sanity-cms.md`
 
 ## Purpose
 
@@ -17,7 +17,7 @@ This doc describes how the pieces already specified (landing page, form, rubric,
 | Resend | Contact storage (Segment) + transactional confirmation email |
 | PostHog | Client analytics (`/pulse` proxy); optional server HogQL for unique visitor count |
 
-Details: `06-waitlist-and-email.md`, `apps/web/README.md`. Scoring rubric / `METHOD_VERSION` remain code-owned — Sanity holds marketing presentation only.
+Details: `06-waitlist-and-email.md`, **`07-sanity-cms.md`**, `apps/web/README.md`. Scoring rubric / `METHOD_VERSION` remain code-owned — Sanity holds marketing presentation only.
 
 ## Component overview (full product)
 
