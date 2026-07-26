@@ -1,4 +1,5 @@
-# DriveScore 🚗⛽
+# <img width="112" height="112" alt="Custom Emoji Maker" src="https://github.com/user-attachments/assets/c1b853af-7534-47d5-9aa3-4f716a2a116a" />
+
 
 > **Will E20 hurt your car? Get a score, not a rumor.**
 
