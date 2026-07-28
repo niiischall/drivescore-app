@@ -13,6 +13,7 @@ export const landingPage = defineType({
     { name: "chrome", title: "Chrome" },
     { name: "hero", title: "Hero" },
     { name: "sections", title: "Sections" },
+    { name: "journey", title: "Journey" },
     { name: "sample", title: "Sample score" },
     { name: "method", title: "Method" },
     { name: "cta", title: "CTAs & footer" },
@@ -158,6 +159,69 @@ export const landingPage = defineType({
           title: "Cards",
           type: "array",
           of: [defineArrayMember({ type: "problemCard" })],
+        }),
+      ],
+    }),
+    defineField({
+      name: "journey",
+      title: "Onboarding journey section",
+      type: "object",
+      group: "journey",
+      fields: [
+        defineField({ name: "eyebrow", title: "Eyebrow", type: "string" }),
+        defineField({
+          name: "titleBefore",
+          title: "Title before accent",
+          type: "string",
+        }),
+        defineField({
+          name: "titleAccent",
+          title: "Title accent",
+          type: "string",
+        }),
+        defineField({
+          name: "titleAfter",
+          title: "Title after accent",
+          type: "string",
+        }),
+        defineField({ name: "lede", title: "Lede", type: "text", rows: 2 }),
+        defineField({
+          name: "ctaLabel",
+          title: "CTA label",
+          type: "string",
+        }),
+        defineField({
+          name: "gaugeStartLabel",
+          title: "Progress gauge start label",
+          type: "string",
+        }),
+        defineField({
+          name: "gaugeEndLabel",
+          title: "Progress gauge end label",
+          type: "string",
+        }),
+        defineField({
+          name: "steps",
+          title: "Steps",
+          type: "array",
+          of: [
+            defineArrayMember({
+              type: "object",
+              name: "journeyStep",
+              fields: [
+                defineField({ name: "title", title: "Title", type: "string" }),
+                defineField({
+                  name: "body",
+                  title: "Body",
+                  type: "text",
+                  rows: 2,
+                }),
+              ],
+              preview: {
+                select: { title: "title", subtitle: "body" },
+              },
+            }),
+          ],
         }),
       ],
     }),

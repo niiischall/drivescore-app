@@ -104,6 +104,17 @@ export type LandingPage = {
     lede: string;
     cards: ProblemCard[];
   };
+  journey: {
+    eyebrow: string;
+    titleBefore: string;
+    titleAccent: string;
+    titleAfter: string;
+    lede: string;
+    ctaLabel: string;
+    gaugeStartLabel: string;
+    gaugeEndLabel: string;
+    steps: { _key?: string; title: string; body: string }[];
+  };
   sampleScore: {
     eyebrow: string;
     titleBefore: string;

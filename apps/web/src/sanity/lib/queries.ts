@@ -48,6 +48,17 @@ export const landingPageQuery = defineQuery(`
       lede,
       cards[]{ icon, title, body }
     },
+    journey{
+      eyebrow,
+      titleBefore,
+      titleAccent,
+      titleAfter,
+      lede,
+      ctaLabel,
+      gaugeStartLabel,
+      gaugeEndLabel,
+      steps[]{ _key, title, body }
+    },
     sampleScore{
       eyebrow,
       titleBefore,

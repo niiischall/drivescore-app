@@ -8,6 +8,7 @@ import {
   ConfidenceSection,
   FaqSection,
   HeroSection,
+  JourneySection,
   LandingFooter,
   LandingHeader,
   MethodSection,
@@ -77,6 +78,12 @@ export function LandingPage({
       </div>
       <div data-section="problem">
         <ProblemSection content={content.problem} />
+      </div>
+      <div data-section="journey">
+        <JourneySection
+          content={content.journey}
+          onCtaClick={() => openWaitlist("journey")}
+        />
       </div>
       <div data-section="sample_score">
         <SampleScoreSection

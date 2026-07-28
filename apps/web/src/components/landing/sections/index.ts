@@ -3,6 +3,7 @@ export { FaqSection } from "./faq";
 export { LandingFooter } from "./footer";
 export { LandingHeader } from "./header";
 export { HeroSection } from "./hero";
+export { JourneySection } from "./journey";
 export { MethodSection } from "./method";
 export { ProblemSection } from "./problem";
 export { QuickActions } from "./quick-actions";
