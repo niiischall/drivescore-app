@@ -125,13 +125,6 @@ export const landingPage = defineType({
       ],
     }),
     defineField({
-      name: "quickActions",
-      title: "Quick actions",
-      type: "array",
-      group: "sections",
-      of: [defineArrayMember({ type: "quickAction" })],
-    }),
-    defineField({
       name: "problem",
       title: "Problem section",
       type: "object",

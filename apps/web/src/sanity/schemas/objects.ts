@@ -267,46 +267,6 @@ export const confidencePointer = defineType({
   ],
 });
 
-export const quickAction = defineType({
-  name: "quickAction",
-  title: "Quick action",
-  type: "object",
-  fields: [
-    defineField({
-      name: "href",
-      title: "Href",
-      type: "string",
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "label",
-      title: "Label",
-      type: "string",
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "icon",
-      title: "Icon key",
-      type: "string",
-      options: {
-        list: [
-          { title: "List checks", value: "listChecks" },
-          { title: "Gauge", value: "gauge" },
-          { title: "Gas pump", value: "gasPump" },
-          { title: "Question", value: "question" },
-        ],
-      },
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "target",
-      title: "Analytics target",
-      type: "string",
-      validation: (Rule) => Rule.required(),
-    }),
-  ],
-});
-
 export const heroStat = defineType({
   name: "heroStat",
   title: "Hero stat",

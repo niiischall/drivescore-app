@@ -52,13 +52,6 @@ export type ConfidencePointer = {
   body: string;
 };
 
-export type QuickAction = {
-  href: string;
-  label: string;
-  icon: "listChecks" | "gauge" | "gasPump" | "question";
-  target: string;
-};
-
 export type HeroStat = {
   value: string;
   label: string;
@@ -95,7 +88,6 @@ export type LandingPage = {
     joinedBodyAfter: string;
     joinedMeta: string;
   };
-  quickActions: QuickAction[];
   problem: {
     eyebrow: string;
     titleBefore: string;

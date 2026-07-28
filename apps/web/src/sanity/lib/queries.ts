@@ -39,7 +39,6 @@ export const landingPageQuery = defineQuery(`
       joinedBodyAfter,
       joinedMeta
     },
-    quickActions[]{ href, label, icon, target },
     problem{
       eyebrow,
       titleBefore,

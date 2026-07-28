@@ -4,13 +4,12 @@ import {
   TrendDown,
 } from "@phosphor-icons/react";
 import type { LandingPage } from "@/sanity/types";
-import { IconChip } from "../ui/brand";
 import { AccentTitle } from "../ui/rich-inline";
 
 const problemIcon = {
-  trendDown: <TrendDown weight="fill" size={22} />,
-  drop: <DropHalfBottom weight="fill" size={22} />,
-  seal: <SealQuestion weight="fill" size={22} />,
+  trendDown: <TrendDown weight="fill" size={16} />,
+  drop: <DropHalfBottom weight="fill" size={16} />,
+  seal: <SealQuestion weight="fill" size={16} />,
 };
 
 export function ProblemSection({
@@ -30,18 +29,20 @@ export function ProblemSection({
       </h2>
       <p className="landing-section__lede mb-1">{content.lede}</p>
       <div className="landing-problem__grid">
-        {content.cards.map((p) => (
-          <div
-            key={p.title}
-            className="landing-lift landing-glass flex items-start gap-3.5 rounded-[18px] border border-[var(--landing-card-border)] bg-[var(--landing-card)] p-4"
-          >
-            <IconChip>{problemIcon[p.icon]}</IconChip>
-            <div className="flex flex-col gap-1">
-              <span className="text-base font-bold">{p.title}</span>
-              <span className="text-sm leading-normal text-[var(--landing-muted)]">
-                {p.body}
+        {content.cards.map((p, i) => (
+          <div key={p.title} className="landing-problem__row">
+            <span className="landing-problem__num" aria-hidden>
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <div className="landing-problem__heading">
+              <span className="landing-problem__icon">
+                {problemIcon[p.icon]}
               </span>
+              <span className="text-base font-bold">{p.title}</span>
             </div>
+            <span className="text-sm leading-normal text-[var(--landing-muted)]">
+              {p.body}
+            </span>
           </div>
         ))}
       </div>

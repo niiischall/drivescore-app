@@ -6,7 +6,6 @@ export { HeroSection } from "./hero";
 export { JourneySection } from "./journey";
 export { MethodSection } from "./method";
 export { ProblemSection } from "./problem";
-export { QuickActions } from "./quick-actions";
 export { SampleScoreSection } from "./sample-score";
 export { StickyCta } from "./sticky-cta";
 export { VisitorMarquee } from "./visitor-marquee";

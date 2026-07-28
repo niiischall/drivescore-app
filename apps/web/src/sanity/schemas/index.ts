@@ -14,7 +14,6 @@ import {
   methodSlice,
   navLink,
   problemCard,
-  quickAction,
   richBullet,
   sampleMarker,
   seoFields,
@@ -38,7 +37,6 @@ export const schemaTypes = [
   methodMarker,
   methodSlice,
   confidencePointer,
-  quickAction,
   heroStat,
   blockContent,
 ];

@@ -51,6 +51,9 @@
   --landing-lilac: var(--color-text-brand);
   --landing-muted: color-mix(in srgb, var(--color-text-primary) 62%, transparent);
   --landing-faint: color-mix(in srgb, var(--color-text-primary) 42%, transparent);
+  /* Ghost numeral tint: --color-primary stays equally strong in both themes,
+     so opacity must flex to stay legible against the dark starfield. */
+  --landing-num: color-mix(in srgb, var(--color-primary) 38%, transparent);
   /* Glass card surface: translucent so the starfield drift shows through the blur */
   --landing-card: color-mix(in srgb, var(--color-surface-raised) 62%, transparent);
   --landing-card-border: color-mix(in srgb, var(--color-text-invert) 70%, transparent);
@@ -121,6 +124,7 @@
   --landing-card: color-mix(in srgb, var(--color-text-invert) 8%, transparent);
   --landing-card-border: color-mix(in srgb, var(--color-text-invert) 16%, transparent);
   --landing-hairline: color-mix(in srgb, var(--color-text-invert) 9%, transparent);
+  --landing-num: color-mix(in srgb, var(--color-primary) 62%, transparent);
   --landing-cta: var(--purple-300);
   --landing-cta-hover: var(--purple-200);
   --landing-cta-fg: var(--color-text-on-paper);
@@ -192,21 +196,6 @@
 .landing-glass {
   backdrop-filter: var(--landing-glass-blur);
   -webkit-backdrop-filter: var(--landing-glass-blur);
-}
-
-/* Quick-action cards: body text stays primary; icon glyphs are white on brand chip */
-.landing a.landing-card-hover {
-  color: var(--color-text-primary);
-}
-
-.landing a.landing-card-hover:hover {
-  color: var(--color-text-primary);
-}
-
-.landing-icon-chip,
-.landing-icon-chip svg {
-  color: var(--color-on-primary);
-  fill: currentColor;
 }
 
 /* Static visitor band (no marquee scroll) */
@@ -665,39 +654,43 @@
   }
 }
 
-/* Quick actions */
-.landing-quick-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  padding: 0 var(--space-4) 40px;
-}
-
-@media (min-width: 768px) {
-  .landing-quick-actions {
-    padding-inline: var(--space-6);
-    gap: var(--space-4);
-  }
-}
-
-@media (min-width: 1024px) {
-  .landing-quick-actions {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    padding-inline: var(--space-6);
-    padding-bottom: var(--space-12);
-  }
-}
-
 /* Problem cards */
 .landing-problem__grid {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 26px;
+}
+
+.landing-problem__row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.landing-problem__num {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--landing-num);
+}
+
+.landing-problem__heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.landing-problem__icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--landing-lilac);
 }
 
 @media (min-width: 768px) {
   .landing-problem__grid {
-    gap: var(--space-4);
+    gap: var(--space-6);
   }
 }
 
@@ -705,6 +698,11 @@
   .landing-problem__grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-8) var(--space-6);
+  }
+
+  .landing-problem__num {
+    font-size: 36px;
   }
 }
 
@@ -915,19 +913,30 @@
 .landing-confidence__grid {
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
-@media (min-width: 768px) {
-  .landing-confidence__grid {
-    gap: var(--space-4);
-  }
+.landing-confidence__row {
+  padding-block: var(--space-4);
+}
+
+.landing-confidence__row:not(:first-child) {
+  border-top: 1px solid var(--landing-hairline);
 }
 
 @media (min-width: 1024px) {
   .landing-confidence__grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-block: 1px solid var(--landing-hairline);
+  }
+
+  .landing-confidence__row {
+    padding: var(--space-5);
+  }
+
+  .landing-confidence__row:not(:first-child) {
+    border-top: none;
+    border-left: 1px solid var(--landing-hairline);
   }
 }
 
@@ -1288,26 +1297,6 @@
 }
 
 /* —— Micro-interactions —— */
-.landing-lift {
-  transition: transform 0.22s ease;
-}
-
-.landing-lift:hover {
-  transform: translateY(-3px);
-}
-
-.landing a.landing-card-hover {
-  transition: transform 0.22s ease;
-}
-
-.landing a.landing-card-hover:hover {
-  transform: translateY(-4px);
-}
-
-.landing a.landing-card-hover:active {
-  transform: translateY(-1px);
-}
-
 .landing-footer__links a,
 .landing-footer__links a:visited {
   display: inline-block;
@@ -1507,36 +1496,30 @@
   transform: none;
 }
 
-@media (min-width: 768px) {
+/* Desktop: extend the mobile connector-line metaphor into a horizontal
+   timeline instead of falling back to boxed cards. */
+@media (min-width: 1024px) {
   .landing-journey__steps {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-4) var(--space-5);
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-5);
   }
 
   .landing-journey__steps::before {
-    display: none;
+    left: 20px;
+    right: 20px;
+    top: 20px;
+    bottom: auto;
+    width: auto;
+    height: 1px;
   }
 
   .landing-journey__step {
-    padding: var(--space-4);
-    border-radius: 18px;
-    background: var(--landing-card);
-    backdrop-filter: var(--landing-glass-blur);
-    -webkit-backdrop-filter: var(--landing-glass-blur);
-    box-shadow: 0 0 0 1px var(--landing-card-border);
-  }
-
-  .landing-journey__step[data-state="active"] {
-    box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--color-primary) 45%, transparent),
-      0 12px 28px color-mix(in srgb, var(--color-primary) 10%, transparent);
-  }
-}
-
-@media (min-width: 1024px) {
-  .landing-journey__steps {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+    padding: 0;
   }
 
   .landing-journey__step-title {
@@ -1560,8 +1543,6 @@
   .landing-cta,
   .landing-cta-dark,
   .landing-cta svg,
-  .landing-lift,
-  .landing a.landing-card-hover,
   .landing-faq__question-text,
   .landing-faq__toggle,
   .landing-footer__links a,
@@ -1582,9 +1563,6 @@
   .landing-cta:hover svg,
   .landing-cta-dark:hover,
   .landing-cta-dark:active,
-  .landing-lift:hover,
-  .landing a.landing-card-hover:hover,
-  .landing a.landing-card-hover:active,
   .landing-faq__question:hover .landing-faq__toggle,
   .landing-faq__question[aria-expanded="true"] .landing-faq__toggle,
   .landing-footer__links a:hover,
