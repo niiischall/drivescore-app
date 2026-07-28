@@ -8,11 +8,11 @@ import {
   ConfidenceSection,
   FaqSection,
   HeroSection,
+  JourneySection,
   LandingFooter,
   LandingHeader,
   MethodSection,
   ProblemSection,
-  QuickActions,
   SampleScoreSection,
   StickyCta,
   VisitorMarquee,
@@ -72,11 +72,14 @@ export function LandingPage({
           onJoinClick={() => openWaitlist("hero")}
         />
       </div>
-      <div data-section="quick_actions">
-        <QuickActions actions={content.quickActions} />
-      </div>
       <div data-section="problem">
         <ProblemSection content={content.problem} />
+      </div>
+      <div data-section="journey">
+        <JourneySection
+          content={content.journey}
+          onCtaClick={() => openWaitlist("journey")}
+        />
       </div>
       <div data-section="sample_score">
         <SampleScoreSection

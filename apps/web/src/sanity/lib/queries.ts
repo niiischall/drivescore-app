@@ -39,7 +39,6 @@ export const landingPageQuery = defineQuery(`
       joinedBodyAfter,
       joinedMeta
     },
-    quickActions[]{ href, label, icon, target },
     problem{
       eyebrow,
       titleBefore,
@@ -47,6 +46,17 @@ export const landingPageQuery = defineQuery(`
       titleAfter,
       lede,
       cards[]{ icon, title, body }
+    },
+    journey{
+      eyebrow,
+      titleBefore,
+      titleAccent,
+      titleAfter,
+      lede,
+      ctaLabel,
+      gaugeStartLabel,
+      gaugeEndLabel,
+      steps[]{ _key, title, body }
     },
     sampleScore{
       eyebrow,

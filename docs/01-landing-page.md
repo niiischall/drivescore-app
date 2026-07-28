@@ -1,7 +1,7 @@
 # DriveScore — Landing Page Architecture
 
 Status: **landing UI implemented** in `apps/web` (waitlist CTA); original “Check your car” form flow still planned  
-Related: `03-multi-stage-form.md`, `04-ai-report-and-monetization.md`, `06-waitlist-and-email.md`
+Related: `03-multi-stage-form.md`, `04-ai-report-and-monetization.md`, `06-waitlist-and-email.md`, **`07-sanity-cms.md`** (content source)
 
 ## Purpose
 Convert an anxious Indian car owner (worried about E20's effect on their vehicle) into someone who starts the compatibility check. The long-term page leads with the tool itself — the calculator/form *is* the hero. **Pre-launch ship:** the hero collects a waitlist email (Resend confirmation) instead of starting the multi-stage form. See `06-waitlist-and-email.md`.
@@ -10,7 +10,7 @@ Convert an anxious Indian car owner (worried about E20's effect on their vehicle
 
 Code: `apps/web/src/components/landing/`.
 
-**Content source:** section copy, FAQs, and company pages (`/privacy`, `/contact`, `/faq`) are loaded from Sanity (`apps/web/src/sanity/`). Presentation (layout, CSS, motion) stays in React. Studio: `/studio`.
+**Content source:** section copy, FAQs, and company pages (`/privacy`, `/contact`, `/faq`) are loaded from Sanity (`apps/web/src/sanity/`). Presentation (layout, CSS, motion) stays in React. Studio: `/studio`. Full CMS guide: [`07-sanity-cms.md`](07-sanity-cms.md).
 
 Current section order roughly matches the draft below, with these deltas:
 

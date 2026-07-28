@@ -1,5 +1,4 @@
 import Image from "next/image";
-import type { ReactNode } from "react";
 
 export const toneColor = {
   compatible: "var(--color-score-compatible)",
@@ -32,14 +31,6 @@ export function BrandWordmark({ size = "md" }: { size?: "sm" | "md" }) {
     <span className={`tracking-tight ${text}`}>
       <span className="font-bold">Drive</span>
       <span className="font-normal">score</span>
-    </span>
-  );
-}
-
-export function IconChip({ children }: { children: ReactNode }) {
-  return (
-    <span className="landing-icon-chip flex size-11 flex-none items-center justify-center rounded-2xl border border-[color-mix(in_srgb,var(--color-primary)_55%,transparent)] bg-primary">
-      {children}
     </span>
   );
 }

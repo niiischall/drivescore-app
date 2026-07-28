@@ -80,7 +80,7 @@ export function MethodSection({
             return next;
           });
         }}
-        className="landing-method__toggle flex w-full cursor-pointer items-center justify-between rounded-full border border-[var(--landing-card-border)] bg-[var(--landing-card)] px-5 py-3.5 text-left text-[15px] font-semibold text-text-primary"
+        className="landing-method__toggle landing-glass flex w-full cursor-pointer items-center justify-between rounded-full border border-[var(--landing-card-border)] bg-[var(--landing-card)] px-5 py-3.5 text-left text-[15px] font-semibold text-text-primary"
       >
         <span>
           {showMarkers

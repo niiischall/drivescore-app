@@ -4,10 +4,12 @@ Next.js app for DriveScore — E20 compatibility score tool for Indian car owner
 
 Currently ships the **marketing landing page** and a **Resend-backed waitlist** (confirmation email + contact segment). Scoring form and reports are still ahead of this surface.
 
+> **Sanity CMS is required.** Landing, FAQ, Privacy, and Contact copy load from Sanity — not from hardcoded TSX. Spec: [`docs/07-sanity-cms.md`](../../docs/07-sanity-cms.md). Studio: [`/studio`](http://localhost:3000/studio).
+
 ## Stack
 
 - Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4
-- [Sanity](https://www.sanity.io) for marketing + static page content (embedded Studio at `/studio`)
+- [Sanity](https://www.sanity.io) for marketing + static page content (embedded Studio at `/studio`) — see [`docs/07-sanity-cms.md`](../../docs/07-sanity-cms.md)
 - [TanStack Query](https://tanstack.com/query) for client mutations
 - [Resend](https://resend.com) for waitlist contacts + confirmation email
 - PostHog (client analytics via `/pulse` proxy; server HogQL for visitor count)
@@ -19,11 +21,12 @@ Currently ships the **marketing landing page** and a **Resend-backed waitlist** 
 ```bash
 pnpm install
 cp .env.example .env.local
-# fill env vars (see below)
+# REQUIRED: NEXT_PUBLIC_SANITY_PROJECT_ID (+ published Sanity content)
+# Also set Resend vars for waitlist
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000). Edit content at [http://localhost:3000/studio](http://localhost:3000/studio).
 
 ## Environment variables
 
@@ -91,19 +94,22 @@ Design / product notes: [`docs/01-landing-page.md`](../../docs/01-landing-page.m
 
 ## Sanity CMS
 
-Marketing copy (landing sections, FAQs, `/privacy`, `/contact`, `/faq`) is authored in Sanity Studio.
+**Full guide:** [`docs/07-sanity-cms.md`](../../docs/07-sanity-cms.md).
+
+Marketing copy (landing sections, FAQs, `/privacy`, `/contact`, `/faq`) is authored in Sanity Studio. Do not put that copy back into React constants.
 
 | Piece | Location |
 | ----- | -------- |
-| Schemas / queries / fetch | `src/sanity/` |
-| Studio | [http://localhost:3000/studio](http://localhost:3000/studio) |
+| Schemas / structure / fetch | `src/sanity/` |
+| Studio route | `src/app/studio/[[...tool]]/page.tsx` → `/studio` |
+| Config | `sanity.config.ts`, `sanity.cli.ts` |
 
 ### Setup
 
 1. Create a Sanity project + `production` dataset at [sanity.io/manage](https://www.sanity.io/manage).
-2. Set `NEXT_PUBLIC_SANITY_PROJECT_ID` (and optional read token) in `.env.local` / Vercel.
+2. Set `NEXT_PUBLIC_SANITY_PROJECT_ID` (and preferably `SANITY_API_READ_TOKEN`) in `.env.local` / Vercel.
 3. Add CORS origin for `http://localhost:3000` and your production host in the Sanity project.
-4. Author content in Studio at `/studio`.
+4. Author and **publish** content in Studio at `/studio` (`siteSettings`, `landingPage`, FAQ items, company pages).
 
 Published CMS content is cached for up to ~1 hour (`revalidate: 3600`).
 
@@ -122,4 +128,5 @@ pnpm lint     # ESLint
 
 - Repo overview: [`../../README.md`](../../README.md)
 - Spec index: [`../../docs/README.md`](../../docs/README.md)
+- Sanity CMS: [`../../docs/07-sanity-cms.md`](../../docs/07-sanity-cms.md)
 - Waitlist & email: [`../../docs/06-waitlist-and-email.md`](../../docs/06-waitlist-and-email.md)

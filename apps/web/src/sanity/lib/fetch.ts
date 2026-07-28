@@ -33,7 +33,15 @@ async function sanityFetch<T>(
 }
 
 function isCompleteLanding(data: LandingPage | null): data is LandingPage {
-  return Boolean(data?.hero?.titleAccent && data?.problem?.cards?.length);
+  const journeyOk =
+    Boolean(data?.journey?.titleAccent) &&
+    (data?.journey?.steps?.length ?? 0) >= 1;
+
+  return Boolean(
+    data?.hero?.titleAccent &&
+      data?.problem?.cards?.length &&
+      journeyOk,
+  );
 }
 
 export async function getSiteSettings(): Promise<SiteSettings> {

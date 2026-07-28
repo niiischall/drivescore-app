@@ -6,7 +6,7 @@ import { track } from "@/lib/analytics";
 import { useJoinWaitlist } from "@/hooks/use-join-waitlist";
 import { BrandWordmark } from "./brand";
 
-export type WaitlistSource = "hero" | "sticky" | "sample";
+export type WaitlistSource = "hero" | "sticky" | "sample" | "journey";
 
 type WaitlistModalProps = {
   open: boolean;

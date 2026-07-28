@@ -1,7 +1,6 @@
 export {
   BrandMark,
   BrandWordmark,
-  IconChip,
   scrollToTop,
   toneColor,
 } from "./brand";

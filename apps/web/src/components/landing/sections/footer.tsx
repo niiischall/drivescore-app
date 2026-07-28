@@ -7,12 +7,14 @@ import { BrandMark, BrandWordmark } from "../ui/brand";
 import { IndiaFlag } from "../ui/india-flag";
 
 function trackFooterLink(
-  group: "method" | "company",
+  group: "method" | "company" | "credit",
   label: string,
   href: string,
 ) {
   track("landing_footer_link_clicked", { group, label, href });
 }
+
+const CREDIT_URL = "https://www.linkedin.com/in/niiischall";
 
 export function LandingFooter({
   content,
@@ -72,6 +74,18 @@ export function LandingFooter({
 
       <p className="m-0 text-[11.5px] leading-[1.55] text-[var(--landing-faint)]">
         {disclaimer}
+      </p>
+
+      <p className="m-0 text-[11.5px] leading-[1.55] text-[var(--landing-faint)]">
+        Built with <span aria-hidden>❤️</span> by{" "}
+        <a
+          href={CREDIT_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => trackFooterLink("credit", "Built by", CREDIT_URL)}
+        >
+          Nischal Nikit
+        </a>
       </p>
     </footer>
   );

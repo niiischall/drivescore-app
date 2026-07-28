@@ -51,8 +51,13 @@
   --landing-lilac: var(--color-text-brand);
   --landing-muted: color-mix(in srgb, var(--color-text-primary) 62%, transparent);
   --landing-faint: color-mix(in srgb, var(--color-text-primary) 42%, transparent);
-  --landing-card: var(--color-surface-raised);
-  --landing-card-border: var(--color-border-subtle);
+  /* Ghost numeral tint: --color-primary stays equally strong in both themes,
+     so opacity must flex to stay legible against the dark starfield. */
+  --landing-num: color-mix(in srgb, var(--color-primary) 38%, transparent);
+  /* Glass card surface: translucent so the starfield drift shows through the blur */
+  --landing-card: color-mix(in srgb, var(--color-surface-raised) 62%, transparent);
+  --landing-card-border: color-mix(in srgb, var(--color-text-invert) 70%, transparent);
+  --landing-glass-blur: blur(16px) saturate(160%);
   --landing-hairline: var(--color-border-subtle);
   --landing-cta: var(--color-primary);
   --landing-cta-hover: var(--color-primary-hover);
@@ -116,9 +121,10 @@
 [data-theme="dark"] .landing {
   --landing-muted: color-mix(in srgb, var(--color-text-primary) 55%, transparent);
   --landing-faint: color-mix(in srgb, var(--color-text-primary) 35%, transparent);
-  --landing-card: color-mix(in srgb, var(--color-text-invert) 4%, transparent);
-  --landing-card-border: color-mix(in srgb, var(--color-text-invert) 10%, transparent);
+  --landing-card: color-mix(in srgb, var(--color-text-invert) 8%, transparent);
+  --landing-card-border: color-mix(in srgb, var(--color-text-invert) 16%, transparent);
   --landing-hairline: color-mix(in srgb, var(--color-text-invert) 9%, transparent);
+  --landing-num: color-mix(in srgb, var(--color-primary) 62%, transparent);
   --landing-cta: var(--purple-300);
   --landing-cta-hover: var(--purple-200);
   --landing-cta-fg: var(--color-text-on-paper);
@@ -186,19 +192,10 @@
   color: var(--color-primary-muted);
 }
 
-/* Quick-action cards: body text stays primary; icon glyphs are white on brand chip */
-.landing a.landing-card-hover {
-  color: var(--color-text-primary);
-}
-
-.landing a.landing-card-hover:hover {
-  color: var(--color-text-primary);
-}
-
-.landing-icon-chip,
-.landing-icon-chip svg {
-  color: var(--color-on-primary);
-  fill: currentColor;
+/* Glassmorphism: frosted blur for surfaces on --landing-card */
+.landing-glass {
+  backdrop-filter: var(--landing-glass-blur);
+  -webkit-backdrop-filter: var(--landing-glass-blur);
 }
 
 /* Static visitor band (no marquee scroll) */
@@ -375,6 +372,8 @@
   border-radius: 18px;
   border: 1px solid var(--landing-card-border);
   background: var(--landing-card);
+  backdrop-filter: var(--landing-glass-blur);
+  -webkit-backdrop-filter: var(--landing-glass-blur);
   padding: 18px var(--space-4) 14px;
 }
 
@@ -655,39 +654,43 @@
   }
 }
 
-/* Quick actions */
-.landing-quick-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  padding: 0 var(--space-4) 40px;
-}
-
-@media (min-width: 768px) {
-  .landing-quick-actions {
-    padding-inline: var(--space-6);
-    gap: var(--space-4);
-  }
-}
-
-@media (min-width: 1024px) {
-  .landing-quick-actions {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    padding-inline: var(--space-6);
-    padding-bottom: var(--space-12);
-  }
-}
-
 /* Problem cards */
 .landing-problem__grid {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 26px;
+}
+
+.landing-problem__row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.landing-problem__num {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--landing-num);
+}
+
+.landing-problem__heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.landing-problem__icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--landing-lilac);
 }
 
 @media (min-width: 768px) {
   .landing-problem__grid {
-    gap: var(--space-4);
+    gap: var(--space-6);
   }
 }
 
@@ -695,6 +698,11 @@
   .landing-problem__grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-8) var(--space-6);
+  }
+
+  .landing-problem__num {
+    font-size: 36px;
   }
 }
 
@@ -703,6 +711,8 @@
   overflow: hidden;
   border-radius: 22px;
   background: var(--landing-card);
+  backdrop-filter: var(--landing-glass-blur);
+  -webkit-backdrop-filter: var(--landing-glass-blur);
   box-shadow: 0 0 0 1px var(--landing-card-border);
 }
 
@@ -903,19 +913,30 @@
 .landing-confidence__grid {
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
-@media (min-width: 768px) {
-  .landing-confidence__grid {
-    gap: var(--space-4);
-  }
+.landing-confidence__row {
+  padding-block: var(--space-4);
+}
+
+.landing-confidence__row:not(:first-child) {
+  border-top: 1px solid var(--landing-hairline);
 }
 
 @media (min-width: 1024px) {
   .landing-confidence__grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-block: 1px solid var(--landing-hairline);
+  }
+
+  .landing-confidence__row {
+    padding: var(--space-5);
+  }
+
+  .landing-confidence__row:not(:first-child) {
+    border-top: none;
+    border-left: 1px solid var(--landing-hairline);
   }
 }
 
@@ -1276,26 +1297,6 @@
 }
 
 /* —— Micro-interactions —— */
-.landing-lift {
-  transition: transform 0.22s ease;
-}
-
-.landing-lift:hover {
-  transform: translateY(-3px);
-}
-
-.landing a.landing-card-hover {
-  transition: transform 0.22s ease;
-}
-
-.landing a.landing-card-hover:hover {
-  transform: translateY(-4px);
-}
-
-.landing a.landing-card-hover:active {
-  transform: translateY(-1px);
-}
-
 .landing-footer__links a,
 .landing-footer__links a:visited {
   display: inline-block;
@@ -1329,6 +1330,203 @@
   animation: landing-fade-up 0.35s ease both;
 }
 
+/* —— Journey (onboard → score) —— */
+.landing-journey {
+  gap: var(--space-5);
+}
+
+.landing-journey__gauge {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.45s ease,
+    transform 0.45s ease;
+}
+
+.landing-journey__gauge[data-visible="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+.landing-journey__gauge-track {
+  position: relative;
+  height: 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-text-primary) 12%, transparent);
+  overflow: hidden;
+}
+
+.landing-journey__gauge-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    color-mix(in srgb, var(--color-primary) 55%, var(--color-text-brand))
+  );
+  transition: width 0.7s ease;
+}
+
+.landing-journey__gauge-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--landing-faint);
+}
+
+.landing-journey__steps {
+  list-style: none;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+
+.landing-journey__steps::before {
+  content: "";
+  position: absolute;
+  left: 19px;
+  top: 12px;
+  bottom: 12px;
+  width: 1px;
+  background: var(--landing-hairline);
+  pointer-events: none;
+}
+
+.landing-journey__step {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+  transition-delay: calc(var(--journey-i, 0) * 80ms);
+}
+
+.landing-journey__steps[data-visible="true"] .landing-journey__step {
+  opacity: 1;
+  transform: none;
+}
+
+.landing-journey__index {
+  position: relative;
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: var(--landing-muted);
+  background: var(--landing-card);
+  box-shadow: 0 0 0 1px var(--landing-card-border);
+  transition:
+    color 0.35s ease,
+    background 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.landing-journey__step[data-state="active"] .landing-journey__index,
+.landing-journey__step[data-state="done"] .landing-journey__index {
+  color: var(--landing-cta-fg);
+  background: var(--landing-cta);
+  box-shadow: 0 0 0 1px transparent;
+}
+
+.landing-journey__step-title {
+  margin: 0 0 var(--space-1);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  color: var(--color-text-primary);
+}
+
+.landing-journey__step-body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--landing-muted);
+}
+
+.landing-journey__step[data-state="pending"] .landing-journey__step-title {
+  color: var(--landing-muted);
+}
+
+.landing-journey__cta {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--landing-cta-fg);
+  background: var(--landing-cta);
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.landing-journey__cta:hover {
+  background: var(--landing-cta-hover);
+  transform: translateY(-1px);
+}
+
+.landing-journey__cta:active {
+  transform: none;
+}
+
+/* Desktop: extend the mobile connector-line metaphor into a horizontal
+   timeline instead of falling back to boxed cards. */
+@media (min-width: 1024px) {
+  .landing-journey__steps {
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-5);
+  }
+
+  .landing-journey__steps::before {
+    left: 20px;
+    right: 20px;
+    top: 20px;
+    bottom: auto;
+    width: auto;
+    height: 1px;
+  }
+
+  .landing-journey__step {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+    padding: 0;
+  }
+
+  .landing-journey__step-title {
+    font-size: 16px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .landing {
     animation: none !important;
@@ -1345,15 +1543,18 @@
   .landing-cta,
   .landing-cta-dark,
   .landing-cta svg,
-  .landing-lift,
-  .landing a.landing-card-hover,
   .landing-faq__question-text,
   .landing-faq__toggle,
   .landing-footer__links a,
   .landing-method__toggle,
   .landing-modal__close,
   .landing-sticky,
-  .landing-joined__icon {
+  .landing-joined__icon,
+  .landing-journey__gauge,
+  .landing-journey__gauge-fill,
+  .landing-journey__step,
+  .landing-journey__index,
+  .landing-journey__cta {
     transition: none !important;
   }
 
@@ -1362,9 +1563,6 @@
   .landing-cta:hover svg,
   .landing-cta-dark:hover,
   .landing-cta-dark:active,
-  .landing-lift:hover,
-  .landing a.landing-card-hover:hover,
-  .landing a.landing-card-hover:active,
   .landing-faq__question:hover .landing-faq__toggle,
   .landing-faq__question[aria-expanded="true"] .landing-faq__toggle,
   .landing-footer__links a:hover,
