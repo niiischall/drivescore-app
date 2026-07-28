@@ -31,7 +31,7 @@ export function ConfidenceSection({
             <div
               key={item.title}
               id={item.id ?? undefined}
-              className="landing-lift flex gap-3.5 rounded-[18px] border border-[var(--landing-card-border)] bg-[var(--landing-card)] p-[18px]"
+              className="landing-lift landing-glass flex gap-3.5 rounded-[18px] border border-[var(--landing-card-border)] bg-[var(--landing-card)] p-[18px]"
             >
               <span className="flex size-10 flex-none items-center justify-center rounded-2xl bg-[color-mix(in_srgb,var(--color-primary)_22%,transparent)] text-[var(--landing-lilac)]">
                 <Icon weight="fill" size={20} />

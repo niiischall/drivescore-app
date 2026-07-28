@@ -8,7 +8,7 @@ export function LandingHeader({ badge }: { badge: string }) {
         <BrandMark size={28} />
         <BrandWordmark />
       </div>
-      <span className="flex items-center gap-1.5 rounded-full border border-[var(--landing-card-border)] bg-[var(--landing-card)] px-2.5 py-1 text-[11px] font-semibold tracking-wide text-text-secondary">
+      <span className="landing-glass flex items-center gap-1.5 rounded-full border border-[var(--landing-card-border)] bg-[var(--landing-card)] px-2.5 py-1 text-[11px] font-semibold tracking-wide text-text-secondary">
         <IndiaFlag size={16} />
         {badge}
       </span>

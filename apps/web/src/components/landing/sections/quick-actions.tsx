@@ -29,7 +29,7 @@ export function QuickActions({
               label: item.label,
             })
           }
-          className="landing-card-hover flex flex-col gap-3.5 rounded-[18px] border border-[var(--landing-card-border)] bg-[var(--landing-card)] px-4 py-[18px] text-text-primary"
+          className="landing-card-hover landing-glass flex flex-col gap-3.5 rounded-[18px] border border-[var(--landing-card-border)] bg-[var(--landing-card)] px-4 py-[18px] text-text-primary"
         >
           <IconChip>{actionIcon[item.icon]}</IconChip>
           <span className="text-[15px] font-bold">{item.label}</span>

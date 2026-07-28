@@ -33,7 +33,7 @@ export function ProblemSection({
         {content.cards.map((p) => (
           <div
             key={p.title}
-            className="landing-lift flex items-start gap-3.5 rounded-[18px] border border-[var(--landing-card-border)] bg-[var(--landing-card)] p-4"
+            className="landing-lift landing-glass flex items-start gap-3.5 rounded-[18px] border border-[var(--landing-card-border)] bg-[var(--landing-card)] p-4"
           >
             <IconChip>{problemIcon[p.icon]}</IconChip>
             <div className="flex flex-col gap-1">

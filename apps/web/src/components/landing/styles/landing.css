@@ -51,8 +51,10 @@
   --landing-lilac: var(--color-text-brand);
   --landing-muted: color-mix(in srgb, var(--color-text-primary) 62%, transparent);
   --landing-faint: color-mix(in srgb, var(--color-text-primary) 42%, transparent);
-  --landing-card: var(--color-surface-raised);
-  --landing-card-border: var(--color-border-subtle);
+  /* Glass card surface: translucent so the starfield drift shows through the blur */
+  --landing-card: color-mix(in srgb, var(--color-surface-raised) 62%, transparent);
+  --landing-card-border: color-mix(in srgb, var(--color-text-invert) 70%, transparent);
+  --landing-glass-blur: blur(16px) saturate(160%);
   --landing-hairline: var(--color-border-subtle);
   --landing-cta: var(--color-primary);
   --landing-cta-hover: var(--color-primary-hover);
@@ -116,8 +118,8 @@
 [data-theme="dark"] .landing {
   --landing-muted: color-mix(in srgb, var(--color-text-primary) 55%, transparent);
   --landing-faint: color-mix(in srgb, var(--color-text-primary) 35%, transparent);
-  --landing-card: color-mix(in srgb, var(--color-text-invert) 4%, transparent);
-  --landing-card-border: color-mix(in srgb, var(--color-text-invert) 10%, transparent);
+  --landing-card: color-mix(in srgb, var(--color-text-invert) 8%, transparent);
+  --landing-card-border: color-mix(in srgb, var(--color-text-invert) 16%, transparent);
   --landing-hairline: color-mix(in srgb, var(--color-text-invert) 9%, transparent);
   --landing-cta: var(--purple-300);
   --landing-cta-hover: var(--purple-200);
@@ -184,6 +186,12 @@
 
 .landing a:hover {
   color: var(--color-primary-muted);
+}
+
+/* Glassmorphism: frosted blur for surfaces on --landing-card */
+.landing-glass {
+  backdrop-filter: var(--landing-glass-blur);
+  -webkit-backdrop-filter: var(--landing-glass-blur);
 }
 
 /* Quick-action cards: body text stays primary; icon glyphs are white on brand chip */
@@ -375,6 +383,8 @@
   border-radius: 18px;
   border: 1px solid var(--landing-card-border);
   background: var(--landing-card);
+  backdrop-filter: var(--landing-glass-blur);
+  -webkit-backdrop-filter: var(--landing-glass-blur);
   padding: 18px var(--space-4) 14px;
 }
 
@@ -703,6 +713,8 @@
   overflow: hidden;
   border-radius: 22px;
   background: var(--landing-card);
+  backdrop-filter: var(--landing-glass-blur);
+  -webkit-backdrop-filter: var(--landing-glass-blur);
   box-shadow: 0 0 0 1px var(--landing-card-border);
 }
 
@@ -1510,6 +1522,8 @@
     padding: var(--space-4);
     border-radius: 18px;
     background: var(--landing-card);
+    backdrop-filter: var(--landing-glass-blur);
+    -webkit-backdrop-filter: var(--landing-glass-blur);
     box-shadow: 0 0 0 1px var(--landing-card-border);
   }
 
