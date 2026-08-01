@@ -1,10 +1,16 @@
 "use client";
 
+import Image from "next/image";
 import { ArrowRight } from "@phosphor-icons/react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { track } from "@/lib/analytics";
 import type { LandingPage } from "@/sanity/types";
 import { AccentTitle } from "../ui/rich-inline";
+import { getJourneyLabelSlot, getJourneyPinSlot } from "./journey-trail";
+
+const JOURNEY_TRAIL_IMAGE = "/illustrations/journey-trail.png";
+const JOURNEY_TRAIL_WIDTH = 1024;
+const JOURNEY_TRAIL_HEIGHT = 682;
 
 export function JourneySection({
   content,
@@ -13,56 +19,13 @@ export function JourneySection({
   content: LandingPage["journey"];
   onCtaClick?: () => void;
 }) {
-  const trackRef = useRef<HTMLOListElement>(null);
-  const [visible, setVisible] = useState(false);
-  const [active, setActive] = useState(0);
-
-  useEffect(() => {
-    const node = trackRef.current;
-    if (!node) return;
-
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          setVisible(true);
-          io.disconnect();
-        }
-      },
-      { threshold: 0.28 },
-    );
-    io.observe(node);
-    return () => io.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!visible || content.steps.length < 2) return;
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    if (reduceMotion) {
-      setActive(content.steps.length - 1);
-      return;
-    }
-
-    let step = 0;
-    const id = window.setInterval(() => {
-      step += 1;
-      if (step >= content.steps.length) {
-        window.clearInterval(id);
-        return;
-      }
-      setActive(step);
-    }, 900);
-    return () => window.clearInterval(id);
-  }, [visible, content.steps.length]);
-
-  const progress =
-    content.steps.length <= 1
-      ? 100
-      : (active / (content.steps.length - 1)) * 100;
+  const [activeStep, setActiveStep] = useState<number | null>(0);
 
   return (
-    <section id="journey" className="landing-section landing-journey">
+    <section
+      id="journey"
+      className="landing-section landing-section--journey landing-journey"
+    >
       <span className="landing-section__eyebrow">{content.eyebrow}</span>
       <h2 className="landing-section__title">
         <AccentTitle
@@ -73,49 +36,102 @@ export function JourneySection({
       </h2>
       <p className="landing-section__lede">{content.lede}</p>
 
-      <div
-        className="landing-journey__gauge"
-        aria-hidden="true"
-        data-visible={visible ? "true" : "false"}
-      >
-        <div className="landing-journey__gauge-track">
-          <div
-            className="landing-journey__gauge-fill"
-            style={{ width: `${progress}%` }}
+      <div className="landing-journey__trail">
+        <div className="landing-journey__map">
+          <Image
+            src={JOURNEY_TRAIL_IMAGE}
+            alt="Path from start to your E20 score"
+            width={JOURNEY_TRAIL_WIDTH}
+            height={JOURNEY_TRAIL_HEIGHT}
+            className="landing-journey__art"
+            sizes="(max-width: 767px) 100vw, 960px"
+            unoptimized
           />
-        </div>
-        <div className="landing-journey__gauge-labels">
-          <span>{content.gaugeStartLabel}</span>
-          <span>{content.gaugeEndLabel}</span>
-        </div>
-      </div>
 
-      <ol
-        ref={trackRef}
-        className="landing-journey__steps"
-        data-visible={visible ? "true" : "false"}
-      >
-        {content.steps.map((step, index) => {
-          const state =
-            index < active ? "done" : index === active ? "active" : "pending";
-          return (
-            <li
-              key={step._key ?? `journey-step-${index}`}
-              className="landing-journey__step"
-              data-state={state}
-              style={{ ["--journey-i" as string]: String(index) }}
-            >
-              <div className="landing-journey__index" aria-hidden="true">
-                <span>{String(index + 1).padStart(2, "0")}</span>
-              </div>
-              <div className="landing-journey__copy">
-                <h3 className="landing-journey__step-title">{step.title}</h3>
-                <p className="landing-journey__step-body">{step.body}</p>
-              </div>
-            </li>
-          );
-        })}
-      </ol>
+          <ol className="landing-journey__pins" aria-label="Steps on the path">
+            {content.steps.map((step, index) => {
+              const pin = getJourneyPinSlot(index);
+              const slot = getJourneyLabelSlot(index);
+              const isActive = activeStep === index;
+              return (
+                <li key={step._key ?? `journey-pin-${index}`}>
+                  <button
+                    type="button"
+                    className="landing-journey__pin"
+                    data-active={isActive ? "true" : "false"}
+                    aria-label={`Step ${index + 1}: ${step.title}`}
+                    aria-pressed={isActive}
+                    style={{
+                      ["--journey-x" as string]: pin.x,
+                      ["--journey-y" as string]: pin.y,
+                      ["--journey-accent" as string]: slot.accent,
+                    }}
+                    onClick={() => {
+                      setActiveStep((prev) => (prev === index ? null : index));
+                      track("landing_journey_step_selected", {
+                        index,
+                        title: step.title,
+                        active: !isActive,
+                        source: "pin",
+                      });
+                    }}
+                  >
+                    {index + 1}
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+
+        <ol className="landing-journey__steps">
+          {content.steps.map((step, index) => {
+            const slot = getJourneyLabelSlot(index);
+            const pin = getJourneyPinSlot(index);
+            const isActive = activeStep === index;
+            return (
+              <li key={step._key ?? `journey-step-${index}`}>
+                <button
+                  type="button"
+                  className="landing-journey__step"
+                  data-side={slot.side}
+                  data-step={index}
+                  data-active={isActive ? "true" : "false"}
+                  aria-pressed={isActive}
+                  style={{
+                    /* Desktop: anchor at pin, then offset left/right via CSS */
+                    ["--journey-x" as string]: pin.x,
+                    ["--journey-y" as string]: pin.y,
+                    ["--journey-accent" as string]: slot.accent,
+                  }}
+                  onClick={() => {
+                    setActiveStep((prev) => (prev === index ? null : index));
+                    track("landing_journey_step_selected", {
+                      index,
+                      title: step.title,
+                      active: !isActive,
+                      source: "card",
+                    });
+                  }}
+                >
+                  <span className="landing-journey__step-num" aria-hidden>
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <div className="landing-journey__copy">
+                    <span className="landing-journey__step-title">
+                      <span className="landing-journey__step-index" aria-hidden>
+                        {index + 1}.{" "}
+                      </span>
+                      {step.title}
+                    </span>
+                    <span className="landing-journey__step-body">{step.body}</span>
+                  </div>
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
 
       {onCtaClick ? (
         <button
@@ -127,7 +143,7 @@ export function JourneySection({
           }}
         >
           {content.ctaLabel}
-          <ArrowRight weight="bold" size={18} aria-hidden />
+          <ArrowRight weight="bold" size={20} aria-hidden />
         </button>
       ) : null}
     </section>

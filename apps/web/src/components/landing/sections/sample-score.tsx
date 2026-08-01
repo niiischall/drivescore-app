@@ -2,7 +2,7 @@ import Image from "next/image";
 import { ArrowRight, Flag } from "@phosphor-icons/react";
 import type { LandingPage } from "@/sanity/types";
 import { toneColor } from "../ui/brand";
-import { AccentTitle, applyCaptionTemplate } from "../ui/rich-inline";
+import { AccentTitle } from "../ui/rich-inline";
 
 export function SampleScoreSection({
   content,
@@ -24,38 +24,40 @@ export function SampleScoreSection({
       <p className="landing-section__lede">{content.lede}</p>
 
       <article className="sample-card">
-        <div className="sample-card__media">
-          <Image
-            src={content.imagePath}
-            alt={content.imageAlt}
-            width={1024}
-            height={610}
-            className="sample-card__img"
-            sizes="(max-width: 767px) 100vw, (max-width: 1023px) 720px, 560px"
-          />
+        <header className="sample-card__header">
+          <div className="sample-card__thumb">
+            <Image
+              src={content.imagePath}
+              alt={content.imageAlt}
+              width={1024}
+              height={610}
+              className="sample-card__thumb-img"
+              sizes="(max-width: 767px) 50vw, (max-width: 1023px) 200px, 260px"
+            />
+          </div>
+
+          <div className="sample-card__identity">
+            <h3 className="m-0 text-lg font-semibold tracking-tight text-text-primary">
+              {content.vehicleName}
+            </h3>
+            <p className="m-0 mt-1 text-sm text-text-secondary">
+              {content.vehicleMeta}
+            </p>
+          </div>
+
           <div
             className="sample-card__score"
             aria-label={`Score ${content.scoreValue}, ${content.scoreBand}`}
           >
+            <span className="sample-card__score-label">Score</span>
             <span className="sample-card__score-value tabular-nums">
               {content.scoreValue}
             </span>
             <span className="sample-card__score-band">{content.scoreBand}</span>
           </div>
-        </div>
+        </header>
 
         <div className="sample-card__body">
-          <header className="sample-card__identity">
-            <div className="min-w-0">
-              <h3 className="m-0 text-lg font-semibold tracking-tight text-text-primary">
-                {content.vehicleName}
-              </h3>
-              <p className="m-0 mt-1 text-sm text-text-secondary">
-                {content.vehicleMeta}
-              </p>
-            </div>
-          </header>
-
           <div className="sample-card__why">
             <p className="sample-card__why-label">{content.markersLabel}</p>
             <ul className="sample-card__markers">
@@ -97,10 +99,6 @@ export function SampleScoreSection({
             {content.ctaLabel}
             <ArrowRight weight="bold" size={18} className="ml-1.5" />
           </button>
-
-          <p className="sample-card__caption">
-            {applyCaptionTemplate(content.captionTemplate)}
-          </p>
         </div>
       </article>
     </section>

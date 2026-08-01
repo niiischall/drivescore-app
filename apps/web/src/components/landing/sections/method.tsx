@@ -12,10 +12,11 @@ export function MethodSection({
   content: LandingPage["method"];
 }) {
   const [showMarkers, setShowMarkers] = useState(false);
+  const [activeSlice, setActiveSlice] = useState<string | null>(null);
   const slices = content.slices;
 
   return (
-    <section id="how" className="landing-section">
+    <section id="how" className="landing-section landing-section--method">
       <span className="landing-section__eyebrow">{content.eyebrow}</span>
       <h2 className="landing-section__title">
         <AccentTitle
@@ -26,93 +27,119 @@ export function MethodSection({
       </h2>
       <p className="landing-section__lede">{content.lede}</p>
 
-      <div className="flex flex-col gap-3">
-        <div className="flex items-baseline justify-between text-[12px] text-text-secondary">
-          <span>{content.compositionLabel}</span>
-          <span className="tabular-nums font-medium text-text-primary">100%</span>
+      <div
+        className="landing-method__panel"
+        data-active-slice={activeSlice ?? undefined}
+        onMouseLeave={() => setActiveSlice(null)}
+        onBlur={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+            setActiveSlice(null);
+          }
+        }}
+      >
+        <div className="landing-method__compose">
+          <div className="landing-method__compose-head">
+            <span className="landing-method__compose-label">
+              {content.compositionLabel}
+            </span>
+            <span className="landing-method__compose-total tabular-nums">
+              100%
+            </span>
+          </div>
+          <div
+            className="landing-compose landing-compose--method"
+            role="group"
+            aria-label={slices
+              .map((slice) => `${slice.label}: ${slice.share}%`)
+              .join(", ")}
+          >
+            {slices.map((slice) => (
+              <button
+                key={slice.id}
+                type="button"
+                data-slice={slice.id}
+                className="landing-compose__slice landing-compose__slice--interactive"
+                style={{ flex: `${slice.share} 1 0` }}
+                aria-label={`${slice.label}: ${slice.share}%`}
+                aria-pressed={activeSlice === slice.id}
+                onMouseEnter={() => setActiveSlice(slice.id)}
+                onFocus={() => setActiveSlice(slice.id)}
+                onClick={() => setActiveSlice(slice.id)}
+              />
+            ))}
+          </div>
         </div>
-        <div className="landing-compose" aria-hidden="true">
-          {slices.map((slice) => (
-            <div
-              key={slice.id}
-              data-slice={slice.id}
-              className="landing-compose__slice"
-              style={{ width: `${slice.share}%` }}
-              title={`${slice.label}: ${slice.share}%`}
-            />
-          ))}
-        </div>
-      </div>
 
-      <ol className="landing-method__slices">
-        {slices.map((slice) => (
-          <li key={slice.id}>
-            <span
+        <ol className="landing-method__slices">
+          {slices.map((slice) => (
+            <li
+              key={slice.id}
+              className="landing-method__slice"
               data-slice={slice.id}
-              className="landing-swatch mt-1.5 size-2.5 flex-none rounded-full"
-              aria-hidden
-            />
-            <div className="flex min-w-0 flex-1 flex-col gap-1">
-              <div className="flex items-baseline justify-between gap-3">
-                <span className="text-base font-semibold">{slice.label}</span>
+              onMouseEnter={() => setActiveSlice(slice.id)}
+            >
+              <div className="landing-method__slice-head">
                 <span
                   data-slice={slice.id}
-                  className="landing-compose-pct flex-none tabular-nums text-lg font-bold"
+                  className="landing-method__swatch"
+                  aria-hidden
+                />
+                <span
+                  data-slice={slice.id}
+                  className="landing-method__slice-pct landing-compose-pct tabular-nums"
                 >
                   {slice.share}%
                 </span>
               </div>
-              <span className="text-sm leading-normal text-[var(--landing-muted)]">
-                {slice.blurb}
-              </span>
-            </div>
-          </li>
-        ))}
-      </ol>
-
-      <button
-        type="button"
-        aria-expanded={showMarkers}
-        onClick={() => {
-          setShowMarkers((v) => {
-            const next = !v;
-            track("landing_markers_toggled", { open: next });
-            return next;
-          });
-        }}
-        className="landing-method__toggle landing-glass flex w-full cursor-pointer items-center justify-between rounded-full border border-[var(--landing-card-border)] bg-[var(--landing-card)] px-5 py-3.5 text-left text-[15px] font-semibold text-text-primary"
-      >
-        <span>
-          {showMarkers
-            ? content.hideMarkersLabel
-            : content.showMarkersLabel}
-        </span>
-        {showMarkers ? (
-          <X weight="bold" size={16} className="text-[var(--landing-lilac)]" />
-        ) : (
-          <Plus weight="bold" size={16} className="text-[var(--landing-lilac)]" />
-        )}
-      </button>
-
-      {showMarkers ? (
-        <ol className="landing-method__markers m-0 flex list-none flex-col gap-0 border-t border-[var(--landing-hairline)] p-0 pt-1">
-          {slices.flatMap((slice) =>
-            slice.markers.map((m) => (
-              <li
-                key={m.name}
-                className="flex items-baseline justify-between gap-4 border-b border-[var(--landing-hairline)] py-3.5"
-              >
-                <span className="text-sm leading-snug text-text-primary">
-                  {m.name}
-                </span>
-                <span className="flex-none tabular-nums text-sm font-semibold text-text-secondary">
-                  {m.weight}%
-                </span>
-              </li>
-            )),
-          )}
+              <h3 className="landing-method__slice-title">{slice.label}</h3>
+              <p className="landing-method__slice-body">{slice.blurb}</p>
+            </li>
+          ))}
         </ol>
-      ) : null}
+
+        <button
+          type="button"
+          aria-expanded={showMarkers}
+          onClick={() => {
+            setShowMarkers((v) => {
+              const next = !v;
+              track("landing_markers_toggled", { open: next });
+              return next;
+            });
+          }}
+          className="landing-method__toggle landing-glass"
+        >
+          <span>
+            {showMarkers
+              ? content.hideMarkersLabel
+              : content.showMarkersLabel}
+          </span>
+          {showMarkers ? (
+            <X weight="bold" size={18} className="landing-method__toggle-icon" />
+          ) : (
+            <Plus
+              weight="bold"
+              size={18}
+              className="landing-method__toggle-icon"
+            />
+          )}
+        </button>
+
+        {showMarkers ? (
+          <ol className="landing-method__markers">
+            {slices.flatMap((slice) =>
+              slice.markers.map((m) => (
+                <li key={m.name} className="landing-method__marker">
+                  <span className="landing-method__marker-name">{m.name}</span>
+                  <span className="landing-method__marker-weight tabular-nums">
+                    {m.weight}%
+                  </span>
+                </li>
+              )),
+            )}
+          </ol>
+        ) : null}
+      </div>
     </section>
   );
 }
