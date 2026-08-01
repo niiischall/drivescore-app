@@ -112,8 +112,7 @@ export const landingPageQuery = defineQuery(`
     footer{
       builtForLabel,
       blurb,
-      methodLinks[]{ label, href },
-      companyLinks[]{ label, href }
+      methodLinks[]{ label, href }
     }
   }
 `);

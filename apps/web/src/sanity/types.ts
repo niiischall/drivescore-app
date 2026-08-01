@@ -160,7 +160,6 @@ export type LandingPage = {
     builtForLabel: string;
     blurb: string;
     methodLinks: NavLink[];
-    companyLinks: NavLink[];
   };
 };
 

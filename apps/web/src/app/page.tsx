@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { LandingPage } from "@/components/landing";
-import { getUniqueVisitorCount } from "@/lib/posthog-visitors";
 import { getSiteUrl } from "@/lib/site";
 import {
   getFaqItems,
@@ -82,8 +81,7 @@ function buildJsonLd(
 }
 
 export default async function Home() {
-  const [visitorCount, content, faqs, siteSettings] = await Promise.all([
-    getUniqueVisitorCount(),
+  const [content, faqs, siteSettings] = await Promise.all([
     getLandingPage(),
     getFaqItems(),
     getSiteSettings(),
@@ -98,7 +96,6 @@ export default async function Home() {
         }}
       />
       <LandingPage
-        visitorCount={visitorCount}
         content={content}
         faqs={faqs}
         siteSettings={siteSettings}

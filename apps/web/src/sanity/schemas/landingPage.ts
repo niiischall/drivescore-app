@@ -446,12 +446,6 @@ export const landingPage = defineType({
           type: "array",
           of: [defineArrayMember({ type: "navLink" })],
         }),
-        defineField({
-          name: "companyLinks",
-          title: "Company links",
-          type: "array",
-          of: [defineArrayMember({ type: "navLink" })],
-        }),
       ],
     }),
   ],

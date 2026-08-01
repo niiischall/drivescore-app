@@ -8,4 +8,3 @@ export { MethodSection } from "./method";
 export { ProblemSection } from "./problem";
 export { SampleScoreSection } from "./sample-score";
 export { StickyCta } from "./sticky-cta";
-export { VisitorMarquee } from "./visitor-marquee";

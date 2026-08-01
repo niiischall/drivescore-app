@@ -15,7 +15,6 @@ import {
   ProblemSection,
   SampleScoreSection,
   StickyCta,
-  VisitorMarquee,
 } from "./sections";
 import {
   WaitlistModal,
@@ -24,12 +23,10 @@ import {
 import "./styles/landing.css";
 
 export function LandingPage({
-  visitorCount,
   content,
   faqs,
   siteSettings,
 }: {
-  visitorCount: number;
   content: LandingContent;
   faqs: FaqItem[];
   siteSettings: SiteSettings;
@@ -56,12 +53,6 @@ export function LandingPage({
 
   return (
     <div ref={rootRef} className="landing font-sans">
-      <div data-section="marquee">
-        <VisitorMarquee
-          visitorCount={visitorCount}
-          suffix={content.marqueeSuffix}
-        />
-      </div>
       <div data-section="header">
         <LandingHeader badge={content.headerBadge} />
       </div>

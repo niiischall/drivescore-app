@@ -1,13 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { track } from "@/lib/analytics";
 import type { LandingPage, SiteSettings } from "@/sanity/types";
 import { BrandMark, BrandWordmark } from "../ui/brand";
 import { IndiaFlag } from "../ui/india-flag";
 
 function trackFooterLink(
-  group: "method" | "company" | "credit",
+  group: "method" | "credit",
   label: string,
   href: string,
 ) {
@@ -41,7 +40,7 @@ export function LandingFooter({
           {content.blurb}
         </p>
         <div className="landing-footer__col">
-          <span className="landing-footer__col-label">METHOD</span>
+          <span className="landing-footer__col-label">EXPLORE</span>
           <div className="landing-footer__links">
             {content.methodLinks.map((link) => (
               <a
@@ -51,22 +50,6 @@ export function LandingFooter({
               >
                 {link.label}
               </a>
-            ))}
-          </div>
-        </div>
-        <div className="landing-footer__col">
-          <span className="landing-footer__col-label">COMPANY</span>
-          <div className="landing-footer__links">
-            {content.companyLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                onClick={() =>
-                  trackFooterLink("company", link.label, link.href)
-                }
-              >
-                {link.label}
-              </Link>
             ))}
           </div>
         </div>
