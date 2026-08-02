@@ -32,7 +32,7 @@ User lands on landing page → onboards via multi-stage form → gets free score
 - Data model implication: separate `reports` table (keyed on fingerprint) from `checks` table (user + timestamp, references a report). Ten users checking the same car with similar usage share one stored report and one token spend.
 
 ### Regeneration triggers (the only events that should burn a fresh AI call)
-- Rubric version change (e.g. v0.2 → v0.3): default to serving the old report tagged with its rubric version rather than auto-regenerating everything — regenerate only on next explicit access/request, to avoid a cost spike across the whole cached set
+- Rubric version change (e.g. v0.1 → v0.2): default to serving the old report tagged with its rubric version rather than auto-regenerating everything — regenerate only on next explicit access/request, to avoid a cost spike across the whole cached set
 - OEM issues a new explicit declaration for that model: this is a genuine Marker 1 change (highest-weight marker) — this does warrant regeneration
 - User's usage profile changes materially (odometer crosses a bucket boundary, moves states): default to still serving the cached report for minor drift; consider regenerating only the usage-narrative paragraph rather than the full report if the change is significant
 

@@ -25,7 +25,7 @@ Every vehicle gets a 0–100 compatibility score with an explicit confidence rat
 Landing Page (+ waitlist) → Multi-Stage Form → Scoring Engine → AI Report
 ```
 
-**Live today (`apps/web`):** marketing landing page and waitlist signup (Resend segment + confirmation email). **Marketing and static page copy are served from Sanity CMS** — see [`docs/07-sanity-cms.md`](docs/07-sanity-cms.md).
+**Live today (`apps/web`):** marketing landing page and waitlist signup (Resend segment + confirmation email). **Landing page and FAQ copy are served from Sanity CMS** — see [`docs/07-sanity-cms.md`](docs/07-sanity-cms.md).
 
 **Planned product flow:**
 
@@ -70,7 +70,7 @@ Design specs and implementation notes live in [`docs/`](docs/):
 4. [`04-ai-report-and-monetization.md`](docs/04-ai-report-and-monetization.md) — free/paid split, subscription model, report-caching architecture
 5. [`05-system-architecture.md`](docs/05-system-architecture.md) — component overview, request flow, data model, regeneration policy
 6. [`06-waitlist-and-email.md`](docs/06-waitlist-and-email.md) — Resend waitlist, confirmation email, env + DNS setup (**implemented**)
-7. [`07-sanity-cms.md`](docs/07-sanity-cms.md) — **Sanity CMS** for marketing + static pages (**implemented**; required for `apps/web`)
+7. [`07-sanity-cms.md`](docs/07-sanity-cms.md) — **Sanity CMS** for landing + FAQ copy (**implemented**; required for `apps/web`)
 
 Web app runbook: [`apps/web/README.md`](apps/web/README.md).
 
@@ -78,7 +78,7 @@ Web app runbook: [`apps/web/README.md`](apps/web/README.md).
 
 ## Sanity CMS (required)
 
-Marketing copy for the landing page, FAQs, Privacy, and Contact is **not** in the repo — it is loaded from [Sanity](https://www.sanity.io).
+Marketing copy for the landing page and FAQs is **not** in the repo — it is loaded from [Sanity](https://www.sanity.io).
 
 | | |
 | --- | --- |
@@ -86,7 +86,7 @@ Marketing copy for the landing page, FAQs, Privacy, and Contact is **not** in th
 | Studio | `/studio` on the web app (e.g. `http://localhost:3000/studio`) |
 | Code | `apps/web/src/sanity/` |
 
-`NEXT_PUBLIC_SANITY_PROJECT_ID` must be set, and the dataset must contain published `siteSettings`, `landingPage`, and `faqItem` documents. Scoring rubric / `METHOD_VERSION` stay in code.
+`NEXT_PUBLIC_SANITY_PROJECT_ID` must be set, and the dataset must contain published `siteSettings`, `landingPage`, and `faqItem` documents. Scoring logic and `METHOD_VERSION` stay in code; the method weights shown on the landing page are a CMS-authored mirror of the rubric doc.
 
 ---
 
@@ -110,20 +110,22 @@ Required for waitlist locally / in production:
 - `RESEND_AUDIENCE_ID` (Resend Segment ID)
 - `RESEND_FROM_EMAIL` (verified domain sender, e.g. `DriveScore <hello@drivescore.club>`)
 
-Also commonly set: `NEXT_PUBLIC_SITE_URL`, `SANITY_API_READ_TOKEN`, PostHog keys (see [`apps/web/.env.example`](apps/web/.env.example)).
+Also commonly set: `NEXT_PUBLIC_SITE_URL`, `SANITY_API_READ_TOKEN`, `NEXT_PUBLIC_POSTHOG_KEY` (see [`apps/web/.env.example`](apps/web/.env.example)).
 
 ---
 
 ## Tech Stack
 
 - Next.js / React / TypeScript / Tailwind CSS (`apps/web`)
-- **Sanity** (marketing + static page CMS; embedded Studio at `/studio`)
+- **Sanity** (marketing CMS; embedded Studio at `/studio`)
 - TanStack Query (client API mutations)
 - Resend (waitlist contacts + transactional confirmation email)
-- PostHog (product analytics, proxied first-party)
+- PostHog (client-side product analytics, proxied first-party)
 - PostgreSQL / Prisma / OpenAI API (planned for scoring + reports)
 
-Monorepo layout: `apps/web` (Next.js app) + `packages/` (`scoring-engine`, `ai`, `cars`, `database`, `types`, `ui`, `config`).
+**Repo layout.** Today this is a single Next.js app at `apps/web`, with its own `package.json` and lockfile — there is no root workspace, so install and run from inside `apps/web`.
+
+The empty `packages/` directories (`scoring-engine`, `ai`, `cars`, `database`, `types`, `ui`, `config`) are placeholders for the planned split described in [`docs/05-system-architecture.md`](docs/05-system-architecture.md). Nothing lives in them yet; a pnpm workspace will be introduced when the first one is populated.
 
 ---
 
@@ -131,7 +133,7 @@ Monorepo layout: `apps/web` (Next.js app) + `packages/` (`scoring-engine`, `ai`,
 
 🚧 DriveScore is under active development.
 
-- **Shipped:** landing page + waitlist (Resend) + Sanity CMS for marketing/static copy in `apps/web`
+- **Shipped:** landing page + waitlist (Resend) + Sanity CMS for landing/FAQ copy in `apps/web`
 - **In progress / planned:** multi-stage form, scoring engine, AI report — see design docs; open items are listed at the bottom of each file
 
 ---

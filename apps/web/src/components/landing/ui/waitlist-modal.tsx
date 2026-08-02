@@ -5,7 +5,7 @@ import { useEffect, useId } from "react";
 import { BrandWordmark } from "./brand";
 import { WaitlistForm } from "./waitlist-form";
 
-export type WaitlistSource = "hero" | "sticky" | "sample" | "journey";
+export type WaitlistSource = "hero" | "sticky" | "sample";
 
 type WaitlistModalProps = {
   open: boolean;

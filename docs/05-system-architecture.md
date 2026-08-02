@@ -11,13 +11,13 @@ This doc describes how the pieces already specified (landing page, form, rubric,
 
 | Component | Role |
 | --------- | ---- |
-| Landing client | Marketing page; hero waitlist form via TanStack Query |
+| Landing client | Marketing page; waitlist modal reached from the sticky/sample/hero-mobile CTAs, plus an inline hero form on desktop, both submitting via TanStack Query |
 | Sanity CMS | Marketing copy (`siteSettings`, `landingPage`, `faqItem`); Studio at `/studio`; ~1h ISR cache |
 | Waitlist API | `POST /api/waitlist` — validate email, upsert Resend Segment contact, send confirmation |
 | Resend | Contact storage (Segment) + transactional confirmation email |
-| PostHog | Client analytics (`/pulse` proxy); optional server HogQL for unique visitor count |
+| PostHog | Client analytics only, proxied first-party via `/pulse`. No server-side calls |
 
-Details: `06-waitlist-and-email.md`, **`07-sanity-cms.md`**, `apps/web/README.md`. Scoring rubric / `METHOD_VERSION` remain code-owned — Sanity holds marketing presentation only.
+Details: `06-waitlist-and-email.md`, **`07-sanity-cms.md`**, `apps/web/README.md`. Scoring logic and `METHOD_VERSION` are code-owned; Sanity holds marketing presentation, including a display mirror of the rubric weights (`07-sanity-cms.md`).
 
 ## Component overview (full product)
 
@@ -37,8 +37,11 @@ Details: `06-waitlist-and-email.md`, **`07-sanity-cms.md`**, `apps/web/README.md
 
 ```mermaid
 flowchart LR
-    U([User]) --> H[Landing hero]
-    H -->|email| API["POST /api/waitlist"]
+    U([User]) --> C["Landing CTAs<br/>sticky · sample · hero (mobile)"]
+    U --> D["Hero aside form<br/>(desktop)"]
+    C --> M[Waitlist modal]
+    M -->|email| API["POST /api/waitlist"]
+    D -->|email| API
     API --> RS[Resend Segment]
     API --> EM[Confirmation email]
 ```

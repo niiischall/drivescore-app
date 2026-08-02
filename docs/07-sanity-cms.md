@@ -5,7 +5,11 @@ Related: `01-landing-page.md`, `05-system-architecture.md`, [`apps/web/README.md
 
 ## Purpose
 
-All marketing and static page copy is authored in **Sanity**, not hardcoded in React. Presentation (layout, CSS, motion, waitlist logic) stays in the Next.js app; editors change text, FAQs, and legal/company pages in Studio without a redeploy for content-only updates (subject to the ~1 hour ISR cache).
+All landing-page and FAQ copy is authored in **Sanity**, not hardcoded in React. Presentation (layout, CSS, motion, waitlist logic) stays in the Next.js app; editors change text and FAQs in Studio without a redeploy for content-only updates (subject to the ~1 hour ISR cache).
+
+There are currently no standalone legal/company pages. `/privacy`, `/faq` and `/contact` were retired — the FAQ lives as a landing section, and `scripts/migrate-landing-copy.ts` deletes the legacy `companyPage` documents.
+
+The only content route is `/`. The rest are `/studio`, `/api/waitlist`, and the generated files `/llms.txt`, `/llms-full.txt`, `/sitemap.xml`, `/robots.txt`, `/manifest.webmanifest`.
 
 This is a core integration for `apps/web`. Builds and runtime require a configured Sanity project with published documents.
 
@@ -13,20 +17,35 @@ This is a core integration for `apps/web`. Builds and runtime require a configur
 
 | Document type | Pattern | Powers |
 | ------------- | ------- | ------ |
-| `siteSettings` | singleton (`siteSettings`) | Product name, default SEO title/description, contact email, footer disclaimer |
-| `landingPage` | singleton (`landingPage`) | Hero, quick actions, problem, sample score, method display, confidence, FAQ chrome, sticky CTA, footer |
+| `siteSettings` | singleton (`siteSettings`) | Product name, default SEO title/description, locale, footer disclaimer |
+| `landingPage` | singleton (`landingPage`) | Header badge, hero, problem, journey, sample score, method display, confidence, FAQ chrome, sticky CTA, footer |
 | `faqItem` | ordered documents | Landing FAQ accordion, FAQ JSON-LD, `llms-full.txt` |
 
-Nested on `landingPage`: problem cards, sample markers, method slices (marketing display), confidence pointers, nav links.
+Nested on `landingPage`: problem cards, journey steps, sample markers, method slices and markers, confidence pointers, nav links.
+
+Several of these are load-bearing, not optional — `sanity/lib/fetch.ts` throws a named error if any array the landing components dereference is missing or empty. See the contributor notes below for the full list.
 
 ## What does **not** live in Sanity
 
-- Scoring engine / rubric truth — `METHOD_VERSION` in `apps/web/src/lib/method.ts` and future `packages/scoring-engine`
+- Scoring logic and the rubric of record — `METHOD_VERSION` in `apps/web/src/lib/method.ts` and `docs/02-scoring-engine-rubric.md`
 - Waitlist / Resend email templates
-- PostHog analytics and visitor-count logic
+- PostHog analytics
 - UI structure, tokens, and motion
 
-CMS may show a `methodVersionLabel` for marketing; it is not the engine source of truth.
+## The method weights are a CMS-authored mirror
+
+One deliberate exception to the rule above. The method section's **tier shares** (`methodSlice.share`) and **all ten marker weights** (`methodMarker.weight`) are numeric fields authored in Studio, rendered from CMS in `sections/method.tsx`, and emitted into `/llms-full.txt` via `lib/llms.ts`.
+
+They are a **display mirror of `docs/02-scoring-engine-rubric.md`, not the source of truth.** Nothing computes a score from them today, and when `packages/scoring-engine` lands it will read its weights from code, not from Sanity.
+
+Guardrails in the schema:
+
+- Every slice `share` and marker `weight` is required and constrained to 0–100
+- `method.slices` must be present and non-empty, and each slice must carry at least one marker
+- Slice shares must total exactly 100 — a publish-blocking error, because `method.tsx` renders a hardcoded “100%” composition label
+- Marker weights within a slice should total that slice's share — a warning, so an in-progress edit isn't blocked
+
+Editing a weight here changes what the site claims about its method while the rubric doc and `METHOD_VERSION` say something else. Change `docs/02` first, then mirror it here.
 
 ## Architecture
 
@@ -89,8 +108,34 @@ pnpm migrate:sanity-copy -- --apply   # write
 
 `scripts/migrate-landing-copy.ts` renames `E20 Score` → `E20 report` across `landingPage` / `siteSettings` / `faqItem`, strips footer links to retired company routes, and deletes legacy `companyPage` docs for `privacy`, `faq`, and `contact`.
 
+### Retired fields
+
+These fields were authored and fetched but never rendered, so they were removed from the schema, GROQ query and types: `marqueeSuffix`, `hero.heroImageLight`, `hero.heroImageDark`, `hero.heroImageAlt`, `hero.stats` (and the `heroStat` object type), `journey.ctaLabel`, `journey.gaugeStartLabel`, `journey.gaugeEndLabel`, `method.methodVersionLabel`, `sampleScore.captionTemplate`, `siteSettings.contactEmail`.
+
+Removing a field from the schema hides it in Studio but does **not** delete the stored values — any content already published under these keys is still in the dataset and will reappear if the field is re-added.
+
 ## Agent / contributor notes
 
 - Do not hardcode marketing copy in landing sections — extend schemas + GROQ + typed props instead.
 - Prefer semantic design tokens for presentation; Sanity fields are content only.
-- Keep rubric weights and scoring logic in code; only marketing blurbs/labels for the method section belong in CMS.
+- Keep scoring logic in code. The method weights in CMS are a display mirror of `docs/02` (see above) — do not add any other numeric rubric data to Sanity.
+- **A field is only "done" when something renders it.** Adding a field to the schema and the GROQ query but not to a component gives editors a Studio input that silently does nothing. If a field has no consumer yet, leave it out until it does.
+- Conversely, a field is only safe if something guarantees it is populated. `sanity/lib/fetch.ts` throws a named error listing whichever of these is missing or empty, so a bad document fails with a useful message instead of crashing mid-render:
+
+  `hero.titleAccent` · `hero.bullets` · `problem.cards` · `journey.titleAccent` · `journey.steps` · `sampleScore.imagePath` · `sampleScore.markers` · `method.slices` (and every slice's `markers`) · `confidence.pointers` · `footer.methodLinks`
+
+  Add to that list whenever you render a CMS array or an image path without a guard.
+
+### Known exceptions — copy still hardcoded in React
+
+These render live English strings that editors cannot change, contrary to the rule above. The whole waitlist surface is hardcoded, which is the largest gap. All of it should move into `landingPage`.
+
+| File | Hardcoded strings |
+| --- | --- |
+| `ui/waitlist-modal.tsx` | Title “Join the waitlist”; body “Be first to check your car's E20 report. Free first check — we'll email you at launch.”; success title “You're on the list”; success body “We'll email {email} when DriveScore launches. Your first check stays free.”; “Done”; aria-labels “Close waitlist dialog” / “Close” |
+| `ui/waitlist-form.tsx` | Label “Email”; placeholder “you@email.com”; submit “Get early access”; loading “Joining…”; error fallback “Couldn't join — try again”; footnote “No spam · Unsubscribe anytime · Built for Indian cars” |
+| `sections/hero.tsx` | The desktop aside card's title and body (duplicating the modal's) — the only hero copy desktop visitors see; the gauge tick labels E0–E25 |
+| `sections/journey.tsx` | Trail image `alt`; aria-labels “Steps on the path” and “Step N: …”. Contrast `sampleScore`, which correctly uses a CMS `imageAlt` |
+| `sections/sample-score.tsx` | The “Score” label on the score card |
+| `sections/footer.tsx` | Column label “EXPLORE”; the “Built with ❤️ by Nischal Nikit” credit line and its LinkedIn URL |
+| `sections/method.tsx` | The “100%” composition total (intentional — it is an invariant, enforced by the slice-share validation above) |

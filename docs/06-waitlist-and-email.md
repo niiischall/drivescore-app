@@ -12,13 +12,20 @@ Capture launch interest from the landing page hero, store the contact in Resend,
 ```mermaid
 sequenceDiagram
   participant User
-  participant Hero as HeroSection
+  participant CTA as Sticky / Sample / Hero-mobile CTA
+  participant Page as LandingPage
+  participant Form as WaitlistForm
   participant Hook as useJoinWaitlist
   participant API as POST_api_waitlist
   participant Resend
 
-  User->>Hero: Submit email
-  Hero->>Hook: mutate email
+  User->>CTA: Click join
+  CTA->>Page: openWaitlist(source)
+  Page->>Page: PostHog waitlist_cta_clicked
+  Page->>Form: Open WaitlistModal
+  User->>Form: Submit email
+  Form->>Form: PostHog waitlist_submit_attempted
+  Form->>Hook: mutate email
   Hook->>API: JSON email
   API->>API: Validate + normalize
   API->>Resend: Upsert contact into Segment
@@ -26,23 +33,35 @@ sequenceDiagram
   Resend-->>User: Inbox confirmation
   API-->>Hook: 200 ok
   Hook->>Hook: PostHog waitlist_joined
-  Hook-->>Hero: Success UI
+  Hook-->>Form: Success UI
 ```
+
+There are two paths into the same hook, split by breakpoint — not both at once:
+
+- **Modal path** — sticky CTA, sample-score CTA, and the hero button *on mobile only*. Fires `waitlist_cta_clicked` first.
+- **Inline path** — on desktop (≥768px) `landing.css` hides `.landing-hero__cta` and shows `.landing-hero__aside`, which renders a `WaitlistForm` directly. No modal, and no `waitlist_cta_clicked`.
+
+So `waitlist_cta_clicked{source:"hero"}` fires on mobile only. Read hero conversion from `waitlist_submit_attempted{source:"hero"}` instead, which fires on both.
 
 ## Implementation map
 
 | Piece | Path |
 | ----- | ---- |
-| Hero form | `apps/web/src/components/landing/sections/hero.tsx` |
+| CTA sources + modal state (`hero` / `sample` / `sticky`) | `apps/web/src/components/landing/landing-page.tsx` |
+| Modal shell | `apps/web/src/components/landing/ui/waitlist-modal.tsx` |
+| **Form UI + submit** | `apps/web/src/components/landing/ui/waitlist-form.tsx` |
+| Inline desktop hero variant of the form | `apps/web/src/components/landing/sections/hero.tsx` |
+| Breakpoint switch between the two hero paths | `apps/web/src/components/landing/styles/landing.css` |
 | React Query mutation | `apps/web/src/hooks/use-join-waitlist.ts` |
 | Client fetch helper | `apps/web/src/lib/waitlist-api.ts` |
 | Query provider | `apps/web/src/components/providers/query-provider.tsx` |
 | API route | `apps/web/src/app/api/waitlist/route.ts` |
 | Resend helpers | `apps/web/src/lib/waitlist.ts` |
+| Email template | `apps/web/src/lib/waitlist-email.ts` |
 
 ## Behavior
 
-1. Client validates email via HTML `required` + `type="email"`, then posts to `/api/waitlist`.
+1. `WaitlistForm` validates email via HTML `required` + `type="email"`, fires `waitlist_submit_attempted`, then posts to `/api/waitlist`.
 2. Server normalizes (trim + lowercase) and validates with a strict regex; `400` on invalid.
 3. Contact is upserted into a Resend **Segment** (env `RESEND_AUDIENCE_ID` — Resend renamed Audiences → Segments).
 4. Already-subscribed contacts are treated as success (idempotent join).
@@ -63,9 +82,8 @@ Also required for analytics / site URL elsewhere:
 
 | Variable | Purpose |
 | -------- | ------- |
-| `NEXT_PUBLIC_POSTHOG_KEY` | Client PostHog |
-| `NEXT_PUBLIC_SITE_URL` | Canonical / OG / sitemap base URL |
-| `POSTHOG_PERSONAL_API_KEY` / `POSTHOG_PROJECT_ID` / `POSTHOG_HOST` | Server visitor count (optional; falls back to static count) |
+| `NEXT_PUBLIC_POSTHOG_KEY` | Client PostHog (analytics is client-only — there is no server-side PostHog call) |
+| `NEXT_PUBLIC_SITE_URL` | Canonical / OG / sitemap base URL, and the absolute image URL in the confirmation email |
 
 ## Resend + domain setup (production)
 
@@ -86,14 +104,13 @@ Local-only shortcut before domain verify: `RESEND_FROM_EMAIL=DriveScore <onboard
 ## Email content
 
 Template: `apps/web/src/lib/waitlist-email.ts`  
-Hero image (absolute URL): `{NEXT_PUBLIC_SITE_URL}/illustrations/car-suv-india-hero-light.png` — same asset as the light-theme landing hero
-
-Landing page theme art: `car-suv-india-hero-light.png` (light) / `car-suv-india-hero.png` (dark), swapped via `data-theme` in CSS.
+Brand image (absolute URL): `{NEXT_PUBLIC_SITE_URL}/icons/icon-512.png` — the app icon. There is no separate email hero illustration.
 
 - Subject: waitlist confirmed + E20 positioning
-- HTML: ~640px light marketing layout — brand header, hero car, product pillars (free check, 10 markers, confidence, AI explains), stats strip, CTA
+- HTML: ~640px light marketing layout — brand header, product pillars (free check, 10 markers, confidence bands, AI explains), CTA
 - Plain-text alternative with the same beats
 - Images require a publicly reachable `NEXT_PUBLIC_SITE_URL` (localhost URLs will break the image in the inbox)
+- The email is light-mode only; it does not follow the site's `data-theme` switch
 
 ## Out of scope (later)
 

@@ -163,6 +163,8 @@ export const methodMarker = defineType({
       name: "weight",
       title: "Weight (%)",
       type: "number",
+      description:
+        "Marketing display value. Must mirror the marker weight in docs/02-scoring-engine-rubric.md — editing it here changes what the site claims, not how any score is computed.",
       validation: (Rule) => Rule.required().min(0).max(100),
     }),
   ],
@@ -183,6 +185,8 @@ export const methodSlice = defineType({
       name: "share",
       title: "Share (%)",
       type: "number",
+      description:
+        "Tier share of the total score. All slice shares must add up to 100.",
       validation: (Rule) => Rule.required().min(0).max(100),
     }),
     defineField({
@@ -203,6 +207,8 @@ export const methodSlice = defineType({
       title: "Markers",
       type: "array",
       of: [defineArrayMember({ type: "methodMarker" })],
+      // method.tsx maps over this unconditionally.
+      validation: (Rule) => Rule.required().min(1),
     }),
   ],
 });
@@ -243,26 +249,6 @@ export const confidencePointer = defineType({
       rows: 4,
       description:
         "Use **bold** for emphasis. Use {{methodVersion}} for the code-owned method version stamp.",
-      validation: (Rule) => Rule.required(),
-    }),
-  ],
-});
-
-export const heroStat = defineType({
-  name: "heroStat",
-  title: "Hero stat",
-  type: "object",
-  fields: [
-    defineField({
-      name: "value",
-      title: "Value",
-      type: "string",
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "label",
-      title: "Label",
-      type: "string",
       validation: (Rule) => Rule.required(),
     }),
   ],
