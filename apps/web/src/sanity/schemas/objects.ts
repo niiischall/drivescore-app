@@ -1,28 +1,9 @@
 /**
  * @module sanity/schemas/objects
- * @description Reusable object types for landing + company content.
+ * @description Reusable object types for landing content.
  */
 
 import { defineArrayMember, defineField, defineType } from "sanity";
-
-export const seoFields = defineType({
-  name: "seoFields",
-  title: "SEO",
-  type: "object",
-  fields: [
-    defineField({
-      name: "title",
-      title: "Title",
-      type: "string",
-    }),
-    defineField({
-      name: "description",
-      title: "Description",
-      type: "text",
-      rows: 3,
-    }),
-  ],
-});
 
 export const textSegment = defineType({
   name: "textSegment",

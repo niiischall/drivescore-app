@@ -170,15 +170,3 @@ export type FaqItem = {
   answerPlain: string;
   order: number;
 };
-
-export type CompanyPage = {
-  slug: string;
-  eyebrow: string;
-  title: string;
-  body: PortableTextBlock[];
-  seo: {
-    title?: string | null;
-    description?: string | null;
-  } | null;
-  lastUpdated?: string | null;
-};

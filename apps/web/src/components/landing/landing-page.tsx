@@ -61,16 +61,14 @@ export function LandingPage({
           content={content.hero}
           joinedEmail={joinedEmail}
           onJoinClick={() => openWaitlist("hero")}
+          onJoined={setJoinedEmail}
         />
       </div>
       <div data-section="problem">
         <ProblemSection content={content.problem} />
       </div>
       <div data-section="journey">
-        <JourneySection
-          content={content.journey}
-          onCtaClick={() => openWaitlist("journey")}
-        />
+        <JourneySection content={content.journey} />
       </div>
       <div data-section="sample_score">
         <SampleScoreSection

@@ -86,7 +86,7 @@ Marketing copy for the landing page, FAQs, Privacy, and Contact is **not** in th
 | Studio | `/studio` on the web app (e.g. `http://localhost:3000/studio`) |
 | Code | `apps/web/src/sanity/` |
 
-`NEXT_PUBLIC_SANITY_PROJECT_ID` must be set, and the dataset must contain published `siteSettings`, `landingPage`, `faqItem`, and `companyPage` documents. Scoring rubric / `METHOD_VERSION` stay in code.
+`NEXT_PUBLIC_SANITY_PROJECT_ID` must be set, and the dataset must contain published `siteSettings`, `landingPage`, and `faqItem` documents. Scoring rubric / `METHOD_VERSION` stay in code.
 
 ---
 

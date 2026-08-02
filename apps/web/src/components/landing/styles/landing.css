@@ -63,6 +63,7 @@
   --landing-cta-hover: var(--color-primary-hover);
   --landing-cta-fg: var(--color-on-primary);
   --landing-shell: 480px;
+  --landing-section-y: var(--space-10);
 
   width: 100%;
   max-width: none;
@@ -169,13 +170,32 @@
 @media (min-width: 768px) {
   .landing {
     --landing-shell: 720px;
+    --landing-section-y: var(--space-12);
   }
 }
 
 @media (min-width: 1024px) {
   .landing {
     --landing-shell: 1120px;
+    --landing-section-y: var(--space-16);
   }
+}
+
+/* Subtle dividers between sections */
+.landing > [data-section] + [data-section]:not([data-section="footer"]) {
+  border-top: 1px solid var(--landing-hairline);
+}
+
+.landing > [data-section="header"] + [data-section] {
+  border-top: none;
+}
+
+.landing > [data-section]:not([data-section="header"]):not([data-section="footer"]) {
+  padding-block: var(--landing-section-y);
+}
+
+.landing > [data-section="footer"] {
+  padding-top: var(--landing-section-y);
 }
 
 /* Offset hash targets so sticky chrome doesn’t cover headings */
@@ -689,8 +709,140 @@
 .landing-hero {
   display: flex;
   flex-direction: column;
+  gap: var(--space-6);
+  padding-inline: var(--space-4);
+}
+
+.landing-hero__main {
+  display: flex;
+  flex-direction: column;
   gap: 18px;
-  padding: var(--space-5) var(--space-4) 36px;
+  min-width: 0;
+}
+
+.landing-hero__aside {
+  display: none;
+  flex: none;
+  width: 100%;
+}
+
+.landing-hero__cta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.landing-hero__form-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-7) var(--space-6);
+  border-radius: var(--radius-3xl);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 42%, transparent);
+  background: var(--color-surface-raised);
+  /* Light mode: highlighter lives outside the card (box-shadow halo) so the
+     surface stays clean and the card silhouette reads as the emphasis. */
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-primary) 14%, transparent),
+    0 0 40px 4px color-mix(in srgb, var(--color-primary) 26%, transparent),
+    0 12px 48px color-mix(in srgb, var(--color-primary) 20%, transparent),
+    var(--shadow-xl);
+}
+
+/* Dark mode keeps an in-card wash + soft outer bloom (reads better on starfield). */
+[data-theme="dark"] .landing-hero__form-card {
+  isolation: isolate;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-primary) 14%, transparent),
+    0 20px 50px color-mix(in srgb, var(--color-primary) 22%, transparent),
+    var(--shadow-xl);
+}
+
+[data-theme="dark"] .landing-hero__form-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--color-primary) 28%, transparent),
+    color-mix(in srgb, var(--color-primary) 8%, transparent) 55%,
+    transparent
+  );
+  pointer-events: none;
+  user-select: none;
+}
+
+[data-theme="dark"] .landing-hero__form-card::after {
+  content: "";
+  position: absolute;
+  inset: -24px -16px -32px;
+  z-index: -2;
+  border-radius: var(--radius-3xl);
+  background: radial-gradient(
+    ellipse at 50% 40%,
+    color-mix(in srgb, var(--color-primary) 32%, transparent),
+    transparent 68%
+  );
+  filter: blur(20px);
+  opacity: 0.85;
+  pointer-events: none;
+  user-select: none;
+}
+
+.landing-hero__form-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  text-wrap: balance;
+}
+
+.landing-hero__form-body {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--landing-muted);
+}
+
+.landing-hero__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.landing-hero__form .landing-modal__input {
+  height: 56px;
+  font-size: 17px;
+  border-color: color-mix(in srgb, var(--color-primary) 22%, var(--color-border));
+  background: var(--color-surface);
+}
+
+.landing-hero__form .landing-modal__input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 24%, transparent);
+}
+
+.landing-hero__form .landing-modal__submit {
+  height: 56px;
+  font-size: 17px;
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--color-primary) 35%, transparent);
+}
+
+.landing-hero__form-meta {
+  margin: 0;
+  text-align: center;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--landing-faint);
+}
+
+.landing-hero__form-card.landing-joined {
+  gap: var(--space-3);
 }
 
 .landing-hero__badge {
@@ -719,11 +871,6 @@
   gap: 10px;
 }
 
-.landing-hero__stats {
-  display: flex;
-  border-block: 1px solid var(--landing-hairline);
-}
-
 .landing-hero__gauge {
   display: flex;
   flex-direction: column;
@@ -736,128 +883,67 @@
   padding: 18px var(--space-4) 14px;
 }
 
-.landing-hero__cta {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.landing-hero-car {
-  position: relative;
-  margin-inline: calc(-1 * var(--space-2));
-  padding-block: var(--space-2);
-}
-
-.landing-hero-car__img {
-  display: block;
-  width: 100%;
-  height: auto;
-  max-width: 360px;
-  margin-inline: auto;
-  opacity: 1;
-}
-
-.landing-hero-car__img--dark {
-  display: none;
-}
-
-[data-theme="dark"] .landing-hero-car__img--light {
-  display: none;
-}
-
-[data-theme="dark"] .landing-hero-car__img--dark {
-  display: block;
-}
-
-.landing-hero-car__glow {
-  position: absolute;
-  left: 50%;
-  bottom: 10%;
-  z-index: -1;
-  width: 65%;
-  height: 22%;
-  translate: -50% 0;
-  border-radius: var(--radius-full);
-  background: radial-gradient(
-    ellipse at center,
-    color-mix(in srgb, var(--color-primary) 22%, transparent),
-    transparent 72%
-  );
-  pointer-events: none;
-  user-select: none;
-}
-
 @media (min-width: 768px) {
   .landing-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    align-items: center;
+    gap: var(--space-8);
     padding-inline: var(--space-6);
-    gap: var(--space-5);
+  }
+
+  .landing-hero__main {
+    min-width: 0;
+    order: unset;
+  }
+
+  .landing-hero__aside {
+    display: block;
+    order: unset;
+    width: auto;
+    min-width: 0;
+  }
+
+  .landing-hero__cta {
+    display: none;
   }
 
   .landing-hero__title {
-    font-size: 40px;
+    font-size: 38px;
   }
 
-  .landing-hero-car__img {
-    max-width: 420px;
+  .landing-hero__form-title {
+    font-size: 28px;
+  }
+
+  .landing-hero__form-body {
+    font-size: 16px;
   }
 }
 
 @media (min-width: 1024px) {
   .landing-hero {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    column-gap: var(--space-10);
-    row-gap: var(--space-5);
-    align-items: center;
-    padding: var(--space-10) var(--space-6) var(--space-12);
-  }
-
-  .landing-hero__badge {
-    grid-column: 1;
-    grid-row: 1;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: var(--space-12);
   }
 
   .landing-hero__title {
-    grid-column: 1;
-    grid-row: 2;
-    font-size: 48px;
-    max-width: 18ch;
+    font-size: 42px;
+    max-width: 20ch;
   }
 
-  .landing-hero__media {
-    grid-column: 2;
-    grid-row: 1 / 7;
-    align-self: center;
-    margin: 0;
+  .landing-hero__form-card {
+    padding: var(--space-8) var(--space-7);
   }
 
-  .landing-hero__points {
-    grid-column: 1;
-    grid-row: 3;
+  .landing-hero__form-title {
+    font-size: 30px;
   }
 
-  .landing-hero__stats {
-    grid-column: 1;
-    grid-row: 4;
-  }
-
-  .landing-hero__gauge {
-    grid-column: 1;
-    grid-row: 5;
-  }
-
-  .landing-hero__cta {
-    grid-column: 1;
-    grid-row: 6;
-    max-width: 360px;
-  }
-
-  .landing-hero-car {
-    margin-inline: 0;
-  }
-
-  .landing-hero-car__img {
-    max-width: 520px;
+  .landing-hero__form .landing-modal__input,
+  .landing-hero__form .landing-modal__submit {
+    height: 58px;
+    font-size: 18px;
   }
 }
 
@@ -866,7 +952,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  padding: 0 var(--space-4) 44px;
+  padding-inline: var(--space-4);
 }
 
 .landing-section__eyebrow {
@@ -1024,7 +1110,6 @@
 @media (min-width: 768px) {
   .landing-section {
     padding-inline: var(--space-6);
-    padding-bottom: var(--space-12);
   }
 
   .landing-section__title {
@@ -1034,8 +1119,6 @@
 
 @media (min-width: 1024px) {
   .landing-section {
-    padding-inline: var(--space-6);
-    padding-bottom: var(--space-16);
     gap: var(--space-5);
   }
 
@@ -1240,6 +1323,45 @@
   .landing-problem__body {
     font-size: 17px;
     line-height: 1.6;
+  }
+}
+
+/* Sample score section — scaled emphasis */
+.landing-section--sample {
+  gap: var(--space-5);
+}
+
+.landing-section--sample .landing-section__eyebrow {
+  font-size: 13px;
+}
+
+.landing-section--sample .landing-section__title {
+  font-size: 32px;
+}
+
+.landing-section--sample .landing-section__lede {
+  font-size: 17px;
+}
+
+@media (min-width: 768px) {
+  .landing-section--sample .landing-section__title {
+    font-size: 38px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .landing-section--sample {
+    gap: var(--space-6);
+  }
+
+  .landing-section--sample .landing-section__title {
+    font-size: 44px;
+    max-width: 22ch;
+  }
+
+  .landing-section--sample .landing-section__lede {
+    font-size: 18px;
+    max-width: 58ch;
   }
 }
 
@@ -1873,7 +1995,7 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: 36px var(--space-4) var(--space-5);
+  padding: 0 var(--space-4) var(--space-5);
 }
 
 .landing-footer__brand-row {
@@ -1917,7 +2039,7 @@
 
 @media (min-width: 1024px) {
   .landing-footer {
-    padding: var(--space-12) var(--space-6) var(--space-8);
+    padding: 0 var(--space-6) var(--space-8);
     gap: var(--space-6);
   }
 
@@ -2457,36 +2579,6 @@
   color: var(--landing-muted);
 }
 
-.landing-journey__cta {
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  margin-top: var(--space-2);
-  height: 52px;
-  padding: 0 var(--space-5);
-  border: 0;
-  border-radius: 999px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--landing-cta-fg);
-  background: var(--landing-cta);
-  transition:
-    background 0.15s ease,
-    transform 0.15s ease;
-}
-
-.landing-journey__cta:hover {
-  background: var(--landing-cta-hover);
-  transform: translateY(-1px);
-}
-
-.landing-journey__cta:active {
-  transform: none;
-}
-
 /* Desktop: steps overlay the map beside pins */
 @media (min-width: 768px) {
   .landing-journey__trail {
@@ -2618,7 +2710,6 @@
   .landing-modal__close,
   .landing-sticky,
   .landing-joined__icon,
-  .landing-journey__cta,
   .landing-journey__step,
   .landing-journey__step-num,
   .landing-journey__step-title,

@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowRight } from "@phosphor-icons/react";
 import { useState } from "react";
 import { track } from "@/lib/analytics";
 import type { LandingPage } from "@/sanity/types";
@@ -14,10 +13,8 @@ const JOURNEY_TRAIL_HEIGHT = 682;
 
 export function JourneySection({
   content,
-  onCtaClick,
 }: {
   content: LandingPage["journey"];
-  onCtaClick?: () => void;
 }) {
   const [activeStep, setActiveStep] = useState<number | null>(0);
 
@@ -40,7 +37,7 @@ export function JourneySection({
         <div className="landing-journey__map">
           <Image
             src={JOURNEY_TRAIL_IMAGE}
-            alt="Path from start to your E20 score"
+            alt="Path from start to your E20 report"
             width={JOURNEY_TRAIL_WIDTH}
             height={JOURNEY_TRAIL_HEIGHT}
             className="landing-journey__art"
@@ -132,20 +129,6 @@ export function JourneySection({
           })}
         </ol>
       </div>
-
-      {onCtaClick ? (
-        <button
-          type="button"
-          className="landing-journey__cta"
-          onClick={() => {
-            track("landing_journey_cta_clicked");
-            onCtaClick();
-          }}
-        >
-          {content.ctaLabel}
-          <ArrowRight weight="bold" size={20} aria-hidden />
-        </button>
-      ) : null}
     </section>
   );
 }

@@ -12,7 +12,7 @@ export function SampleScoreSection({
   onJoinClick: () => void;
 }) {
   return (
-    <section id="sample" className="landing-section">
+    <section id="sample" className="landing-section landing-section--sample">
       <span className="landing-section__eyebrow">{content.eyebrow}</span>
       <h2 className="landing-section__title">
         <AccentTitle
