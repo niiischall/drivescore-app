@@ -14,14 +14,14 @@ export function HeroSection({ content, onJoinClick }: HeroSectionProps) {
   return (
     <section className="landing-hero">
       <div className="landing-hero__main">
-        <div className="landing-hero__badge">
+        <div className="landing-hero__badge" data-reveal="badge">
           <span className="size-2 rounded-full bg-score-compatible" />
           <span className="text-[13px] font-bold text-[color-mix(in_srgb,var(--color-text-primary)_85%,transparent)]">
             {content.badge}
           </span>
         </div>
 
-        <h1 className="landing-hero__title">
+        <h1 className="landing-hero__title" data-reveal="title">
           <AccentTitle
             before={content.titleBefore}
             accent={content.titleAccent}
@@ -29,7 +29,7 @@ export function HeroSection({ content, onJoinClick }: HeroSectionProps) {
           />
         </h1>
 
-        <div className="landing-hero__points">
+        <div className="landing-hero__points" data-reveal-stagger="bullets">
           {content.bullets.map((bullet, i) => (
             <div key={i} className="flex items-center gap-2.5">
               <span className="flex size-[22px] flex-none items-center justify-center rounded-full bg-primary text-surface-paper">
@@ -50,7 +50,7 @@ export function HeroSection({ content, onJoinClick }: HeroSectionProps) {
           ))}
         </div>
 
-        <div className="landing-hero__gauge">
+        <div className="landing-hero__gauge" data-reveal="gauge">
           <div className="flex justify-between text-[11px] font-semibold text-text-secondary">
             <span className="flex items-center gap-1.5">
               <GasPump size={13} />
@@ -83,7 +83,7 @@ export function HeroSection({ content, onJoinClick }: HeroSectionProps) {
         </div>
       </div>
 
-      <aside className="landing-hero__aside">
+      <aside className="landing-hero__aside" data-reveal="form">
         <div className="landing-hero__form-card">
           <h2 className="landing-hero__form-title">Check your car</h2>
           <p className="landing-hero__form-body">
@@ -93,7 +93,7 @@ export function HeroSection({ content, onJoinClick }: HeroSectionProps) {
         </div>
       </aside>
 
-      <div className="landing-hero__cta">
+      <div className="landing-hero__cta" data-reveal="cta">
         <button
           type="button"
           onClick={onJoinClick}

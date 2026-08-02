@@ -13,17 +13,21 @@ export function SampleScoreSection({
 }) {
   return (
     <section id="sample" className="landing-section landing-section--sample">
-      <span className="landing-section__eyebrow">{content.eyebrow}</span>
-      <h2 className="landing-section__title">
+      <span className="landing-section__eyebrow" data-reveal="header">
+        {content.eyebrow}
+      </span>
+      <h2 className="landing-section__title" data-reveal="header">
         <AccentTitle
           before={content.titleBefore}
           accent={content.titleAccent}
           after={content.titleAfter}
         />
       </h2>
-      <p className="landing-section__lede">{content.lede}</p>
+      <p className="landing-section__lede" data-reveal="header">
+        {content.lede}
+      </p>
 
-      <article className="sample-card">
+      <article className="sample-card" data-reveal="card">
         <header className="sample-card__header">
           <div className="sample-card__thumb">
             <Image
