@@ -4,7 +4,7 @@ Next.js app for DriveScore — E20 compatibility score tool for Indian car owner
 
 Currently ships the **marketing landing page** and a **Resend-backed waitlist** (confirmation email + contact segment). Scoring form and reports are still ahead of this surface.
 
-> **Sanity CMS is required.** Landing, FAQ, Privacy, and Contact copy load from Sanity — not from hardcoded TSX. Spec: [`docs/07-sanity-cms.md`](../../docs/07-sanity-cms.md). Studio: [`/studio`](http://localhost:3000/studio).
+> **Sanity CMS is required.** Landing copy and FAQ items load from Sanity — not from hardcoded TSX. Spec: [`docs/07-sanity-cms.md`](../../docs/07-sanity-cms.md). Studio: [`/studio`](http://localhost:3000/studio).
 
 ## Stack
 
@@ -96,7 +96,7 @@ Design / product notes: [`docs/01-landing-page.md`](../../docs/01-landing-page.m
 
 **Full guide:** [`docs/07-sanity-cms.md`](../../docs/07-sanity-cms.md).
 
-Marketing copy (landing sections, FAQs, `/privacy`, `/contact`, `/faq`) is authored in Sanity Studio. Do not put that copy back into React constants.
+Marketing copy (landing sections + FAQ items) is authored in Sanity Studio. Do not put that copy back into React constants.
 
 | Piece | Location |
 | ----- | -------- |
@@ -109,7 +109,7 @@ Marketing copy (landing sections, FAQs, `/privacy`, `/contact`, `/faq`) is autho
 1. Create a Sanity project + `production` dataset at [sanity.io/manage](https://www.sanity.io/manage).
 2. Set `NEXT_PUBLIC_SANITY_PROJECT_ID` (and preferably `SANITY_API_READ_TOKEN`) in `.env.local` / Vercel.
 3. Add CORS origin for `http://localhost:3000` and your production host in the Sanity project.
-4. Author and **publish** content in Studio at `/studio` (`siteSettings`, `landingPage`, FAQ items, company pages).
+4. Author and **publish** content in Studio at `/studio` (`siteSettings`, `landingPage`, FAQ items).
 
 Published CMS content is cached for up to ~1 hour (`revalidate: 3600`).
 
@@ -118,10 +118,11 @@ Published CMS content is cached for up to ~1 hour (`revalidate: 3600`).
 ## Scripts
 
 ```bash
-pnpm dev      # development server
-pnpm build    # production build
-pnpm start    # serve production build
-pnpm lint     # ESLint
+pnpm dev                   # development server
+pnpm build                 # production build
+pnpm start                 # serve production build
+pnpm lint                  # ESLint
+pnpm migrate:sanity-copy   # dry-run Sanity copy migration (add -- --apply to write)
 ```
 
 ## Related docs

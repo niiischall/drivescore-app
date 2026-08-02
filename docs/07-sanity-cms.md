@@ -15,8 +15,7 @@ This is a core integration for `apps/web`. Builds and runtime require a configur
 | ------------- | ------- | ------ |
 | `siteSettings` | singleton (`siteSettings`) | Product name, default SEO title/description, contact email, footer disclaimer |
 | `landingPage` | singleton (`landingPage`) | Hero, quick actions, problem, sample score, method display, confidence, FAQ chrome, sticky CTA, footer |
-| `faqItem` | ordered documents | Landing FAQ accordion, `/faq`, FAQ JSON-LD, `llms-full.txt` |
-| `companyPage` | documents by `slug` | `/privacy`, `/contact`, `/faq` intro (+ ready for future `terms` / `about`) |
+| `faqItem` | ordered documents | Landing FAQ accordion, FAQ JSON-LD, `llms-full.txt` |
 
 Nested on `landingPage`: problem cards, sample markers, method slices (marketing display), confidence pointers, nav links.
 
@@ -44,7 +43,7 @@ flowchart LR
 | Schemas / structure | `apps/web/src/sanity/schemas/`, `structure.ts` |
 | Client + GROQ + fetch | `apps/web/src/sanity/lib/` |
 | Embedded Studio | `apps/web/src/app/studio/[[...tool]]/page.tsx` → `/studio` |
-| Consumers | `app/page.tsx`, `app/faq|privacy|contact`, landing sections, `lib/llms.ts` |
+| Consumers | `app/page.tsx`, landing sections, `lib/llms.ts` |
 
 Server fetches use the Sanity API (CDN off) with optional `SANITY_API_READ_TOKEN`. Next.js caches responses with `revalidate: 3600` (~1 hour).
 
@@ -68,7 +67,7 @@ See [`apps/web/.env.example`](../apps/web/.env.example). Mirror the same vars in
 2. Set env vars in `.env.local` / Vercel.
 3. Add CORS origins for `http://localhost:3000` and the production host.
 4. Run `pnpm dev` and open [http://localhost:3000/studio](http://localhost:3000/studio).
-5. Ensure published documents exist for: Site settings, Landing page, FAQ items, and company pages (`privacy`, `contact`, `faq`).
+5. Ensure published documents exist for: Site settings, Landing page, and FAQ items.
 
 Without project id or required documents, marketing routes fail at build/runtime (no in-repo content fallback).
 
@@ -79,8 +78,19 @@ Without project id or required documents, marketing routes fail at build/runtime
 3. Edit → **Publish**
 4. Wait for the Next.js revalidation window (~1 hour), or redeploy, to see changes on the live site
 
+## One-off migrations
+
+From `apps/web`, with `SANITY_API_WRITE_TOKEN` in `.env.local` (Editor+):
+
+```bash
+pnpm migrate:sanity-copy              # dry-run
+pnpm migrate:sanity-copy -- --apply   # write
+```
+
+`scripts/migrate-landing-copy.ts` renames `E20 Score` → `E20 report` across `landingPage` / `siteSettings` / `faqItem`, strips footer links to retired company routes, and deletes legacy `companyPage` docs for `privacy`, `faq`, and `contact`.
+
 ## Agent / contributor notes
 
-- Do not hardcode marketing copy in landing sections or company pages — extend schemas + GROQ + typed props instead.
+- Do not hardcode marketing copy in landing sections — extend schemas + GROQ + typed props instead.
 - Prefer semantic design tokens for presentation; Sanity fields are content only.
 - Keep rubric weights and scoring logic in code; only marketing blurbs/labels for the method section belong in CMS.

@@ -21,7 +21,7 @@ DriveScore helps Indian car owners understand whether their vehicle is ready for
 
 ## Product
 
-- [Home](${base}/): Waitlist landing page — E20 score overview, sample result, method, and FAQ
+- [Home](${base}/): Waitlist landing page — E20 report overview, sample result, method, and FAQ
 - [llms-full.txt](${base}/llms-full.txt): Longer machine-readable product summary for AI agents
 
 ## Optional

@@ -4,10 +4,9 @@
  */
 
 import { isSanityConfigured } from "../env";
-import type { CompanyPage, FaqItem, LandingPage, SiteSettings } from "../types";
+import type { FaqItem, LandingPage, SiteSettings } from "../types";
 import { client } from "./client";
 import {
-  companyPageQuery,
   faqItemsQuery,
   landingPageQuery,
   siteSettingsQuery,
@@ -70,12 +69,4 @@ export async function getFaqItems(): Promise<FaqItem[]> {
     answerPlain: item.answerPlain || "",
     order: item.order ?? i,
   }));
-}
-
-export async function getCompanyPage(
-  slug: string,
-): Promise<CompanyPage | null> {
-  const data = await sanityFetch<CompanyPage>(companyPageQuery, { slug });
-  if (data?.title && data.body?.length) return data;
-  return null;
 }

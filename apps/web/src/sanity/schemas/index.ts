@@ -3,7 +3,6 @@
  * @description Schema type registry for Sanity Studio.
  */
 
-import { companyPage } from "./companyPage";
 import { faqItem } from "./faqItem";
 import { landingPage } from "./landingPage";
 import {
@@ -16,7 +15,6 @@ import {
   problemCard,
   richBullet,
   sampleMarker,
-  seoFields,
   textSegment,
 } from "./objects";
 import { siteSettings } from "./siteSettings";
@@ -26,9 +24,7 @@ export const schemaTypes = [
   siteSettings,
   landingPage,
   faqItem,
-  companyPage,
   // Objects
-  seoFields,
   textSegment,
   richBullet,
   navLink,

@@ -1,6 +1,6 @@
 /**
  * @module sanity/schemas/faqItem
- * @description FAQ documents shared by landing accordion, /faq, and JSON-LD.
+ * @description FAQ documents shared by the landing accordion and JSON-LD.
  */
 
 import { defineField, defineType } from "sanity";

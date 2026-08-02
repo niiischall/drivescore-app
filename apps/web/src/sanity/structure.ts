@@ -5,12 +5,7 @@
 
 import type { StructureResolver } from "sanity/structure";
 
-const HIDDEN_TYPES = new Set([
-  "siteSettings",
-  "landingPage",
-  "faqItem",
-  "companyPage",
-]);
+const HIDDEN_TYPES = new Set(["siteSettings", "landingPage", "faqItem"]);
 
 export const structure: StructureResolver = (S) =>
   S.list()
@@ -32,7 +27,6 @@ export const structure: StructureResolver = (S) =>
         ),
       S.divider(),
       S.documentTypeListItem("faqItem").title("FAQ items"),
-      S.documentTypeListItem("companyPage").title("Company pages"),
       ...S.documentTypeListItems().filter(
         (item) => !HIDDEN_TYPES.has(item.getId() ?? ""),
       ),

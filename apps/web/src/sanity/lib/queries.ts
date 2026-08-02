@@ -126,14 +126,3 @@ export const faqItemsQuery = defineQuery(`
     order
   }
 `);
-
-export const companyPageQuery = defineQuery(`
-  *[_type == "companyPage" && slug.current == $slug][0]{
-    "slug": slug.current,
-    eyebrow,
-    title,
-    body,
-    seo,
-    lastUpdated
-  }
-`);

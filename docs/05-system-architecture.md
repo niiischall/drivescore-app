@@ -12,7 +12,7 @@ This doc describes how the pieces already specified (landing page, form, rubric,
 | Component | Role |
 | --------- | ---- |
 | Landing client | Marketing page; hero waitlist form via TanStack Query |
-| Sanity CMS | Marketing + static page copy (`siteSettings`, `landingPage`, `faqItem`, `companyPage`); Studio at `/studio`; ~1h ISR cache |
+| Sanity CMS | Marketing copy (`siteSettings`, `landingPage`, `faqItem`); Studio at `/studio`; ~1h ISR cache |
 | Waitlist API | `POST /api/waitlist` — validate email, upsert Resend Segment contact, send confirmation |
 | Resend | Contact storage (Segment) + transactional confirmation email |
 | PostHog | Client analytics (`/pulse` proxy); optional server HogQL for unique visitor count |
