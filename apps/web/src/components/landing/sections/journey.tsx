@@ -23,18 +23,22 @@ export function JourneySection({
       id="journey"
       className="landing-section landing-section--journey landing-journey"
     >
-      <span className="landing-section__eyebrow">{content.eyebrow}</span>
-      <h2 className="landing-section__title">
+      <span className="landing-section__eyebrow" data-reveal="header">
+        {content.eyebrow}
+      </span>
+      <h2 className="landing-section__title" data-reveal="header">
         <AccentTitle
           before={content.titleBefore}
           accent={content.titleAccent}
           after={content.titleAfter}
         />
       </h2>
-      <p className="landing-section__lede">{content.lede}</p>
+      <p className="landing-section__lede" data-reveal="header">
+        {content.lede}
+      </p>
 
       <div className="landing-journey__trail">
-        <div className="landing-journey__map">
+        <div className="landing-journey__map" data-reveal="map">
           <Image
             src={JOURNEY_TRAIL_IMAGE}
             alt="Path from start to your E20 report"
@@ -81,7 +85,7 @@ export function JourneySection({
           </ol>
         </div>
 
-        <ol className="landing-journey__steps">
+        <ol className="landing-journey__steps" data-reveal="steps">
           {content.steps.map((step, index) => {
             const slot = getJourneyLabelSlot(index);
             const pin = getJourneyPinSlot(index);

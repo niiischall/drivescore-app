@@ -25,17 +25,22 @@ export function ProblemSection({
 
   return (
     <section id="problem" className="landing-section landing-section--problem">
-      <span className="landing-section__eyebrow">{content.eyebrow}</span>
-      <h2 className="landing-section__title">
+      <span className="landing-section__eyebrow" data-reveal="header">
+        {content.eyebrow}
+      </span>
+      <h2 className="landing-section__title" data-reveal="header">
         <AccentTitle
           before={content.titleBefore}
           accent={content.titleAccent}
           after={content.titleAfter}
         />
       </h2>
-      <p className="landing-section__lede mb-1">{content.lede}</p>
+      <p className="landing-section__lede mb-1" data-reveal="header">
+        {content.lede}
+      </p>
       <div
         className="landing-problem__grid"
+        data-reveal-stagger
         data-active-card={activeCard ?? undefined}
         onMouseLeave={() => setActiveCard(null)}
         onBlur={(event) => {

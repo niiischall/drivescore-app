@@ -32,6 +32,9 @@ importers:
       '@vercel/speed-insights':
         specifier: ^2.0.0
         version: 2.0.0(next@16.2.10(@babel/core@7.29.7)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
+      gsap:
+        specifier: ^3.15.0
+        version: 3.15.0
       next:
         specifier: 16.2.10
         version: 16.2.10(@babel/core@7.29.7)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -3998,6 +4001,9 @@ packages:
   groq@6.6.0:
     resolution: {integrity: sha512-fZwReb3ZSnIaQou9z9ft6MqByOHTSkJmRotgK7hInPpm0istlYRfEr76IwOlB5j9a03MVCgoclQJdfdH225hWA==}
     engines: {node: '>=22.12'}
+
+  gsap@3.15.0:
+    resolution: {integrity: sha512-dMW4CWBTUK1AEEDeZc1g4xpPGIrSf9fJF960qbTZmN/QwZIWY5wgliS6JWl9/25fpTGJrMRtSjGtOmPnfjZB+A==}
 
   gunzip-maybe@1.4.2:
     resolution: {integrity: sha512-4haO1M4mLO91PW57BMsDFf75UmwoRX0GkdD+Faw+Lr+r/OZrOCS0pIBwOL1xCKQqnQzbNFGgK2V2CpBUPeFNTw==}
@@ -10457,6 +10463,8 @@ snapshots:
   groq@3.88.1-typegen-experimental.0: {}
 
   groq@6.6.0: {}
+
+  gsap@3.15.0: {}
 
   gunzip-maybe@1.4.2:
     dependencies:

@@ -18,7 +18,7 @@ export function FaqSection({
 
   return (
     <section id="faq" className="landing-section landing-section--faq">
-      <div className="landing-faq__header">
+      <div className="landing-faq__header" data-reveal="header">
         <span className="landing-section__eyebrow">{content.eyebrow}</span>
         <h2 className="landing-section__title">
           <AccentTitle
@@ -28,7 +28,7 @@ export function FaqSection({
           />
         </h2>
       </div>
-      <div className="landing-faq__list">
+      <div className="landing-faq__list" data-reveal-stagger>
         {items.map((f, i) => {
           const open = openFaq === i;
           return (

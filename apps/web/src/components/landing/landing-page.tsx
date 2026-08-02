@@ -7,6 +7,7 @@ import {
 } from "@/lib/vehicle-check-analytics";
 import type { FaqItem, LandingPage as LandingContent, SiteSettings } from "@/sanity/types";
 import { useLandingAnalytics } from "./hooks/use-landing-analytics";
+import { useLandingReveal } from "./hooks/use-landing-reveal";
 import {
   ConfidenceSection,
   FaqSection,
@@ -38,6 +39,7 @@ export function LandingPage({
   const rootRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   useLandingAnalytics(rootRef);
+  useLandingReveal(rootRef);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalSource, setModalSource] = useState<VehicleCheckSource>("hero");
 

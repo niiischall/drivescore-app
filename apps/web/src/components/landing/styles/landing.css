@@ -47,6 +47,15 @@
   }
 }
 
+/* Opacity-only hide after JS is ready. Transform is owned by GSAP so clearProps
+   cannot fight a stylesheet translate and snap elements back down. */
+@media (prefers-reduced-motion: no-preference) {
+  .landing[data-reveal-ready] [data-reveal]:not([data-revealed]),
+  .landing[data-reveal-ready] [data-reveal-stagger] > *:not([data-revealed]) {
+    opacity: 0;
+  }
+}
+
 .landing {
   --landing-lilac: var(--color-text-brand);
   --landing-muted: color-mix(in srgb, var(--color-text-primary) 62%, transparent);
@@ -643,7 +652,35 @@
   transform: translate(-50%, 16px);
   opacity: 0;
   pointer-events: none;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow:
+    0 12px 36px color-mix(in srgb, var(--color-text-primary) 28%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--color-primary) 55%, transparent);
   transition: transform 0.2s ease, opacity 0.2s ease-out;
+}
+
+.landing-sticky__title {
+  color: var(--color-on-primary);
+}
+
+.landing-sticky__subtitle {
+  color: color-mix(in srgb, var(--color-on-primary) 70%, transparent);
+}
+
+.landing-sticky__btn {
+  background: var(--color-on-primary);
+  color: var(--color-primary);
+  transition: transform 0.2s ease, background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.landing-sticky__btn:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.landing-sticky__btn:active {
+  transform: translateY(1px) scale(0.985);
 }
 
 .landing-sticky--visible {
@@ -683,7 +720,9 @@
     right: 0;
     z-index: var(--z-sticky);
     display: block;
-    border-bottom: 1px solid var(--landing-card-border);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-on-primary) 14%, transparent);
     transform: translateY(-100%);
     opacity: 0;
     pointer-events: none;
@@ -705,6 +744,28 @@
   max-width: var(--landing-shell);
   margin-inline: auto;
   padding: var(--space-3) var(--space-6);
+}
+
+.landing-sticky-header__brand {
+  color: var(--color-on-primary);
+}
+
+.landing-sticky-header__btn {
+  background: var(--color-on-primary);
+  color: var(--color-primary);
+  transition:
+    transform 0.2s ease,
+    background-color 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.landing-sticky-header__btn:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.landing-sticky-header__btn:active {
+  transform: translateY(1px) scale(0.985);
 }
 
 .landing-cta {
