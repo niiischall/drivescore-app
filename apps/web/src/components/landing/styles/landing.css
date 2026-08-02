@@ -423,20 +423,35 @@
   opacity: 0.55;
 }
 
-.landing-method__panel[data-active-slice="ground"] .landing-method__slice[data-slice="ground"] {
-  opacity: 1;
-}
-
-.landing-method__panel[data-active-slice="materials"] .landing-method__slice[data-slice="materials"] {
-  opacity: 1;
-}
-
-.landing-method__panel[data-active-slice="calibration"] .landing-method__slice[data-slice="calibration"] {
-  opacity: 1;
-}
-
+.landing-method__panel[data-active-slice="ground"] .landing-method__slice[data-slice="ground"],
+.landing-method__panel[data-active-slice="materials"] .landing-method__slice[data-slice="materials"],
+.landing-method__panel[data-active-slice="calibration"] .landing-method__slice[data-slice="calibration"],
 .landing-method__panel[data-active-slice="usage"] .landing-method__slice[data-slice="usage"] {
   opacity: 1;
+  background: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--color-primary) 42%, var(--color-surface-raised)) 0%,
+    color-mix(in srgb, var(--color-primary) 26%, var(--color-surface-raised)) 50%,
+    color-mix(in srgb, var(--color-primary) 36%, var(--color-surface-raised)) 100%
+  );
+  border-color: color-mix(in srgb, var(--color-primary) 50%, var(--landing-card-border));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-primary) 28%, transparent),
+    0 8px 24px color-mix(in srgb, var(--color-primary) 18%, transparent);
+  transform: translateY(-2px);
+}
+
+[data-theme="dark"] .landing-method__panel[data-active-slice="ground"] .landing-method__slice[data-slice="ground"],
+[data-theme="dark"] .landing-method__panel[data-active-slice="materials"] .landing-method__slice[data-slice="materials"],
+[data-theme="dark"] .landing-method__panel[data-active-slice="calibration"] .landing-method__slice[data-slice="calibration"],
+[data-theme="dark"] .landing-method__panel[data-active-slice="usage"] .landing-method__slice[data-slice="usage"] {
+  background: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--color-primary) 55%, var(--color-surface-raised)) 0%,
+    color-mix(in srgb, var(--color-primary) 38%, var(--color-surface-raised)) 50%,
+    color-mix(in srgb, var(--color-primary) 48%, var(--color-surface-raised)) 100%
+  );
+  border-color: color-mix(in srgb, var(--color-primary) 62%, var(--landing-card-border));
 }
 
 .landing-method__panel[data-active-slice="ground"] .landing-compose__slice[data-slice="ground"] {
@@ -461,30 +476,6 @@
   filter: brightness(1.08);
   transform: scaleY(1.18);
   z-index: 1;
-}
-
-.landing-method__panel[data-active-slice="ground"] .landing-method__slice[data-slice="ground"] {
-  background: color-mix(in srgb, var(--color-compose-ground) 14%, var(--color-surface-raised));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-compose-ground) 30%, transparent);
-  transform: translateY(-2px);
-}
-
-.landing-method__panel[data-active-slice="materials"] .landing-method__slice[data-slice="materials"] {
-  background: color-mix(in srgb, var(--color-compose-materials) 14%, var(--color-surface-raised));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-compose-materials) 30%, transparent);
-  transform: translateY(-2px);
-}
-
-.landing-method__panel[data-active-slice="calibration"] .landing-method__slice[data-slice="calibration"] {
-  background: color-mix(in srgb, var(--color-compose-calibration) 14%, var(--color-surface-raised));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-compose-calibration) 30%, transparent);
-  transform: translateY(-2px);
-}
-
-.landing-method__panel[data-active-slice="usage"] .landing-method__slice[data-slice="usage"] {
-  background: color-mix(in srgb, var(--color-compose-usage) 14%, var(--color-surface-raised));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-compose-usage) 30%, transparent);
-  transform: translateY(-2px);
 }
 
 .landing-method__slice[data-slice="ground"] {
@@ -678,7 +669,7 @@
 }
 
 /* Sticky header CTA: fills the gap left once the desktop hero (with its
-   inline waitlist form) scrolls out of view. Hidden below 1024px — the
+   inline vehicle check form) scrolls out of view. Hidden below 1024px — the
    bottom .landing-sticky pill already covers mobile/tablet. */
 .landing-sticky-header {
   display: none;
@@ -840,10 +831,10 @@
 }
 
 .landing-hero__form-title {
-  margin: 0;
+  margin: 0 0 var(--space-1);
   font-size: 26px;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.25;
   letter-spacing: -0.02em;
   color: var(--color-text-primary);
   text-wrap: balance;
@@ -852,7 +843,7 @@
 .landing-hero__form-body {
   margin: 0;
   font-size: 16px;
-  line-height: 1.55;
+  line-height: 1.6;
   color: var(--landing-muted);
 }
 
@@ -878,18 +869,6 @@
   height: 56px;
   font-size: 17px;
   box-shadow: 0 10px 28px color-mix(in srgb, var(--color-primary) 35%, transparent);
-}
-
-.landing-hero__form-meta {
-  margin: 0;
-  text-align: center;
-  font-size: 12.5px;
-  line-height: 1.45;
-  color: var(--landing-faint);
-}
-
-.landing-hero__form-card.landing-joined {
-  gap: var(--space-3);
 }
 
 .landing-hero__badge {
@@ -1581,17 +1560,49 @@
   margin: 0;
   padding: var(--space-4) var(--space-5);
   border-radius: var(--radius-3xl);
-  border: 1px solid var(--landing-card-border);
-  background: color-mix(in srgb, var(--color-score-caution) 10%, transparent);
   font-size: 13.5px;
-  line-height: 1.45;
-  color: color-mix(in srgb, var(--color-score-caution) 85%, white);
+  font-weight: 500;
+  line-height: 1.5;
 }
 
-.sample-card__flag {
+[data-theme="light"] .sample-card__confidence {
+  border: 1px solid color-mix(in srgb, var(--color-primary) 48%, var(--color-info-border));
+  background: linear-gradient(
+    125deg,
+    color-mix(in srgb, var(--color-primary) 28%, var(--color-primary-subtle)) 0%,
+    color-mix(in srgb, var(--color-primary) 82%, var(--color-primary-subtle)) 42%,
+    var(--color-primary) 100%
+  );
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-primary) 22%, transparent),
+    0 6px 22px color-mix(in srgb, var(--color-primary) 28%, transparent);
+  color: var(--color-on-primary);
+}
+
+[data-theme="dark"] .sample-card__confidence {
+  border: 1px solid color-mix(in srgb, var(--color-primary) 72%, var(--color-border));
+  background: linear-gradient(
+    125deg,
+    color-mix(in srgb, var(--color-primary) 55%, var(--color-primary-subtle)) 0%,
+    var(--color-primary) 40%,
+    color-mix(in srgb, var(--color-primary) 92%, var(--color-primary-active)) 100%
+  );
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-primary) 48%, transparent),
+    0 10px 32px color-mix(in srgb, var(--color-primary) 50%, transparent);
+  color: var(--color-on-primary);
+}
+
+[data-theme="light"] .sample-card__flag {
   flex: none;
   margin-top: 2px;
-  color: var(--color-score-caution);
+  color: color-mix(in srgb, var(--color-score-caution) 55%, var(--color-on-primary));
+}
+
+[data-theme="dark"] .sample-card__flag {
+  flex: none;
+  margin-top: 2px;
+  color: color-mix(in srgb, var(--color-score-caution) 50%, var(--color-on-primary));
 }
 
 .sample-card__cta {
@@ -2098,56 +2109,6 @@
   }
 }
 
-.landing-joined {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.landing-joined__card {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
-  padding: var(--space-4) var(--space-5);
-  border-radius: 20px;
-  border: 1px solid var(--landing-card-border);
-  background: color-mix(in srgb, var(--color-score-compatible) 16%, transparent);
-}
-
-.landing-joined__icon {
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-full);
-  background: var(--color-score-compatible);
-  color: var(--color-on-primary);
-}
-
-.landing-joined__title {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 1.3;
-  color: var(--color-text-primary);
-}
-
-.landing-joined__body {
-  margin: 4px 0 0;
-  font-size: 13.5px;
-  line-height: 1.45;
-  color: color-mix(in srgb, var(--color-score-compatible) 55%, var(--color-text-primary));
-}
-
-.landing-joined__meta {
-  margin: 0;
-  text-align: center;
-  font-size: 12.5px;
-  color: var(--landing-faint);
-}
-
 .landing-modal {
   position: fixed;
   inset: 0;
@@ -2283,6 +2244,285 @@
   opacity: 0.6;
 }
 
+.landing-modal__select {
+  appearance: none;
+  cursor: pointer;
+  padding-right: var(--space-10);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-5) center;
+}
+
+.landing-modal__select:disabled {
+  cursor: not-allowed;
+}
+
+/* —— Vehicle form skeleton loaders —— */
+@keyframes landing-form-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes landing-form-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.landing-form-skeleton-wrap {
+  pointer-events: none;
+}
+
+.landing-form-skeleton {
+  height: 52px;
+  width: 100%;
+  border-radius: var(--radius-full);
+  border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-text-primary) 6%, var(--color-surface)) 0%,
+    color-mix(in srgb, var(--color-text-primary) 12%, var(--color-surface)) 50%,
+    color-mix(in srgb, var(--color-text-primary) 6%, var(--color-surface)) 100%
+  );
+  background-size: 200% 100%;
+  animation: landing-form-shimmer 1.15s ease-in-out infinite;
+}
+
+.landing-hero__form .landing-form-skeleton {
+  height: 56px;
+}
+
+.landing-form-skeleton--button {
+  opacity: 0.72;
+}
+
+.landing-form-submit-loader {
+  display: block;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-full);
+  border: 2px solid color-mix(in srgb, var(--color-on-primary) 35%, transparent);
+  border-top-color: var(--color-on-primary);
+  animation: landing-form-spin 0.7s linear infinite;
+}
+
+/* —— Brand select (logo + name) —— */
+.landing-brand-select {
+  position: relative;
+  width: 100%;
+}
+
+.landing-brand-select__trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.landing-brand-select__trigger:disabled {
+  cursor: not-allowed;
+}
+
+.landing-brand-select__placeholder {
+  flex: 1;
+  color: var(--color-text-secondary);
+}
+
+.landing-brand-select__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.landing-brand-select__logo {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-paper);
+  overflow: hidden;
+}
+
+.landing-brand-select__logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.landing-brand-select__chevron {
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+  transition: transform 0.18s ease;
+}
+
+.landing-brand-select--open .landing-brand-select__chevron {
+  transform: rotate(180deg);
+}
+
+.landing-brand-select__menu {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  right: 0;
+  max-height: 240px;
+  margin: 0;
+  padding: var(--space-2);
+  list-style: none;
+  overflow-y: auto;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+}
+
+.landing-brand-select__option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: none;
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--color-text-primary);
+  font-size: 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.landing-brand-select__option:hover,
+.landing-brand-select__option--highlighted {
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.landing-brand-select__option--selected {
+  background: color-mix(in srgb, var(--color-primary) 14%, transparent);
+}
+
+.landing-brand-select__option--selected.landing-brand-select__option--highlighted {
+  background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+}
+
+/* —— Vehicle check form success —— */
+.landing-form-success {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+  width: 100%;
+  animation: landing-fade-up 0.28s ease both;
+}
+
+.landing-form-success__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--color-score-compatible) 18%, transparent);
+  color: var(--color-score-compatible);
+  animation: landing-form-success-icon-in 0.35s ease both;
+}
+
+.landing-form-success__copy {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.landing-form-success__message {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  text-wrap: pretty;
+}
+
+.landing-form-success__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  margin-top: var(--space-2);
+  padding-top: var(--space-5);
+  border-top: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+  animation: landing-fade-up 0.28s ease 0.08s both;
+}
+
+.landing-form-success__subline {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--landing-faint);
+}
+
+.landing-form-success__cta {
+  width: 100%;
+  max-width: 320px;
+  margin: 0;
+}
+
+.landing-hero__form-card:has(.landing-form-success) {
+  gap: var(--space-6);
+}
+
+.landing-modal__panel:has(.landing-form-success) .landing-modal__body {
+  margin-bottom: var(--space-5);
+}
+
+.landing-google-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  height: 52px;
+  padding: 0 var(--space-5);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.landing-google-btn:hover {
+  transform: translateY(-1px);
+  opacity: 0.92;
+}
+
+.landing-google-btn:active {
+  transform: translateY(0);
+}
+
+@keyframes landing-form-success-icon-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .landing-modal__submit {
   display: flex;
   align-items: center;
@@ -2308,32 +2548,11 @@
   color: var(--color-score-risk);
 }
 
-.landing-modal__meta {
-  margin: var(--space-4) 0 0;
-  text-align: center;
+.landing-modal__field-error {
+  margin: calc(var(--space-1) * -1) 0 var(--space-2);
+  text-align: left;
   font-size: 12px;
-  line-height: 1.45;
-  color: var(--landing-faint);
-}
-
-.landing-modal__success {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-3);
-  padding-top: var(--space-2);
-}
-
-.landing-modal__success .landing-modal__title {
-  margin-bottom: 0;
-}
-
-.landing-modal__success .landing-modal__body {
-  margin-bottom: var(--space-2);
-}
-
-.landing-modal__success .landing-modal__submit {
-  margin-top: var(--space-2);
+  color: var(--color-score-risk);
 }
 
 /* —— Micro-interactions —— */
@@ -2360,10 +2579,6 @@
 
 .landing-method__toggle:active {
   transform: translateY(0) scale(0.99);
-}
-
-.landing-modal__success .landing-joined__icon {
-  animation: landing-fade-up 0.35s ease both;
 }
 
 /* —— Journey (onboard → score) —— */
@@ -2737,7 +2952,11 @@
   .landing-method__markers,
   .landing-modal__backdrop,
   .landing-modal__panel,
-  .landing-modal__success .landing-joined__icon {
+  .landing-form-success,
+  .landing-form-success__icon,
+  .landing-form-success__actions,
+  .landing-form-skeleton,
+  .landing-form-submit-loader {
     animation: none !important;
   }
 
@@ -2757,7 +2976,6 @@
   .landing-modal__close,
   .landing-sticky,
   .landing-sticky-header,
-  .landing-joined__icon,
   .landing-journey__step,
   .landing-journey__step-num,
   .landing-journey__step-title,

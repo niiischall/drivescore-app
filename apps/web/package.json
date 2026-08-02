@@ -11,6 +11,7 @@
     "migrate:sanity-copy": "tsx scripts/migrate-landing-copy.ts"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.7.1",
     "@phosphor-icons/react": "^2.1.10",
     "@portabletext/react": "^7.0.1",
     "@portabletext/types": "^4.0.2",
@@ -23,8 +24,10 @@
     "posthog-js": "^1.402.2",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-hook-form": "^7.84.0",
     "sanity": "^6.6.0",
-    "styled-components": "^6.4.4"
+    "styled-components": "^6.4.4",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@sanity/vision": "^6.6.0",

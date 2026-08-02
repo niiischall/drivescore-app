@@ -21,7 +21,7 @@ DriveScore helps Indian car owners understand whether their vehicle is ready for
 
 ## Product
 
-- [Home](${base}/): Waitlist landing page — E20 report overview, sample result, method, and FAQ
+- [Home](${base}/): Landing page with vehicle check — E20 report overview, sample result, method, and FAQ
 - [llms-full.txt](${base}/llms-full.txt): Longer machine-readable product summary for AI agents
 
 ## Optional
@@ -63,7 +63,7 @@ export async function buildLlmsFullTxt() {
 - URL: ${base}/
 - Audience: Indian car owners concerned about E20 fuel
 - Locale: ${settings.locale}
-- Pricing: First compatibility check is free (waitlist / early access)
+- Pricing: First compatibility check is free
 
 ## What it does
 
