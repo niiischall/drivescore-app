@@ -27,11 +27,7 @@ export const landingPageQuery = defineQuery(`
       gaugeLabel,
       gaugeMandate,
       ctaLabel,
-      ctaMicrocopy,
-      joinedTitle,
-      joinedBodyBefore,
-      joinedBodyAfter,
-      joinedMeta
+      ctaMicrocopy
     },
     problem{
       eyebrow,

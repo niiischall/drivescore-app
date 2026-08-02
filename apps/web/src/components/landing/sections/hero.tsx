@@ -3,23 +3,14 @@
 import { ArrowRight, Check, GasPump } from "@phosphor-icons/react";
 import type { LandingPage } from "@/sanity/types";
 import { AccentTitle } from "../ui/rich-inline";
-import { WaitlistForm } from "../ui/waitlist-form";
+import { VehicleCheckForm } from "../ui/vehicle-check-form";
 
 type HeroSectionProps = {
   content: LandingPage["hero"];
-  joinedEmail: string | null;
   onJoinClick: () => void;
-  onJoined: (email: string) => void;
 };
 
-export function HeroSection({
-  content,
-  joinedEmail,
-  onJoinClick,
-  onJoined,
-}: HeroSectionProps) {
-  const joined = Boolean(joinedEmail);
-
+export function HeroSection({ content, onJoinClick }: HeroSectionProps) {
   return (
     <section className="landing-hero">
       <div className="landing-hero__main">
@@ -93,78 +84,28 @@ export function HeroSection({
       </div>
 
       <aside className="landing-hero__aside">
-        {!joined ? (
-          <div className="landing-hero__form-card">
-            <h2 className="landing-hero__form-title">Check your car</h2>
-            <p className="landing-hero__form-body">
-              Be first to check your car&apos;s E20 report.
-            </p>
-            <WaitlistForm source="hero" onJoined={onJoined} variant="hero" />
-          </div>
-        ) : (
-          <div
-            className="landing-hero__form-card landing-joined"
-            role="status"
-            aria-live="polite"
-          >
-            <div className="landing-joined__card">
-              <span className="landing-joined__icon" aria-hidden>
-                <Check weight="bold" size={18} />
-              </span>
-              <div>
-                <p className="landing-joined__title">{content.joinedTitle}</p>
-                <p className="landing-joined__body">
-                  {content.joinedBodyBefore}{" "}
-                  <span className="font-medium text-text-primary">
-                    {joinedEmail}
-                  </span>{" "}
-                  {content.joinedBodyAfter}
-                </p>
-              </div>
-            </div>
-            <p className="landing-joined__meta">{content.joinedMeta}</p>
-          </div>
-        )}
+        <div className="landing-hero__form-card">
+          <h2 className="landing-hero__form-title">Check your car</h2>
+          <p className="landing-hero__form-body">
+            Select your make, model, and variant to see your E20 compatibility.
+          </p>
+          <VehicleCheckForm source="hero" variant="hero" />
+        </div>
       </aside>
 
-      {!joined ? (
-        <div className="landing-hero__cta">
-          <button
-            type="button"
-            onClick={onJoinClick}
-            className="landing-cta flex h-[54px] cursor-pointer items-center justify-center rounded-full border-none text-[17px] font-bold"
-          >
-            {content.ctaLabel}
-            <ArrowRight weight="bold" size={18} className="ml-1.5" />
-          </button>
-          <p className="m-0 text-center text-[12.5px] text-[var(--landing-faint)]">
-            {content.ctaMicrocopy}
-          </p>
-        </div>
-      ) : (
-        <div
-          className="landing-hero__cta landing-joined"
-          role="status"
-          aria-live="polite"
+      <div className="landing-hero__cta">
+        <button
+          type="button"
+          onClick={onJoinClick}
+          className="landing-cta flex h-[54px] cursor-pointer items-center justify-center rounded-full border-none text-[17px] font-bold"
         >
-          <div className="landing-joined__card">
-            <span className="landing-joined__icon" aria-hidden>
-              <Check weight="bold" size={18} />
-            </span>
-            <div>
-              <p className="landing-joined__title">{content.joinedTitle}</p>
-              <p className="landing-joined__body">
-                {content.joinedBodyBefore}{" "}
-                <span className="font-medium text-text-primary">
-                  {joinedEmail}
-                </span>{" "}
-                {content.joinedBodyAfter}
-              </p>
-            </div>
-          </div>
-          <p className="landing-joined__meta">{content.joinedMeta}</p>
-        </div>
-      )}
+          {content.ctaLabel}
+          <ArrowRight weight="bold" size={18} className="ml-1.5" />
+        </button>
+        <p className="m-0 text-center text-[12.5px] text-[var(--landing-faint)]">
+          {content.ctaMicrocopy}
+        </p>
+      </div>
     </section>
   );
 }

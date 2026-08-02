@@ -1,7 +1,10 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { track } from "@/lib/analytics";
+import {
+  trackVehicleCheckCtaClicked,
+  trackVehicleCheckModalClosed,
+} from "@/lib/vehicle-check-analytics";
 import type { FaqItem, LandingPage as LandingContent, SiteSettings } from "@/sanity/types";
 import { useLandingAnalytics } from "./hooks/use-landing-analytics";
 import {
@@ -18,9 +21,9 @@ import {
   StickyHeader,
 } from "./sections";
 import {
-  WaitlistModal,
-  type WaitlistSource,
-} from "./ui/waitlist-modal";
+  VehicleCheckModal,
+  type VehicleCheckSource,
+} from "./ui/vehicle-check-modal";
 import "./styles/landing.css";
 
 export function LandingPage({
@@ -35,22 +38,18 @@ export function LandingPage({
   const rootRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   useLandingAnalytics(rootRef);
-  const [waitlistOpen, setWaitlistOpen] = useState(false);
-  const [joinedEmail, setJoinedEmail] = useState<string | null>(null);
-  const [waitlistSource, setWaitlistSource] = useState<WaitlistSource>("hero");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalSource, setModalSource] = useState<VehicleCheckSource>("hero");
 
-  function openWaitlist(source: WaitlistSource) {
-    setWaitlistSource(source);
-    track("waitlist_cta_clicked", { source });
-    setWaitlistOpen(true);
+  function openVehicleCheck(source: VehicleCheckSource) {
+    setModalSource(source);
+    trackVehicleCheckCtaClicked(source);
+    setModalOpen(true);
   }
 
-  function closeWaitlist() {
-    track("waitlist_modal_closed", {
-      source: waitlistSource,
-      joined: Boolean(joinedEmail),
-    });
-    setWaitlistOpen(false);
+  function closeVehicleCheck() {
+    trackVehicleCheckModalClosed(modalSource);
+    setModalOpen(false);
   }
 
   return (
@@ -61,9 +60,7 @@ export function LandingPage({
       <div data-section="hero" ref={heroRef}>
         <HeroSection
           content={content.hero}
-          joinedEmail={joinedEmail}
-          onJoinClick={() => openWaitlist("hero")}
-          onJoined={setJoinedEmail}
+          onJoinClick={() => openVehicleCheck("hero")}
         />
       </div>
       <div data-section="problem">
@@ -75,7 +72,7 @@ export function LandingPage({
       <div data-section="sample_score">
         <SampleScoreSection
           content={content.sampleScore}
-          onJoinClick={() => openWaitlist("sample")}
+          onJoinClick={() => openVehicleCheck("sample")}
         />
       </div>
       <div data-section="method">
@@ -96,18 +93,16 @@ export function LandingPage({
       <StickyCta
         content={content.stickyCta}
         heroRef={heroRef}
-        onJoinClick={() => openWaitlist("sticky")}
+        onJoinClick={() => openVehicleCheck("sticky")}
       />
       <StickyHeader
         heroRef={heroRef}
-        onCheckClick={() => openWaitlist("header")}
+        onCheckClick={() => openVehicleCheck("header")}
       />
-      <WaitlistModal
-        open={waitlistOpen}
-        joinedEmail={joinedEmail}
-        source={waitlistSource}
-        onClose={closeWaitlist}
-        onJoined={setJoinedEmail}
+      <VehicleCheckModal
+        open={modalOpen}
+        source={modalSource}
+        onClose={closeVehicleCheck}
       />
     </div>
   );

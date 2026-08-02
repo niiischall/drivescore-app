@@ -72,10 +72,6 @@ export type LandingPage = {
     gaugeMandate: string;
     ctaLabel: string;
     ctaMicrocopy: string;
-    joinedTitle: string;
-    joinedBodyBefore: string;
-    joinedBodyAfter: string;
-    joinedMeta: string;
   };
   problem: {
     eyebrow: string;

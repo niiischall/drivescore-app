@@ -57,31 +57,49 @@ Client events via `src/lib/analytics.ts` (no-op if key unset):
 | `landing_faq_toggled` | FAQ open/close (`index`, `question`, `open`) |
 | `landing_markers_toggled` | Method “10 markers” expand (`open`) |
 | `landing_footer_link_clicked` | Footer link (`group`, `label`, `href`) |
-| `waitlist_cta_clicked` | Join CTA opens the modal (`source`: hero / sticky / sample / header). **Not fired by the desktop hero form**, which submits inline — see below |
-| `waitlist_modal_closed` | Modal closed (`source`, `joined`) |
-| `waitlist_submit_attempted` | Email submit (`source`, `email_domain`) |
-| `waitlist_joined` | Successful join (`email_domain`) |
-| `waitlist_submit_failed` | Join API error (`error`) |
+| `vehicle_check_cta_clicked` | Check CTA opens the modal (`source`: hero / sticky / sample / header). **Not fired by the desktop hero form**, which submits inline |
+| `vehicle_check_modal_opened` | Modal opened (`source`) |
+| `vehicle_check_modal_closed` | Modal closed (`source`) |
+| `vehicle_check_form_viewed` | Form rendered and ready (`source`, `form_variant`: hero / modal) |
+| `vehicle_check_brand_selected` | Brand chosen (`source`, `form_variant`, `brand`) |
+| `vehicle_check_model_selected` | Model chosen (`source`, `form_variant`, `brand`, `model`) |
+| `vehicle_check_variant_selected` | Variant chosen (`source`, `form_variant`, `brand`, `model`, `variant`) |
+| `vehicle_check_validation_failed` | Client Zod validation on submit (`source`, `form_variant`, `fields`, `field_count`) |
+| `vehicle_check_submit_attempted` | Valid submit (`source`, `form_variant`, `brand`, `model`, `variant`) |
+| `vehicle_check_submitted` | API success (`source`, `form_variant`, `brand`, `model`, `variant`, `vehicle_label`) |
+| `vehicle_check_submit_failed` | API error (`source`, `form_variant`, `error`, optional `brand` / `model` / `variant`) |
+| `vehicle_check_success_viewed` | Post-submit success UI shown (`source`, `form_variant`, `brand`, `model`, `variant`, `vehicle_label`) |
+| `google_signin_clicked` | Google CTA on success (`source`, `form_variant`, `brand`, `model`, `variant`, `vehicle_label`) |
+| `vehicle_check_catalog_load_failed` | Catalog fetch error (`source`, `form_variant`, `level`: brands / models / variants, `error`, optional `brand` / `model`) |
 
-## Waitlist (stubbed)
+## Vehicle check (stubbed)
 
-Join CTA → modal → `useJoinWaitlist` (React Query) → `POST /api/waitlist` (stub: validates + `console.log`s the email, no email/CRM provider) → success UI + PostHog events above.
+Check CTA → modal (mobile) or inline hero form (desktop) → `useSubmitVehicleCheck` (React Query) → `POST /api/vehicle-check` (stub: validates selection + `console.log`s, no auth yet) → inline success UI + PostHog funnel events above.
 
-**Two entry paths, split at 768px by `styles/landing.css`.** Below 768px the hero shows a button that opens the modal; at and above 768px the button is hidden and the hero aside renders an inline `WaitlistForm` that submits directly. Both hit the same hook and API. Consequence: `waitlist_cta_clicked{source:"hero"}` only fires on mobile, and `hero.ctaLabel` / `hero.ctaMicrocopy` are not rendered on desktop.
+**Two entry paths, split at 768px by `styles/landing.css`.** Below 768px the hero shows a button that opens the modal; at and above 768px the button is hidden and the hero aside renders an inline `VehicleCheckForm` (`form_variant: hero`). Modal instances use `form_variant: modal`. Consequence: `vehicle_check_cta_clicked{source:"hero"}` only fires on mobile, and `hero.ctaLabel` / `hero.ctaMicrocopy` are not rendered on desktop.
 
 | File | Role |
 | ---- | ---- |
+| `src/lib/vehicle-check-analytics.ts` | Typed PostHog helpers for the vehicle check funnel |
 | `src/components/landing/landing-page.tsx` | Modal state + the four CTA sources (`hero` / `sample` / `sticky` / `header`) |
-| `src/components/landing/ui/waitlist-modal.tsx` | Modal shell |
-| `src/components/landing/ui/waitlist-form.tsx` | Form UI + submit |
+| `src/components/landing/ui/vehicle-check-modal.tsx` | Modal shell |
+| `src/components/landing/ui/vehicle-check-form.tsx` | Form UI + submit + funnel events |
+| `src/components/landing/ui/brand-select.tsx` | Brand combobox with logos |
 | `src/components/landing/sections/hero.tsx` | Inline hero variant of the form (desktop aside) |
 | `src/components/landing/sections/sticky-cta.tsx` | Sticky bottom pill (mobile/tablet, CMS copy), scroll-gated |
 | `src/components/landing/sections/sticky-header.tsx` | Sticky top header (desktop, “Check your car”), scroll-gated |
 | `src/components/landing/hooks/use-scrolled-past.ts` | Shared scroll-past-hero visibility hook |
-| `src/hooks/use-join-waitlist.ts` | Mutation hook |
-| `src/lib/waitlist-api.ts` | Client fetch |
-| `src/app/api/waitlist/route.ts` | API route |
-| `src/lib/waitlist.ts` | Email validation/normalization |
+| `src/hooks/use-submit-vehicle-check.ts` | Mutation hook |
+| `src/hooks/use-vehicle-catalog.ts` | React Query hooks for cascading catalog |
+| `src/lib/vehicle-check-api.ts` | Client fetch |
+| `src/lib/vehicles/vehicle-check-schema.ts` | Zod schema (React Hook Form) |
+| `src/app/api/vehicle-check/route.ts` | API route |
+| `src/app/api/vehicles/route.ts` | Cascading catalog API |
+| `src/lib/vehicles/catalog.ts` | Hardcoded vehicle catalog |
+
+## Waitlist (removed)
+
+The email waitlist flow was replaced by the vehicle check form above. Legacy waitlist event names (`waitlist_*`) are no longer emitted.
 | `src/components/providers/query-provider.tsx` | QueryClient provider |
 
 After changing env vars, restart `pnpm dev`.

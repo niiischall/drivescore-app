@@ -86,26 +86,6 @@ export const landingPage = defineType({
           title: "CTA microcopy",
           type: "string",
         }),
-        defineField({
-          name: "joinedTitle",
-          title: "Joined title",
-          type: "string",
-        }),
-        defineField({
-          name: "joinedBodyBefore",
-          title: "Joined body (before email)",
-          type: "string",
-        }),
-        defineField({
-          name: "joinedBodyAfter",
-          title: "Joined body (after email)",
-          type: "string",
-        }),
-        defineField({
-          name: "joinedMeta",
-          title: "Joined meta",
-          type: "string",
-        }),
       ],
     }),
     defineField({
