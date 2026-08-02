@@ -1,7 +1,9 @@
-# DriveScore — Scoring Engine Rubric (v0.2)
+# DriveScore — Scoring Engine Rubric (v0.1)
 
-Status: v0.2 draft (research-validated, pre-build)
-Related: `01-landing-page.md` (Section 3), `03-multi-stage-form.md`
+Status: v0.1 (research-validated, pre-build)
+Related: `01-landing-page.md` (Method section), `03-multi-stage-form.md`, `07-sanity-cms.md`
+
+**Version stamp:** this doc is the rubric of record for `METHOD_VERSION` in `apps/web/src/lib/method.ts`, which is currently `v0.1`. The two must move together — if you change a weight or a marker here, bump the constant in the same commit. The tier shares and marker weights shown on the landing page are mirrored into Sanity for display (see `07-sanity-cms.md`); those must be updated to match too.
 
 ## Overview
 0–100 score → 3 confidence bands. Score reflects E20 (20% ethanol-blended petrol) compatibility risk for a specific vehicle. Two distinct risk axes are being scored together:
@@ -53,10 +55,11 @@ Material durability should be weighted more heavily than calibration, since it's
 
 ## Versioning policy
 - Rubric changes (weight/marker changes) increment version (v0.1 → v0.2 → ...)
+- Bumping the version means editing three places in one commit: this doc, `METHOD_VERSION` in `apps/web/src/lib/method.ts`, and the mirrored display weights in Sanity
 - Score displayed with its rubric version explicitly in UI
 - Cached reports generated under an older rubric version are tagged with that version rather than silently recalculated — avoids surprise re-scoring and uncontrolled regeneration cost
 
-## Known open gaps (carry into v0.3 planning)
+## Known open gaps (carry into v0.2 planning)
 - Exact regulatory cutoff dates/gazette references unverified — confirm against MoRTH/BIS/SIAM primary sources before production launch
 - Tier 3 markers (7–9) have the lowest confidence of the set; consider whether to expose marker-level confidence, not just an overall confidence flag
 - OEM compatibility table needs a sourcing/maintenance plan (who updates it, how often)

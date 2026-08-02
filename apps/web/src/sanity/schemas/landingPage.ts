@@ -5,6 +5,19 @@
 
 import { defineArrayMember, defineField, defineType } from "sanity";
 
+/** Shape of a method slice as seen by validation rules. */
+type MethodSliceValue = {
+  id?: string;
+  label?: string;
+  share?: number;
+  markers?: { name?: string; weight?: number }[];
+};
+
+const round2 = (n: number) => Math.round(n * 100) / 100;
+
+const sliceLabel = (slice: MethodSliceValue) =>
+  slice.label ?? slice.id ?? "untitled slice";
+
 export const landingPage = defineType({
   name: "landingPage",
   title: "Landing page",
@@ -23,13 +36,6 @@ export const landingPage = defineType({
       name: "headerBadge",
       title: "Header badge",
       type: "string",
-      group: "chrome",
-    }),
-    defineField({
-      name: "marqueeSuffix",
-      title: "Marquee suffix",
-      type: "string",
-      description: 'Text after the visitor count, e.g. "car owners have visited so far"',
       group: "chrome",
     }),
     defineField({
@@ -55,32 +61,10 @@ export const landingPage = defineType({
           type: "string",
         }),
         defineField({
-          name: "heroImageLight",
-          title: "Hero image (light) path",
-          type: "string",
-          description: "Public path, e.g. /illustrations/...",
-        }),
-        defineField({
-          name: "heroImageDark",
-          title: "Hero image (dark) path",
-          type: "string",
-        }),
-        defineField({
-          name: "heroImageAlt",
-          title: "Hero image alt",
-          type: "string",
-        }),
-        defineField({
           name: "bullets",
           title: "Benefit bullets",
           type: "array",
           of: [defineArrayMember({ type: "richBullet" })],
-        }),
-        defineField({
-          name: "stats",
-          title: "Stats",
-          type: "array",
-          of: [defineArrayMember({ type: "heroStat" })],
         }),
         defineField({
           name: "gaugeLabel",
@@ -179,21 +163,6 @@ export const landingPage = defineType({
         }),
         defineField({ name: "lede", title: "Lede", type: "text", rows: 2 }),
         defineField({
-          name: "ctaLabel",
-          title: "CTA label",
-          type: "string",
-        }),
-        defineField({
-          name: "gaugeStartLabel",
-          title: "Progress gauge start label",
-          type: "string",
-        }),
-        defineField({
-          name: "gaugeEndLabel",
-          title: "Progress gauge end label",
-          type: "string",
-        }),
-        defineField({
           name: "steps",
           title: "Steps",
           type: "array",
@@ -245,6 +214,9 @@ export const landingPage = defineType({
           name: "imagePath",
           title: "Vehicle image path",
           type: "string",
+          description: "Public path, e.g. /illustrations/...",
+          // Passed straight to next/image src.
+          validation: (Rule) => Rule.required(),
         }),
         defineField({
           name: "imageAlt",
@@ -293,12 +265,6 @@ export const landingPage = defineType({
           title: "CTA label",
           type: "string",
         }),
-        defineField({
-          name: "captionTemplate",
-          title: "Caption template",
-          type: "string",
-          description: "Use {{methodVersion}} for the code-owned version stamp.",
-        }),
       ],
     }),
     defineField({
@@ -330,13 +296,6 @@ export const landingPage = defineType({
           type: "string",
         }),
         defineField({
-          name: "methodVersionLabel",
-          title: "Method version label (display)",
-          type: "string",
-          description:
-            "Editorial label shown in marketing; scoring engine still owns METHOD_VERSION in code.",
-        }),
-        defineField({
           name: "showMarkersLabel",
           title: "Show markers label",
           type: "string",
@@ -351,6 +310,39 @@ export const landingPage = defineType({
           title: "Slices",
           type: "array",
           of: [defineArrayMember({ type: "methodSlice" })],
+          description:
+            "Tier breakdown shown in the method section. The section renders a hardcoded “100%” composition label, so shares must total 100.",
+          validation: (Rule) => [
+            // method.tsx dereferences this array unconditionally.
+            Rule.required().min(1),
+            // Hard invariant: the UI claims the slices add up to the whole score.
+            Rule.custom((slices?: MethodSliceValue[]) => {
+              if (!slices?.length) return true;
+              const total = round2(
+                slices.reduce((sum, slice) => sum + (slice.share ?? 0), 0),
+              );
+              return total === 100
+                ? true
+                : `Slice shares must add up to 100% (currently ${total}%).`;
+            }),
+            // Soft check: marker weights should reconcile with their tier share.
+            Rule.custom((slices?: MethodSliceValue[]) => {
+              if (!slices?.length) return true;
+              const mismatched = slices.filter((slice) => {
+                const markers = slice.markers ?? [];
+                if (!markers.length) return false;
+                const total = round2(
+                  markers.reduce((sum, m) => sum + (m.weight ?? 0), 0),
+                );
+                return total !== (slice.share ?? 0);
+              });
+              return mismatched.length === 0
+                ? true
+                : `Marker weights should add up to their slice share: ${mismatched
+                    .map(sliceLabel)
+                    .join(", ")}.`;
+            }).warning(),
+          ],
         }),
       ],
     }),

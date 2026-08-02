@@ -11,7 +11,6 @@ export const siteSettingsQuery = defineQuery(`
     title,
     description,
     locale,
-    contactEmail,
     footerDisclaimer
   }
 `);
@@ -19,17 +18,12 @@ export const siteSettingsQuery = defineQuery(`
 export const landingPageQuery = defineQuery(`
   *[_type == "landingPage" && _id == "landingPage"][0]{
     headerBadge,
-    marqueeSuffix,
     hero{
       badge,
       titleBefore,
       titleAccent,
       titleAfter,
-      heroImageLight,
-      heroImageDark,
-      heroImageAlt,
       bullets[]{ segments[]{ text, emphasis } },
-      stats[]{ value, label },
       gaugeLabel,
       gaugeMandate,
       ctaLabel,
@@ -53,9 +47,6 @@ export const landingPageQuery = defineQuery(`
       titleAccent,
       titleAfter,
       lede,
-      ctaLabel,
-      gaugeStartLabel,
-      gaugeEndLabel,
       steps[]{ _key, title, body }
     },
     sampleScore{
@@ -73,8 +64,7 @@ export const landingPageQuery = defineQuery(`
       markersLabel,
       markers[]{ label, verdict, tone, width },
       confidenceNote,
-      ctaLabel,
-      captionTemplate
+      ctaLabel
     },
     method{
       eyebrow,
@@ -83,7 +73,6 @@ export const landingPageQuery = defineQuery(`
       titleAfter,
       lede,
       compositionLabel,
-      methodVersionLabel,
       showMarkersLabel,
       hideMarkersLabel,
       slices[]{

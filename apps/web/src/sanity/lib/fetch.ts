@@ -31,16 +31,36 @@ async function sanityFetch<T>(
   }
 }
 
-function isCompleteLanding(data: LandingPage | null): data is LandingPage {
-  const journeyOk =
-    Boolean(data?.journey?.titleAccent) &&
-    (data?.journey?.steps?.length ?? 0) >= 1;
+/**
+ * Fields the landing components dereference without a guard. A document missing
+ * any of these would crash the page at render, so fail here with a message that
+ * names the culprit instead.
+ */
+function missingLandingFields(data: LandingPage | null): string[] {
+  if (!data) return ["<document>"];
 
-  return Boolean(
-    data?.hero?.titleAccent &&
-      data?.problem?.cards?.length &&
-      journeyOk,
-  );
+  const required: [string, unknown][] = [
+    ["hero.titleAccent", data.hero?.titleAccent],
+    ["hero.bullets", data.hero?.bullets?.length],
+    ["problem.cards", data.problem?.cards?.length],
+    ["journey.titleAccent", data.journey?.titleAccent],
+    ["journey.steps", data.journey?.steps?.length],
+    // Fed straight into next/image src — an empty value throws at render.
+    ["sampleScore.imagePath", data.sampleScore?.imagePath],
+    ["sampleScore.markers", data.sampleScore?.markers?.length],
+    ["method.slices", data.method?.slices?.length],
+    ["confidence.pointers", data.confidence?.pointers?.length],
+    ["footer.methodLinks", data.footer?.methodLinks?.length],
+  ];
+
+  const missing = required.filter(([, value]) => !value).map(([key]) => key);
+
+  // Each method slice renders its own marker list.
+  const slicesWithoutMarkers = (data.method?.slices ?? [])
+    .filter((slice) => !slice.markers?.length)
+    .map((slice) => `method.slices["${slice.id ?? "?"}"].markers`);
+
+  return [...missing, ...slicesWithoutMarkers];
 }
 
 export async function getSiteSettings(): Promise<SiteSettings> {
@@ -53,8 +73,11 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 
 export async function getLandingPage(): Promise<LandingPage> {
   const data = await sanityFetch<LandingPage>(landingPageQuery);
-  if (!isCompleteLanding(data)) {
-    throw new Error('Missing or incomplete Sanity document "landingPage".');
+  const missing = missingLandingFields(data);
+  if (missing.length || !data) {
+    throw new Error(
+      `Incomplete Sanity document "landingPage" — missing: ${missing.join(", ")}.`,
+    );
   }
   return data;
 }

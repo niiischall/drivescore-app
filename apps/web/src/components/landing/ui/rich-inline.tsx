@@ -1,6 +1,10 @@
 /**
  * @module landing/ui/rich-inline
  * @description Renders **bold** markers and {{methodVersion}} in CMS strings.
+ *
+ * Note: placeholder substitution happens in `RichInline` only. `AccentTitle` and
+ * any component rendering a CMS string directly will print `{{methodVersion}}`
+ * literally. Today the only consumer is `confidence.pointers[].body`.
  */
 
 import { METHOD_VERSION } from "@/lib/method";
@@ -55,8 +59,4 @@ export function AccentTitle({
       {after}
     </>
   );
-}
-
-export function applyCaptionTemplate(template: string) {
-  return applyPlaceholders(template);
 }

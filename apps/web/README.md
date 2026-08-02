@@ -9,10 +9,10 @@ Currently ships the **marketing landing page** and a **Resend-backed waitlist** 
 ## Stack
 
 - Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4
-- [Sanity](https://www.sanity.io) for marketing + static page content (embedded Studio at `/studio`) — see [`docs/07-sanity-cms.md`](../../docs/07-sanity-cms.md)
+- [Sanity](https://www.sanity.io) for landing + FAQ content (embedded Studio at `/studio`) — see [`docs/07-sanity-cms.md`](../../docs/07-sanity-cms.md)
 - [TanStack Query](https://tanstack.com/query) for client mutations
 - [Resend](https://resend.com) for waitlist contacts + confirmation email
-- PostHog (client analytics via `/pulse` proxy; server HogQL for visitor count)
+- PostHog for client analytics, proxied first-party via `/pulse` (see `next.config.ts` rewrites)
 - Vercel Analytics + Speed Insights
 - Light / dark UI via `prefers-color-scheme` (`data-theme` on `<html>`, see `theme-sync.tsx`)
 
@@ -39,13 +39,13 @@ Copy from [`.env.example`](.env.example):
 | `NEXT_PUBLIC_SANITY_DATASET` | CMS | Defaults to `production` |
 | `NEXT_PUBLIC_SANITY_API_VERSION` | CMS | Defaults to `2025-01-01` |
 | `SANITY_API_READ_TOKEN` | Private/draft reads | Optional for published CDN reads |
-| `NEXT_PUBLIC_POSTHOG_KEY` | Client analytics | Optional in local; skip if unused |
-| `POSTHOG_PERSONAL_API_KEY` | Visitor marquee | With `POSTHOG_PROJECT_ID`; falls back to static count |
-| `POSTHOG_PROJECT_ID` | Visitor marquee | |
-| `POSTHOG_HOST` | Visitor marquee | Defaults to `https://us.posthog.com` |
+| `SANITY_API_WRITE_TOKEN` | `pnpm migrate:sanity-copy` only | Editor+ token; not needed to run the app |
+| `NEXT_PUBLIC_POSTHOG_KEY` | Client analytics | Optional in local; skip if unused. Analytics is client-only — there are no server-side PostHog vars |
 | `RESEND_API_KEY` | Waitlist | Resend API key |
 | `RESEND_AUDIENCE_ID` | Waitlist | Resend **Segment** ID (Audiences → Segments) |
 | `RESEND_FROM_EMAIL` | Waitlist | Verified sender, e.g. `DriveScore <hello@drivescore.club>` |
+
+`VERCEL_PROJECT_PRODUCTION_URL` is also read by `src/lib/site.ts` as a fallback when `NEXT_PUBLIC_SITE_URL` is unset. Vercel injects it automatically — don't set it by hand.
 
 Full waitlist / DNS setup: [`docs/06-waitlist-and-email.md`](../../docs/06-waitlist-and-email.md).
 
@@ -57,11 +57,12 @@ Client events via `src/lib/analytics.ts` (no-op if key unset):
 | ----- | ---- |
 | `landing_page_viewed` | Landing mounts |
 | `landing_section_viewed` | Section enters viewport (`section`) |
-| `landing_quick_action_clicked` | Quick-action card (`target`, `label`) |
-| `landing_faq_toggled` | FAQ open/close (`question`, `open`) |
+| `landing_problem_card_selected` | Problem card selected (`index`, `title`) |
+| `landing_journey_step_selected` | Journey step selected (`index`, `title`, `active`, `source`: pin / card) |
+| `landing_faq_toggled` | FAQ open/close (`index`, `question`, `open`) |
 | `landing_markers_toggled` | Method “10 markers” expand (`open`) |
 | `landing_footer_link_clicked` | Footer link (`group`, `label`, `href`) |
-| `waitlist_cta_clicked` | Join CTA (`source`: hero / sticky / sample) |
+| `waitlist_cta_clicked` | Join CTA opens the modal (`source`: hero / sticky / sample). **Not fired by the desktop hero form**, which submits inline — see below |
 | `waitlist_modal_closed` | Modal closed (`source`, `joined`) |
 | `waitlist_submit_attempted` | Email submit (`source`, `email_domain`) |
 | `waitlist_joined` | Successful join (`email_domain`) |
@@ -71,24 +72,39 @@ Client events via `src/lib/analytics.ts` (no-op if key unset):
 
 Join CTA → modal → `useJoinWaitlist` (React Query) → `POST /api/waitlist` → Resend Segment + confirmation email → success UI + PostHog events above.
 
+**Two entry paths, split at 768px by `styles/landing.css`.** Below 768px the hero shows a button that opens the modal; at and above 768px the button is hidden and the hero aside renders an inline `WaitlistForm` that submits directly. Both hit the same hook and API. Consequence: `waitlist_cta_clicked{source:"hero"}` only fires on mobile, and `hero.ctaLabel` / `hero.ctaMicrocopy` are not rendered on desktop.
+
 | File | Role |
 | ---- | ---- |
-| `src/components/landing/sections/hero.tsx` | Form UI |
+| `src/components/landing/landing-page.tsx` | Modal state + the three CTA sources (`hero` / `sample` / `sticky`) |
+| `src/components/landing/ui/waitlist-modal.tsx` | Modal shell |
+| `src/components/landing/ui/waitlist-form.tsx` | Form UI + submit |
+| `src/components/landing/sections/hero.tsx` | Inline hero variant of the form (desktop aside) |
 | `src/hooks/use-join-waitlist.ts` | Mutation hook |
 | `src/lib/waitlist-api.ts` | Client fetch |
 | `src/app/api/waitlist/route.ts` | API route |
 | `src/lib/waitlist.ts` | Validate + Resend calls |
+| `src/lib/waitlist-email.ts` | Confirmation email template |
 | `src/components/providers/query-provider.tsx` | QueryClient provider |
 
 After changing env vars, restart `pnpm dev`. Mirror Resend vars in Vercel for production.
 
 ## Landing page structure
 
-Components live under `src/components/landing/`:
+Components live under `src/components/landing/`. Render order (`landing-page.tsx`):
 
-- Header, hero (waitlist), visitor marquee, quick actions
-- Problem, sample score, method, confidence, FAQ
-- Footer, sticky CTA
+1. Header
+2. Hero (waitlist CTA)
+3. Problem
+4. Journey
+5. Sample score
+6. Method
+7. Confidence
+8. FAQ
+9. Footer
+10. Sticky CTA (overlay) + waitlist modal
+
+Section copy loads from Sanity, with exceptions — the waitlist modal/form, the hero's desktop aside card, and a few labels are still hardcoded (full list in [`docs/07-sanity-cms.md`](../../docs/07-sanity-cms.md)). `src/sanity/lib/fetch.ts` throws a named error if any required CMS array is missing.
 
 Design / product notes: [`docs/01-landing-page.md`](../../docs/01-landing-page.md).
 
@@ -113,7 +129,11 @@ Marketing copy (landing sections + FAQ items) is authored in Sanity Studio. Do n
 
 Published CMS content is cached for up to ~1 hour (`revalidate: 3600`).
 
-`METHOD_VERSION` in `src/lib/method.ts` remains the scoring-engine stamp; CMS may show a display label but is not the engine source of truth.
+`METHOD_VERSION` in `src/lib/method.ts` is the scoring-engine stamp and must stay in sync with [`docs/02-scoring-engine-rubric.md`](../../docs/02-scoring-engine-rubric.md).
+
+The `{{methodVersion}}` placeholder is substituted only by the `RichInline` component in `ui/rich-inline.tsx`, whose one call site today is `confidence.pointers[].body`. In any other CMS field it renders literally.
+
+The method section's tier shares and marker weights **are** authored in Sanity, as a display mirror of the rubric doc — see [`docs/07-sanity-cms.md`](../../docs/07-sanity-cms.md) for the guardrails (shares must total 100).
 
 ## Scripts
 

@@ -52,33 +52,22 @@ export type ConfidencePointer = {
   body: string;
 };
 
-export type HeroStat = {
-  value: string;
-  label: string;
-};
-
 export type SiteSettings = {
   name: string;
   title: string;
   description: string;
   locale: string;
-  contactEmail: string;
   footerDisclaimer: string;
 };
 
 export type LandingPage = {
   headerBadge: string;
-  marqueeSuffix: string;
   hero: {
     badge: string;
     titleBefore: string;
     titleAccent: string;
     titleAfter: string;
-    heroImageLight: string;
-    heroImageDark: string;
-    heroImageAlt: string;
     bullets: RichBullet[];
-    stats: HeroStat[];
     gaugeLabel: string;
     gaugeMandate: string;
     ctaLabel: string;
@@ -102,9 +91,6 @@ export type LandingPage = {
     titleAccent: string;
     titleAfter: string;
     lede: string;
-    ctaLabel: string;
-    gaugeStartLabel: string;
-    gaugeEndLabel: string;
     steps: { _key?: string; title: string; body: string }[];
   };
   sampleScore: {
@@ -123,7 +109,6 @@ export type LandingPage = {
     markers: SampleMarker[];
     confidenceNote: string;
     ctaLabel: string;
-    captionTemplate: string;
   };
   method: {
     eyebrow: string;
@@ -132,7 +117,6 @@ export type LandingPage = {
     titleAfter: string;
     lede: string;
     compositionLabel: string;
-    methodVersionLabel: string;
     showMarkersLabel: string;
     hideMarkersLabel: string;
     slices: MethodSlice[];

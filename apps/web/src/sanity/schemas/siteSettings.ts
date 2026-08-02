@@ -36,12 +36,6 @@ export const siteSettings = defineType({
       initialValue: "en_IN",
     }),
     defineField({
-      name: "contactEmail",
-      title: "Contact email",
-      type: "string",
-      validation: (Rule) => Rule.email(),
-    }),
-    defineField({
       name: "footerDisclaimer",
       title: "Footer disclaimer",
       type: "text",

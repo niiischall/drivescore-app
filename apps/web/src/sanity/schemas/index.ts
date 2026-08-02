@@ -8,7 +8,6 @@ import { landingPage } from "./landingPage";
 import {
   blockContent,
   confidencePointer,
-  heroStat,
   methodMarker,
   methodSlice,
   navLink,
@@ -33,6 +32,5 @@ export const schemaTypes = [
   methodMarker,
   methodSlice,
   confidencePointer,
-  heroStat,
   blockContent,
 ];
