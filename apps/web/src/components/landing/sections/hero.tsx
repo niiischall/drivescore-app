@@ -95,10 +95,9 @@ export function HeroSection({
       <aside className="landing-hero__aside">
         {!joined ? (
           <div className="landing-hero__form-card">
-            <h2 className="landing-hero__form-title">Join the waitlist</h2>
+            <h2 className="landing-hero__form-title">Check your car</h2>
             <p className="landing-hero__form-body">
-              Be first to check your car&apos;s E20 report. Free first check —
-              we&apos;ll email you at launch.
+              Be first to check your car&apos;s E20 report.
             </p>
             <WaitlistForm source="hero" onJoined={onJoined} variant="hero" />
           </div>

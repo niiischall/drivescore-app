@@ -4,7 +4,7 @@ Status: **landing UI implemented** in `apps/web` (waitlist CTA); original “Che
 Related: `03-multi-stage-form.md`, `04-ai-report-and-monetization.md`, `06-waitlist-and-email.md`, **`07-sanity-cms.md`** (content source)
 
 ## Purpose
-Convert an anxious Indian car owner (worried about E20's effect on their vehicle) into someone who starts the compatibility check. The long-term page leads with the tool itself — the calculator/form *is* the hero. **Pre-launch ship:** the hero collects a waitlist email (Resend confirmation) instead of starting the multi-stage form. See `06-waitlist-and-email.md`.
+Convert an anxious Indian car owner (worried about E20's effect on their vehicle) into someone who starts the compatibility check. The long-term page leads with the tool itself — the calculator/form *is* the hero. **Pre-launch ship:** the hero collects a waitlist email (stubbed server-side — no confirmation email is sent) instead of starting the multi-stage form. See `06-waitlist-and-email.md`.
 
 ## Implemented surface (`apps/web`)
 
@@ -16,8 +16,8 @@ The shipped page departs from the original draft in several ways:
 
 | Draft | Shipped |
 | ----- | ------- |
-| Primary CTA “Check your car” | “Join the waitlist” → modal → `POST /api/waitlist` (React Query `useJoinWaitlist`). Modal entry points: hero (mobile only), sample score, sticky CTA — plus an inline hero form on desktop |
-| Micro-copy “no signup required” | Waitlist email + confirmation; “Free first check — we'll email you at launch” and “No spam · Unsubscribe anytime · Built for Indian cars” |
+| Primary CTA “Check your car” | Modal heading now also reads “Check your car” → modal → `POST /api/waitlist` (React Query `useJoinWaitlist`; API is stubbed — logs the email, sends nothing). Modal entry points: hero (mobile only), sample score, sticky CTA (mobile pill / desktop header, both scroll-gated after hero) — plus an inline hero form on desktop |
+| Micro-copy “no signup required” | Waitlist email capture; “Be first to check your car's E20 report” and “No spam · Unsubscribe anytime · Built for Indian cars” |
 | Trust / social proof | **Not built.** Still an open item — see below |
 | Hero subhead | Replaced by a list of benefit bullets (`hero.bullets`) |
 | — | **New: Journey section** — an illustrated 4-step trail previewing the intake form |
@@ -116,8 +116,13 @@ Chrome from [`faq.*`]; questions from ordered `faqItem` documents, which also fe
 - Disclaimer [`siteSettings.footerDisclaimer`]: heuristic estimate, not an OEM certification
 - Links [`footer.methodLinks`] — methodology/anchor links only. There are no `/privacy` or `/contact` routes; those pages were retired
 
-### 9. Sticky CTA — `sections/sticky-cta.tsx`
-Persistent bar [`stickyCta.*`] → waitlist modal, `source: "sticky"`. This is what replaced the draft's "Final CTA" section.
+### 9. Sticky CTA — `sections/sticky-cta.tsx` (mobile/tablet) + `sections/sticky-header.tsx` (desktop)
+Two viewport-split variants of the same idea, both gated by the `useScrolledPast` hook (`hooks/use-scrolled-past.ts`, an `IntersectionObserver` on the hero section) — hidden until the user scrolls past the hero, then fades in:
+
+- **Below 1024px:** floating bottom pill, CMS copy [`stickyCta.*`] → waitlist modal, `source: "sticky"`.
+- **1024px and up:** sticky top header, hardcoded “Check your car” label → waitlist modal, `source: "header"`. Fills the gap left once the desktop hero's inline waitlist form scrolls out of view.
+
+This is what replaced the draft's "Final CTA" section.
 
 ## Full page order (shipped)
 
@@ -130,7 +135,7 @@ Persistent bar [`stickyCta.*`] → waitlist modal, `source: "sticky"`. This is w
 7. Confidence & Transparency
 8. FAQ
 9. Footer
-10. Sticky CTA (overlay, not in flow)
+10. Sticky CTA — mobile pill or desktop header (overlay, scroll-gated after hero, not in flow)
 
 Order is set in `components/landing/landing-page.tsx`, which also owns the waitlist modal and the `data-section` wrappers that drive `landing_section_viewed`.
 

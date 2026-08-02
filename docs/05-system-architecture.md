@@ -11,10 +11,9 @@ This doc describes how the pieces already specified (landing page, form, rubric,
 
 | Component | Role |
 | --------- | ---- |
-| Landing client | Marketing page; waitlist modal reached from the sticky/sample/hero-mobile CTAs, plus an inline hero form on desktop, both submitting via TanStack Query |
+| Landing client | Marketing page; waitlist modal reached from the sticky (bottom pill on mobile, top header on desktop)/sample/hero-mobile CTAs, plus an inline hero form on desktop, both submitting via TanStack Query |
 | Sanity CMS | Marketing copy (`siteSettings`, `landingPage`, `faqItem`); Studio at `/studio`; ~1h ISR cache |
-| Waitlist API | `POST /api/waitlist` — validate email, upsert Resend Segment contact, send confirmation |
-| Resend | Contact storage (Segment) + transactional confirmation email |
+| Waitlist API | `POST /api/waitlist` — validate email, `console.log` it (stub — no email/CRM integration yet) |
 | PostHog | Client analytics only, proxied first-party via `/pulse`. No server-side calls |
 
 Details: `06-waitlist-and-email.md`, **`07-sanity-cms.md`**, `apps/web/README.md`. Scoring logic and `METHOD_VERSION` are code-owned; Sanity holds marketing presentation, including a display mirror of the rubric weights (`07-sanity-cms.md`).
@@ -24,7 +23,7 @@ Details: `06-waitlist-and-email.md`, **`07-sanity-cms.md`**, `apps/web/README.md
 | Component            | Role                                                                                                                        | Status |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------- | ------ |
 | Client               | Landing page + multi-stage form (the only user-facing layer)                                                                | Landing live; form planned |
-| Waitlist / email     | Resend Segment + confirmation email (`06`)                                                                                | **Live** |
+| Waitlist / email     | Email logged server-side, stub — no email/CRM integration yet (`06`)                                                      | **Live** |
 | Vehicle lookup       | RC/VAHAN registration API integration — resolves registration number to make, model, manufacture date, fuel type, RTO/state | Planned |
 | Scoring engine       | Computes the 10-marker score; wraps the rules engine (Markers 3–9 inference) and the OEM declaration table (Marker 1)       | Planned |
 | Report cache         | Stores generated AI reports, keyed on vehicle + usage fingerprint — not per-user                                            | Planned |
@@ -37,13 +36,12 @@ Details: `06-waitlist-and-email.md`, **`07-sanity-cms.md`**, `apps/web/README.md
 
 ```mermaid
 flowchart LR
-    U([User]) --> C["Landing CTAs<br/>sticky · sample · hero (mobile)"]
+    U([User]) --> C["Landing CTAs<br/>sticky (mobile pill / desktop header) · sample · hero (mobile)"]
     U --> D["Hero aside form<br/>(desktop)"]
     C --> M[Waitlist modal]
     M -->|email| API["POST /api/waitlist"]
     D -->|email| API
-    API --> RS[Resend Segment]
-    API --> EM[Confirmation email]
+    API --> LOG["console.log (stub)"]
 ```
 
 ### Full product (planned)
@@ -128,5 +126,5 @@ Carried over from `04-ai-report-and-monetization.md` for completeness at the arc
 - Define exact cache invalidation process for the "OEM issues new declaration" trigger — likely needs an admin/ops workflow, not just a code path
 - Define subscription service's fair-use cap enforcement point precisely: checked before generation is attempted, with a clear user-facing message if the cap is hit (e.g. "you've used your fresh reports this period — here's your cached/free summary instead")
 - Decide whether report cache lookups are exact-match only on fingerprint, or allow a "close enough" fuzzy match (e.g. usage bucket boundaries) — exact-match is simpler and recommended for v1
-- Waitlist hardening (rate limit, double opt-in) — see out-of-scope in `06-waitlist-and-email.md`
-- Infra beyond current Vercel + Resend + PostHog for the scoring path still TBD
+- Waitlist hardening (real email/CRM delivery, rate limit, double opt-in) — see out-of-scope in `06-waitlist-and-email.md`
+- Infra beyond current Vercel + PostHog for the scoring path still TBD

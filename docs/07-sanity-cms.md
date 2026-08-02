@@ -28,7 +28,7 @@ Several of these are load-bearing, not optional — `sanity/lib/fetch.ts` throws
 ## What does **not** live in Sanity
 
 - Scoring logic and the rubric of record — `METHOD_VERSION` in `apps/web/src/lib/method.ts` and `docs/02-scoring-engine-rubric.md`
-- Waitlist / Resend email templates
+- Waitlist form copy (email capture is stubbed — see `06-waitlist-and-email.md`)
 - PostHog analytics
 - UI structure, tokens, and motion
 
@@ -132,7 +132,7 @@ These render live English strings that editors cannot change, contrary to the ru
 
 | File | Hardcoded strings |
 | --- | --- |
-| `ui/waitlist-modal.tsx` | Title “Join the waitlist”; body “Be first to check your car's E20 report. Free first check — we'll email you at launch.”; success title “You're on the list”; success body “We'll email {email} when DriveScore launches. Your first check stays free.”; “Done”; aria-labels “Close waitlist dialog” / “Close” |
+| `ui/waitlist-modal.tsx` | Title “Check your car”; body “Be first to check your car's E20 report.”; success title “You're on the list”; success body “We'll email {email} when DriveScore launches. Your first check stays free.”; “Done”; aria-labels “Close waitlist dialog” / “Close” |
 | `ui/waitlist-form.tsx` | Label “Email”; placeholder “you@email.com”; submit “Get early access”; loading “Joining…”; error fallback “Couldn't join — try again”; footnote “No spam · Unsubscribe anytime · Built for Indian cars” |
 | `sections/hero.tsx` | The desktop aside card's title and body (duplicating the modal's) — the only hero copy desktop visitors see; the gauge tick labels E0–E25 |
 | `sections/journey.tsx` | Trail image `alt`; aria-labels “Steps on the path” and “Step N: …”. Contrast `sampleScore`, which correctly uses a CMS `imageAlt` |
