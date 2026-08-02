@@ -647,13 +647,21 @@
   position: fixed;
   bottom: 12px;
   left: 50%;
-  transform: translateX(-50%);
   width: min(480px, calc(100% - 28px));
   z-index: var(--z-sticky);
-  transition: transform 0.2s ease;
+  transform: translate(-50%, 16px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.2s ease, opacity 0.2s ease-out;
 }
 
-.landing-sticky:hover {
+.landing-sticky--visible {
+  transform: translate(-50%, 0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.landing-sticky--visible:hover {
   transform: translate(-50%, -2px);
 }
 
@@ -667,6 +675,45 @@
   .landing-sticky {
     display: none;
   }
+}
+
+/* Sticky header CTA: fills the gap left once the desktop hero (with its
+   inline waitlist form) scrolls out of view. Hidden below 1024px — the
+   bottom .landing-sticky pill already covers mobile/tablet. */
+.landing-sticky-header {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .landing-sticky-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-sticky);
+    display: block;
+    border-bottom: 1px solid var(--landing-card-border);
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.25s ease-out, opacity 0.2s ease-out;
+  }
+
+  .landing-sticky-header--visible {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.landing-sticky-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: var(--landing-shell);
+  margin-inline: auto;
+  padding: var(--space-3) var(--space-6);
 }
 
 .landing-cta {
@@ -2709,6 +2756,7 @@
   .landing-problem__icon,
   .landing-modal__close,
   .landing-sticky,
+  .landing-sticky-header,
   .landing-joined__icon,
   .landing-journey__step,
   .landing-journey__step-num,

@@ -2,7 +2,7 @@
 
 Next.js app for DriveScore — E20 compatibility score tool for Indian car owners.
 
-Currently ships the **marketing landing page** and a **Resend-backed waitlist** (confirmation email + contact segment). Scoring form and reports are still ahead of this surface.
+Currently ships the **marketing landing page** and a **waitlist signup** (email is validated and logged server-side — no email/CRM provider is wired up yet). Scoring form and reports are still ahead of this surface.
 
 > **Sanity CMS is required.** Landing copy and FAQ items load from Sanity — not from hardcoded TSX. Spec: [`docs/07-sanity-cms.md`](../../docs/07-sanity-cms.md). Studio: [`/studio`](http://localhost:3000/studio).
 
@@ -11,7 +11,6 @@ Currently ships the **marketing landing page** and a **Resend-backed waitlist** 
 - Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4
 - [Sanity](https://www.sanity.io) for landing + FAQ content (embedded Studio at `/studio`) — see [`docs/07-sanity-cms.md`](../../docs/07-sanity-cms.md)
 - [TanStack Query](https://tanstack.com/query) for client mutations
-- [Resend](https://resend.com) for waitlist contacts + confirmation email
 - PostHog for client analytics, proxied first-party via `/pulse` (see `next.config.ts` rewrites)
 - Vercel Analytics + Speed Insights
 - Light / dark UI via `prefers-color-scheme` (`data-theme` on `<html>`, see `theme-sync.tsx`)
@@ -22,7 +21,6 @@ Currently ships the **marketing landing page** and a **Resend-backed waitlist** 
 pnpm install
 cp .env.example .env.local
 # REQUIRED: NEXT_PUBLIC_SANITY_PROJECT_ID (+ published Sanity content)
-# Also set Resend vars for waitlist
 pnpm dev
 ```
 
@@ -41,13 +39,10 @@ Copy from [`.env.example`](.env.example):
 | `SANITY_API_READ_TOKEN` | Private/draft reads | Optional for published CDN reads |
 | `SANITY_API_WRITE_TOKEN` | `pnpm migrate:sanity-copy` only | Editor+ token; not needed to run the app |
 | `NEXT_PUBLIC_POSTHOG_KEY` | Client analytics | Optional in local; skip if unused. Analytics is client-only — there are no server-side PostHog vars |
-| `RESEND_API_KEY` | Waitlist | Resend API key |
-| `RESEND_AUDIENCE_ID` | Waitlist | Resend **Segment** ID (Audiences → Segments) |
-| `RESEND_FROM_EMAIL` | Waitlist | Verified sender, e.g. `DriveScore <hello@drivescore.club>` |
 
 `VERCEL_PROJECT_PRODUCTION_URL` is also read by `src/lib/site.ts` as a fallback when `NEXT_PUBLIC_SITE_URL` is unset. Vercel injects it automatically — don't set it by hand.
 
-Full waitlist / DNS setup: [`docs/06-waitlist-and-email.md`](../../docs/06-waitlist-and-email.md).
+Full waitlist details: [`docs/06-waitlist-and-email.md`](../../docs/06-waitlist-and-email.md).
 
 ## Analytics (PostHog)
 
@@ -62,32 +57,34 @@ Client events via `src/lib/analytics.ts` (no-op if key unset):
 | `landing_faq_toggled` | FAQ open/close (`index`, `question`, `open`) |
 | `landing_markers_toggled` | Method “10 markers” expand (`open`) |
 | `landing_footer_link_clicked` | Footer link (`group`, `label`, `href`) |
-| `waitlist_cta_clicked` | Join CTA opens the modal (`source`: hero / sticky / sample). **Not fired by the desktop hero form**, which submits inline — see below |
+| `waitlist_cta_clicked` | Join CTA opens the modal (`source`: hero / sticky / sample / header). **Not fired by the desktop hero form**, which submits inline — see below |
 | `waitlist_modal_closed` | Modal closed (`source`, `joined`) |
 | `waitlist_submit_attempted` | Email submit (`source`, `email_domain`) |
 | `waitlist_joined` | Successful join (`email_domain`) |
 | `waitlist_submit_failed` | Join API error (`error`) |
 
-## Waitlist (Resend)
+## Waitlist (stubbed)
 
-Join CTA → modal → `useJoinWaitlist` (React Query) → `POST /api/waitlist` → Resend Segment + confirmation email → success UI + PostHog events above.
+Join CTA → modal → `useJoinWaitlist` (React Query) → `POST /api/waitlist` (stub: validates + `console.log`s the email, no email/CRM provider) → success UI + PostHog events above.
 
 **Two entry paths, split at 768px by `styles/landing.css`.** Below 768px the hero shows a button that opens the modal; at and above 768px the button is hidden and the hero aside renders an inline `WaitlistForm` that submits directly. Both hit the same hook and API. Consequence: `waitlist_cta_clicked{source:"hero"}` only fires on mobile, and `hero.ctaLabel` / `hero.ctaMicrocopy` are not rendered on desktop.
 
 | File | Role |
 | ---- | ---- |
-| `src/components/landing/landing-page.tsx` | Modal state + the three CTA sources (`hero` / `sample` / `sticky`) |
+| `src/components/landing/landing-page.tsx` | Modal state + the four CTA sources (`hero` / `sample` / `sticky` / `header`) |
 | `src/components/landing/ui/waitlist-modal.tsx` | Modal shell |
 | `src/components/landing/ui/waitlist-form.tsx` | Form UI + submit |
 | `src/components/landing/sections/hero.tsx` | Inline hero variant of the form (desktop aside) |
+| `src/components/landing/sections/sticky-cta.tsx` | Sticky bottom pill (mobile/tablet, CMS copy), scroll-gated |
+| `src/components/landing/sections/sticky-header.tsx` | Sticky top header (desktop, “Check your car”), scroll-gated |
+| `src/components/landing/hooks/use-scrolled-past.ts` | Shared scroll-past-hero visibility hook |
 | `src/hooks/use-join-waitlist.ts` | Mutation hook |
 | `src/lib/waitlist-api.ts` | Client fetch |
 | `src/app/api/waitlist/route.ts` | API route |
-| `src/lib/waitlist.ts` | Validate + Resend calls |
-| `src/lib/waitlist-email.ts` | Confirmation email template |
+| `src/lib/waitlist.ts` | Email validation/normalization |
 | `src/components/providers/query-provider.tsx` | QueryClient provider |
 
-After changing env vars, restart `pnpm dev`. Mirror Resend vars in Vercel for production.
+After changing env vars, restart `pnpm dev`.
 
 ## Landing page structure
 

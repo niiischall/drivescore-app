@@ -5,7 +5,7 @@ import { useEffect, useId } from "react";
 import { BrandWordmark } from "./brand";
 import { WaitlistForm } from "./waitlist-form";
 
-export type WaitlistSource = "hero" | "sticky" | "sample";
+export type WaitlistSource = "hero" | "sticky" | "sample" | "header";
 
 type WaitlistModalProps = {
   open: boolean;
@@ -81,11 +81,10 @@ export function WaitlistModal({
               <BrandWordmark />
             </p>
             <h2 id={titleId} className="landing-modal__title">
-              Join the waitlist
+              Check your car
             </h2>
             <p id={descId} className="landing-modal__body">
-              Be first to check your car&apos;s E20 report. Free first check —
-              we&apos;ll email you at launch.
+              Be first to check your car&apos;s E20 report.
             </p>
 
             <WaitlistForm

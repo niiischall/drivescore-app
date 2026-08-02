@@ -20,13 +20,13 @@ Landing Page (+ waitlist) → Multi-Stage Form → Scoring Engine → AI Report
 3. **`03-multi-stage-form.md`** — the 4-stage intake form, field-by-field mapping to rubric markers, user-input vs backend-derived split
 4. **`04-ai-report-and-monetization.md`** — free/paid split, subscription model, report-caching architecture for cost control
 5. **`05-system-architecture.md`** — component overview, end-to-end request flow, checks/reports data model, regeneration policy
-6. **`06-waitlist-and-email.md`** — Resend waitlist + confirmation email (**implemented** in `apps/web`)
+6. **`06-waitlist-and-email.md`** — waitlist capture, email delivery stubbed to a console log (**implemented** in `apps/web`)
 7. **`07-sanity-cms.md`** — Sanity CMS for landing + FAQ copy (**implemented**; required for `apps/web`)
 
 App runbook: [`apps/web/README.md`](../apps/web/README.md).
 
 ## Status
-- **Implemented:** landing page UI in `apps/web` (header, hero, problem, journey, sample score, method, confidence, FAQ, footer, sticky CTA), waitlist modal + API + Resend confirmation (`06`), Sanity CMS for marketing copy (`07`)
+- **Implemented:** landing page UI in `apps/web` (header, hero, problem, journey, sample score, method, confidence, FAQ, footer, sticky CTA), waitlist modal + API (`06`, email delivery stubbed to a console log), Sanity CMS for marketing copy (`07`)
 - **Draft / not yet built:** scoring form, rubric engine, AI report, subscriptions (`02`–`05` open items still apply)
 - **Specced but never built:** visitor-count marquee / social proof — removed from the docs and schema, still an open item in `01`
 
@@ -36,4 +36,4 @@ Known open items are listed at the bottom of each file — several require produ
 - Payment/subscription state machine (trial vs active vs lapsed — flagged in `04` and `05` open items)
 - OEM E20-declaration table sourcing/maintenance plan
 - Markers 3–9 rules engine — exact logic spec (era + variant → inferred material/calibration profile)
-- Backend/infra choices beyond current `apps/web` + Resend/PostHog/Sanity
+- Backend/infra choices beyond current `apps/web` + PostHog/Sanity

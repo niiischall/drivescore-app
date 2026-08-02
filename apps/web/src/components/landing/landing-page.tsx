@@ -15,6 +15,7 @@ import {
   ProblemSection,
   SampleScoreSection,
   StickyCta,
+  StickyHeader,
 } from "./sections";
 import {
   WaitlistModal,
@@ -32,6 +33,7 @@ export function LandingPage({
   siteSettings: SiteSettings;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
   useLandingAnalytics(rootRef);
   const [waitlistOpen, setWaitlistOpen] = useState(false);
   const [joinedEmail, setJoinedEmail] = useState<string | null>(null);
@@ -56,7 +58,7 @@ export function LandingPage({
       <div data-section="header">
         <LandingHeader badge={content.headerBadge} />
       </div>
-      <div data-section="hero">
+      <div data-section="hero" ref={heroRef}>
         <HeroSection
           content={content.hero}
           joinedEmail={joinedEmail}
@@ -93,7 +95,12 @@ export function LandingPage({
       </div>
       <StickyCta
         content={content.stickyCta}
+        heroRef={heroRef}
         onJoinClick={() => openWaitlist("sticky")}
+      />
+      <StickyHeader
+        heroRef={heroRef}
+        onCheckClick={() => openWaitlist("header")}
       />
       <WaitlistModal
         open={waitlistOpen}

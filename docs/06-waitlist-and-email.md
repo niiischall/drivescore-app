@@ -1,11 +1,11 @@
-# DriveScore — Waitlist & Confirmation Email (Resend)
+# DriveScore — Waitlist (stubbed)
 
-Status: **implemented** in `apps/web`  
+Status: **implemented** in `apps/web`, email/CRM delivery **stubbed**  
 Related: `01-landing-page.md`, `05-system-architecture.md`
 
 ## Purpose
 
-Capture launch interest from the landing page hero, store the contact in Resend, and send a single opt-in confirmation email (“You’re on the waitlist”). No double opt-in click link in v1.
+Capture launch interest from the landing page hero. The API route validates and logs the email server-side (`console.log`) instead of calling an email/CRM provider — no confirmation email is sent and no contact is stored anywhere outside the server logs. This is intentional: the Resend integration (contact segment + confirmation email) was removed to keep the waitlist UI live without wiring a real provider.
 
 ## Flow
 
@@ -17,7 +17,6 @@ sequenceDiagram
   participant Form as WaitlistForm
   participant Hook as useJoinWaitlist
   participant API as POST_api_waitlist
-  participant Resend
 
   User->>CTA: Click join
   CTA->>Page: openWaitlist(source)
@@ -28,9 +27,7 @@ sequenceDiagram
   Form->>Hook: mutate email
   Hook->>API: JSON email
   API->>API: Validate + normalize
-  API->>Resend: Upsert contact into Segment
-  API->>Resend: Send confirmation email
-  Resend-->>User: Inbox confirmation
+  API->>API: console.log the email (stub)
   API-->>Hook: 200 ok
   Hook->>Hook: PostHog waitlist_joined
   Hook-->>Form: Success UI
@@ -38,83 +35,62 @@ sequenceDiagram
 
 There are two paths into the same hook, split by breakpoint — not both at once:
 
-- **Modal path** — sticky CTA, sample-score CTA, and the hero button *on mobile only*. Fires `waitlist_cta_clicked` first.
+- **Modal path** — sticky CTA (bottom pill on mobile/tablet, top header on desktop), sample-score CTA, and the hero button *on mobile only*. Fires `waitlist_cta_clicked` first.
 - **Inline path** — on desktop (≥768px) `landing.css` hides `.landing-hero__cta` and shows `.landing-hero__aside`, which renders a `WaitlistForm` directly. No modal, and no `waitlist_cta_clicked`.
 
 So `waitlist_cta_clicked{source:"hero"}` fires on mobile only. Read hero conversion from `waitlist_submit_attempted{source:"hero"}` instead, which fires on both.
+
+Both sticky CTA variants (`source: "sticky"` below 1024px, `source: "header"` at and above) are hidden until the user scrolls past the hero — see `hooks/use-scrolled-past.ts`, an `IntersectionObserver` on the hero section shared by `sticky-cta.tsx` and `sticky-header.tsx`.
 
 ## Implementation map
 
 | Piece | Path |
 | ----- | ---- |
-| CTA sources + modal state (`hero` / `sample` / `sticky`) | `apps/web/src/components/landing/landing-page.tsx` |
+| CTA sources + modal state (`hero` / `sample` / `sticky` / `header`) | `apps/web/src/components/landing/landing-page.tsx` |
 | Modal shell | `apps/web/src/components/landing/ui/waitlist-modal.tsx` |
 | **Form UI + submit** | `apps/web/src/components/landing/ui/waitlist-form.tsx` |
 | Inline desktop hero variant of the form | `apps/web/src/components/landing/sections/hero.tsx` |
+| Sticky bottom pill (mobile/tablet, CMS copy) | `apps/web/src/components/landing/sections/sticky-cta.tsx` |
+| Sticky top header (desktop, hardcoded “Check your car”) | `apps/web/src/components/landing/sections/sticky-header.tsx` |
+| Scroll-past-hero visibility hook, shared by both sticky variants | `apps/web/src/components/landing/hooks/use-scrolled-past.ts` |
 | Breakpoint switch between the two hero paths | `apps/web/src/components/landing/styles/landing.css` |
 | React Query mutation | `apps/web/src/hooks/use-join-waitlist.ts` |
 | Client fetch helper | `apps/web/src/lib/waitlist-api.ts` |
 | Query provider | `apps/web/src/components/providers/query-provider.tsx` |
 | API route | `apps/web/src/app/api/waitlist/route.ts` |
-| Resend helpers | `apps/web/src/lib/waitlist.ts` |
-| Email template | `apps/web/src/lib/waitlist-email.ts` |
+| Email validation/normalization | `apps/web/src/lib/waitlist.ts` |
 
 ## Behavior
 
 1. `WaitlistForm` validates email via HTML `required` + `type="email"`, fires `waitlist_submit_attempted`, then posts to `/api/waitlist`.
 2. Server normalizes (trim + lowercase) and validates with a strict regex; `400` on invalid.
-3. Contact is upserted into a Resend **Segment** (env `RESEND_AUDIENCE_ID` — Resend renamed Audiences → Segments).
-4. Already-subscribed contacts are treated as success (idempotent join).
-5. Confirmation email is sent from `RESEND_FROM_EMAIL` (plain text + simple HTML).
-6. On success, client shows the joined UI and captures PostHog event `waitlist_joined` (email domain only).
+3. Server logs the normalized email (`console.log("[waitlist] join", email)`) and returns `{ ok: true }`. No contact is stored, no email is sent.
+4. On success, client shows the joined UI and captures PostHog event `waitlist_joined` (email domain only).
 
 ## Environment variables
 
-Set in `apps/web/.env.local` (see `apps/web/.env.example`):
+None required for the waitlist path itself — the previous `RESEND_API_KEY` / `RESEND_AUDIENCE_ID` / `RESEND_FROM_EMAIL` vars were removed along with the Resend integration.
 
-| Variable | Purpose |
-| -------- | ------- |
-| `RESEND_API_KEY` | Resend API key |
-| `RESEND_AUDIENCE_ID` | Segment ID for the Waitlist segment |
-| `RESEND_FROM_EMAIL` | Verified sender, e.g. `DriveScore <hello@drivescore.club>` |
-
-Also required for analytics / site URL elsewhere:
+Still required for analytics / site URL elsewhere:
 
 | Variable | Purpose |
 | -------- | ------- |
 | `NEXT_PUBLIC_POSTHOG_KEY` | Client PostHog (analytics is client-only — there is no server-side PostHog call) |
-| `NEXT_PUBLIC_SITE_URL` | Canonical / OG / sitemap base URL, and the absolute image URL in the confirmation email |
+| `NEXT_PUBLIC_SITE_URL` | Canonical / OG / sitemap base URL |
 
-## Resend + domain setup (production)
+## Re-adding a real provider (later)
 
-1. Create API key in Resend → `RESEND_API_KEY`.
-2. Create a Segment named **Waitlist** → `RESEND_AUDIENCE_ID`.
-3. Add and verify sending domain (e.g. `drivescore.club`) in Resend.
-4. Add Resend DNS at the registrar (Porkbun for DriveScore):
-   - TXT `resend._domainkey` (DKIM)
-   - MX `send` → Resend/Amazon SES host (priority 10)
-   - TXT `send` (SPF for sending subdomain)
-   - Optional TXT `_dmarc`
-5. Keep **root** MX/SPF for mailbox forwarding (e.g. Porkbun `fwd1`/`fwd2`) so `hello@` can still receive replies.
-6. Set `RESEND_FROM_EMAIL=DriveScore <hello@drivescore.club>` and restart the app.
-7. Mirror the same env vars in Vercel (or host) for production.
+When ready to send real confirmation emails / store contacts again:
 
-Local-only shortcut before domain verify: `RESEND_FROM_EMAIL=DriveScore <onboarding@resend.dev>` (delivers only to your Resend account email).
-
-## Email content
-
-Template: `apps/web/src/lib/waitlist-email.ts`  
-Brand image (absolute URL): `{NEXT_PUBLIC_SITE_URL}/icons/icon-512.png` — the app icon. There is no separate email hero illustration.
-
-- Subject: waitlist confirmed + E20 positioning
-- HTML: ~640px light marketing layout — brand header, product pillars (free check, 10 markers, confidence bands, AI explains), CTA
-- Plain-text alternative with the same beats
-- Images require a publicly reachable `NEXT_PUBLIC_SITE_URL` (localhost URLs will break the image in the inbox)
-- The email is light-mode only; it does not follow the site's `data-theme` switch
+1. Pick a provider (Resend or otherwise) and add its SDK back to `apps/web/package.json`.
+2. Replace the `console.log` in `apps/web/src/app/api/waitlist/route.ts` with the provider call(s).
+3. Add the provider's env vars to `apps/web/.env.example` and Vercel.
+4. Reintroduce a confirmation email template if the provider sends transactional email.
 
 ## Out of scope (later)
 
+- Real email/CRM delivery (see above — currently stubbed to a console log)
 - Double opt-in token links
-- Admin UI / CSV export beyond Resend dashboard
+- Admin UI / CSV export
 - Welcome drip sequences
 - Rate limiting (e.g. Upstash) if abused

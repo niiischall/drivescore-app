@@ -1,9 +1,5 @@
 import { NextResponse } from "next/server";
-import {
-  normalizeWaitlistEmail,
-  sendWaitlistConfirmation,
-  upsertWaitlistContact,
-} from "@/lib/waitlist";
+import { normalizeWaitlistEmail } from "@/lib/waitlist";
 
 export const runtime = "nodejs";
 
@@ -30,27 +26,6 @@ export async function POST(request: Request) {
     );
   }
 
-  try {
-    await upsertWaitlistContact(email);
-    await sendWaitlistConfirmation(email);
-    return NextResponse.json({ ok: true });
-  } catch (err) {
-    const message =
-      err instanceof Error ? err.message : "Could not join waitlist";
-    const misconfigured =
-      message.includes("is not configured") ||
-      message.includes("RESEND_");
-
-    console.error("[waitlist]", message);
-
-    return NextResponse.json(
-      {
-        ok: false,
-        error: misconfigured
-          ? "Waitlist is temporarily unavailable"
-          : "Couldn't join — try again",
-      },
-      { status: misconfigured ? 503 : 500 },
-    );
-  }
+  console.log("[waitlist] join", email);
+  return NextResponse.json({ ok: true });
 }
